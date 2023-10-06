@@ -1,0 +1,59 @@
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+/* // Define a function to load a JSON file
+function loadJSONFile(filename, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.overrideMimeType("application/json");
+    xhr.open("GET", filename, true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(xhr.responseText);
+        }
+    };
+    xhr.send(null);
+}
+
+// Function to display data (you can define this function as needed)
+function displayData(data) {
+    // Your code to display or manipulate the data goes here
+    console.log("Displaying data:", data);
+
+    // For example, populate a table with the data
+    const tbody = document.querySelector("#dataTable tbody");
+    tbody.innerHTML = "";
+
+    data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.value1}</td>
+            <td>${item.value2}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Load JSON data and display it
+loadJSONFile("file:///android_asset/data.json", function (jsonString) {
+    try {
+        var jsonData = JSON.parse(jsonString);
+        displayData(jsonData);
+    } catch (error) {
+        console.error("Error parsing JSON: " + error);
+    }
+});
+ */

@@ -1,0 +1,23 @@
+table {
+    border-collapse: collapse;    
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+
+   /* Media query for screens with a maximum width of 420px */
+   @media (max-width: 420px) {
+    table {
+      margin-top: 10px !important;
+    }
+  }
