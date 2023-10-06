@@ -58,7 +58,7 @@ openRequest.onsuccess = (event) => {
   db = event.target.result;
 
   // Fetch and store data from data.json if it doesn't exist in IndexedDB
-  fetch("../../../assets/data.json")
+  fetch("../assets/data.json")
     .then((response) => response.json())
     .then((jsonData) => {
       const transaction = db.transaction(storeName, "readwrite");
