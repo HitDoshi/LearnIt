@@ -12,7 +12,8 @@ var select = 0; // 0-none , 1-left , 2-right
 var questionRow = null;
 var answerRow = null;
 
-const color = ['#EEE685',"#9F9F5F","#808000","#48D1CC","#C0D9D9","#AFEEEE","#00B2EE","#A4D3EE","#D8BFD8","#ECC8EC"];
+const color = ['#EEE685',"#9F9F5F","#808000","#48D1CC","#C0D9D9","#AFEEEE","#00B2EE","#A4D3EE","#D8BFD8","#ECC8EC",
+"#6f42c1","#fd7e14","#ffc107","#7F5A58","#3C565B","#808000","#FFFFCC","#FFDEAD","#9F8C76","#F98B88"];
 var index = 0;
 
 var indexedDB =
@@ -126,9 +127,15 @@ function getData() {
       value2 = shuffle(value2);
 
       const dataTable = document.getElementById("dataTable");
+      const suggestion = document.getElementById("suggestion");
 
       const tbody = dataTable.querySelector("tbody");
       tbody.innerHTML = "";
+
+      if(favData.length==0){
+        dataTable.style.display = 'none';        
+        suggestion.style.display = 'block';        
+      }
 
       for (var i = 0; i < favData.length; i++) {
         const row = appendData(value1[i], value2[i]);
