@@ -17,28 +17,7 @@ var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedD
       // Select the default option on page load
       window.addEventListener("load", function () {
 
-        undoData();
-        const dropdownItems = document.querySelectorAll('.dropdown-item');
-
-        if (myParam == "1") {
-          dropdownItems[0].style.color = 'green'
-          displayData();
-        } else if (myParam == "2") {
-          dropdownItems[1].style.color = 'green'
-          displayFavData();
-        } else if (myParam == "3") {
-          dropdownItems[2].style.color = 'green'
-          displaySkipData();
-        }
-
-        var navbarToggle = document.querySelector(".navbar-toggler");
-    var navbarCollapse = document.querySelector(".navbar-collapse");
-
-       if (navbarCollapse.classList.contains("show")) {
-         navbarCollapse.classList.remove("show");
-     } else {
-         navbarCollapse.classList.add("show");
-     }
+       
       });
 
 
@@ -79,6 +58,29 @@ openRequest.onsuccess = (event) => {
         // Display data from IndexedDB
         // displayData();
         // updateFavoritesTable(db);
+
+        undoData();
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+        if (myParam == "1") {
+          dropdownItems[0].style.color = 'green'
+          displayData();
+        } else if (myParam == "2") {
+          dropdownItems[1].style.color = 'green'
+          displayFavData();
+        } else if (myParam == "3") {
+          dropdownItems[2].style.color = 'green'
+          displaySkipData();
+        }
+
+        var navbarToggle = document.querySelector(".navbar-toggler");
+    var navbarCollapse = document.querySelector(".navbar-collapse");
+
+       if (navbarCollapse.classList.contains("show")) {
+         navbarCollapse.classList.remove("show");
+     } else {
+         navbarCollapse.classList.add("show");
+     }
       };
     })
     .catch((error) => {
