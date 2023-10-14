@@ -11,15 +11,14 @@ const deleteData = []; // delete data ==> {id}
 const urlParams = new URLSearchParams(window.location.search);
 const myParam = urlParams.get("id");
 
+const value = localStorage.getItem("toggle_question"); //false means value1 show otherwise value2
+
 var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 // var request = indexedDB.deleteDatabase("test");
 
       // Select the default option on page load
-      window.addEventListener("load", function () {
-
-       
+      window.addEventListener("load", function () {        
       });
-
 
 openRequest.onupgradeneeded = (event) => {
   db = event.target.result;
@@ -365,8 +364,7 @@ function appendData(data) {
 
   row.innerHTML = `
                     <td>${data.id}</td>
-                    <td>${data.value1}</td>
-                    <td>${data.value2}</td>
+                    <td>${value == "true" ? data.value2 : data.value1}</td>                    
                     <td><input type="checkbox" data-id="${
                       data.id
                     }" class="favorite" ${data.isFav ? "checked" : ""} /></td>

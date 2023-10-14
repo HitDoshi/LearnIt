@@ -1,0 +1,54 @@
+.data_display_container {
+  display: flex;
+  text-align: center;
+}
+
+.text_container {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: lightblue;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */  
+}
+
+button{
+  width: fit-content;
+  height: fit-content;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 12px;
+}
+
+.data-display {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+
+.data-entry {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.toggle-options{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.alignment{
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+}
