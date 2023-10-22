@@ -1,90 +1,150 @@
-const dbName = "test";
-const dbVersion = 1;
-const storeName = "indexDB";
+var dbName = "test";
+var dbVersion = 1;
+var storeName = "data";
+var index = "subjectTopicIndex"
+
+var topic = parseInt(localStorage.getItem("topic"));
+
+if (topic == 0) {
+  dbName = "user";
+  dbVersion = 1;
+  storeName = "userData";
+  index = "subjectIndex";
+}
 
 const openRequest = indexedDB.open(dbName, dbVersion);
-let db; // Reference to the IndexedDB database
+const userOpenRequest = indexedDB.open('user', 1);
+let db,userDB; // Reference to the IndexedDB database
 const changeFavDataState = []; // fav data ==> {id,isFav}
 const changeSkipDataState = []; // skip data ==> {id,isSkip}
 const deleteData = []; // delete data ==> {id}
+
+var subject = parseInt(localStorage.getItem("subject")) || 1;
 
 const urlParams = new URLSearchParams(window.location.search);
 const myParam = urlParams.get("id");
 
 const value = localStorage.getItem("toggle_question"); //false means value1 show otherwise value2
 
-var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+var indexedDB =
+  window.indexedDB ||
+  window.mozIndexedDB ||
+  window.webkitIndexedDB ||
+  window.msIndexedDB ||
+  window.shimIndexedDB;
 // var request = indexedDB.deleteDatabase("test");
 
-      // Select the default option on page load
-      window.addEventListener("load", function () {        
-      });
+// Select the default option on page load
+window.addEventListener("load", function () {});
+
+document
+  .getElementById("addData-Form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission
+    const form = document.getElementById("addData-Form");
+
+    var value1 = document.getElementById("value1").value;
+    var value2 = document.getElementById("value2").value;
+    var value3 = document.getElementById("value3").value;
+    var isFav = document.getElementById("favourite").checked;
+    var isSkip = document.getElementById("skip").checked;
+
+
+    // Check if value1 and value2 are not empty
+    if (value1.trim() === "" || value2.trim() === "") {
+    } else {
+      // Perform your custom action here with value1 and value2
+      addUserData({      
+        subjectId:subject,
+        value1:value1,
+        value2:value2,
+        value3:value3,
+        isFav:isFav,
+        isSkip:isSkip,
+      })
+      // You can submit the form or perform other actions here.
+    }
+    $("#exampleModalCenter").modal("hide");
+    form.reset();
+    var navbarCollapse = document.querySelector(".navbar-collapse");
+
+        if (navbarCollapse.classList.contains("show")) {
+          navbarCollapse.classList.remove("show");
+        } else {
+          navbarCollapse.classList.add("show");
+        }
+  });
+
+document.getElementById("cancelButton").addEventListener("click", function () {
+  // Get the form element by its ID
+  const form = document.getElementById("addData-Form");
+
+  // Reset the form
+  form.reset();
+});
 
 openRequest.onupgradeneeded = (event) => {
   db = event.target.result;
+  
   // Create the object store if it doesn't exist
   if (!db.objectStoreNames.contains(storeName)) {
-    db.createObjectStore(storeName, { keyPath: "id" });
+    const objectStore = db.createObjectStore(storeName, { keyPath: "id" });
+    // Create a compound index for subjectId and topicId
+
+    if(topic==0){    
+      objectStore.createIndex(index, ["subjectId"]);
+    }else{
+      objectStore.createIndex(index, ["subjectId", "topicId"]);
+    }
+  }
+};
+userOpenRequest.onupgradeneeded = (event) => {
+  userDB = event.target.result;
+  
+  // Create the object store if it doesn't exist
+  if (!userDB.objectStoreNames.contains('userData')) {
+    const objectStore = userDB.createObjectStore('userData', { keyPath: "id" });
+    // Create a compound index for subjectId and topicId
+      objectStore.createIndex('subjectIndex', ["subjectId"]);
   }
 };
 
 openRequest.onerror = (event) => {
-  console.error("Database error: " + event.target.errorCode);
+  console.error("Database error: " + event.target.error);
+};
+userOpenRequest.onerror = (event) => {
+  console.error("Database error: " + event.target.error);
 };
 
 openRequest.onsuccess = (event) => {
   db = event.target.result;
 
-  // Fetch and store data from data.json if it doesn't exist in IndexedDB
-  fetch("data.json")
-    .then((response) => response.json())
-    .then((jsonData) => {
-      const transaction = db.transaction(storeName, "readwrite");
-      const objectStore = transaction.objectStore(storeName);
-
-      // Check if data.json records already exist in IndexedDB
-      objectStore.count().onsuccess = (event) => {
-        const count = event.target.result;
-        const countJsonData = jsonData.length;
-
-        if (count == 0) {          
-          // Store data from data.json into IndexedDB
-          jsonData.forEach((item) => {
-            objectStore.add(item);
-          });
-        }
-
-        // Display data from IndexedDB
-        // displayData();
-        // updateFavoritesTable(db);
-
         undoData();
-        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        
+        const dropdownItems = document.querySelectorAll(".dropdown-item");
 
         if (myParam == "1") {
-          dropdownItems[0].style.color = 'green'
+          dropdownItems[0].style.color = "green";
           displayData();
         } else if (myParam == "2") {
-          dropdownItems[1].style.color = 'green'
+          dropdownItems[1].style.color = "green";
           displayFavData();
         } else if (myParam == "3") {
-          dropdownItems[2].style.color = 'green'
+          dropdownItems[2].style.color = "green";
           displaySkipData();
         }
 
         var navbarToggle = document.querySelector(".navbar-toggler");
-    var navbarCollapse = document.querySelector(".navbar-collapse");
+        var navbarCollapse = document.querySelector(".navbar-collapse");
 
-       if (navbarCollapse.classList.contains("show")) {
-         navbarCollapse.classList.remove("show");
-     } else {
-         navbarCollapse.classList.add("show");
-     }
-      };
-    })
-    .catch((error) => {
-      console.error("Error loading JSON data: " + error);
-    });
+        if (navbarCollapse.classList.contains("show")) {
+          navbarCollapse.classList.remove("show");
+        } else {
+          navbarCollapse.classList.add("show");
+        }
+};
+userOpenRequest.onsuccess = (event) => {
+  userDB = event.target.result;        
 };
 
 function displayData() {
@@ -92,8 +152,8 @@ function displayData() {
     console.error("Database is not open yet.");
     return;
   }
-
-  const transaction = db.transaction(storeName, "readonly");
+  try {
+    const transaction = db.transaction(storeName, "readonly");
   const objectStore = transaction.objectStore(storeName);
   const dataTable = document.getElementById("dataTable");
 
@@ -102,18 +162,42 @@ function displayData() {
   // const favoritesTable = document.getElementById("favoritesTable");
   // const favoritesTbody = favoritesTable.querySelector("tbody");
 
-  objectStore.openCursor().onsuccess = (event) => {
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic; // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+
+  if(topic==0){
+    var range = IDBKeyRange.only([subjectId]);
+  }else{
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  }  
+
+  // Use the compound index for the search
+  
+  var request = objectStore.index(index);
+  var idNumber = 1;
+
+  request.openCursor(range).onsuccess = (event) => {
     const cursor = event.target.result;
 
     if (cursor) {
       const data = cursor.value;
 
-      const row = appendData(data);
+      console.log(data);
+
+      const row = appendData(data,idNumber);
       tbody.appendChild(row);
 
       cursor.continue();
+      idNumber++;
     }
   };
+  } catch (error) {
+    console.log(error);
+  }
+  
 }
 
 function displayFavData() {
@@ -122,6 +206,7 @@ function displayFavData() {
     return;
   }
 
+  
   const transaction = db.transaction(storeName, "readonly");
   const objectStore = transaction.objectStore(storeName);
   const dataTable = document.getElementById("dataTable");
@@ -131,15 +216,31 @@ function displayFavData() {
   // const favoritesTable = document.getElementById("favoritesTable");
   // const favoritesTbody = favoritesTable.querySelector("tbody");
 
-  objectStore.openCursor().onsuccess = (event) => {
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic; // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+  if(topic==0){
+    var range = IDBKeyRange.only([subjectId]);
+  }else{
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  }  
+  // Use the compound index for the search
+  var request = objectStore.index(index);
+  var idNumber = 1;
+
+  request.openCursor(range).onsuccess = (event) => {
     const cursor = event.target.result;
 
     if (cursor) {
-      const data = cursor.value;      
+      const data = cursor.value;
 
       if (data.isFav) {
-        const row = appendData(data);
-        tbody.appendChild(row);        
+        const row = appendData(data,idNumber);
+        tbody.appendChild(row);    
+      idNumber++;
+
       }
       cursor.continue();
     }
@@ -161,14 +262,29 @@ function displaySkipData() {
   // const favoritesTable = document.getElementById("favoritesTable");
   // const favoritesTbody = favoritesTable.querySelector("tbody");
 
-  objectStore.openCursor().onsuccess = (event) => {
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic; // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+  if(topic==0){
+    var range = IDBKeyRange.only([subjectId]);
+  }else{
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  }  
+  // Use the compound index for the search
+  var request = objectStore.index(index);
+  var idNumber = 1;
+
+  request.openCursor(range).onsuccess = (event) => {
     const cursor = event.target.result;
     if (cursor) {
       const data = cursor.value;
 
       if (data.isSkip) {
-        const row = appendData(data);
+        const row = appendData(data,idNumber);
         tbody.appendChild(row);
+        idNumber++;
       }
       cursor.continue();
     }
@@ -226,7 +342,20 @@ function updateFavoritesTable(db) {
   // Clear existing favorite table rows
   favoritesTbody.innerHTML = "";
 
-  objectStore.openCursor().onsuccess = (event) => {
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic; // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+  if(topic==0){
+    var range = IDBKeyRange.only([subjectId]);
+  }else{
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  }  
+  // Use the compound index for the search
+  var request = objectStore.index(index);
+
+  request.openCursor(range).onsuccess = (event) => {
     const cursor = event.target.result;
     if (cursor) {
       const data = cursor.value;
@@ -246,7 +375,7 @@ function updateFavoritesTable(db) {
 
 function getSelectedOptionText() {
   const selectedOption = document.querySelector(".filter-option.selected");
-  
+
   if (selectedOption) {
     return selectedOption.id;
   } else {
@@ -256,63 +385,53 @@ function getSelectedOptionText() {
 }
 
 function loadUpdatedTable() {
-
   // const option = getSelectedOptionText();
 
   // console.log(typeof option);
   // console.log(option);
 
-  if (myParam == '1') {
+  if (myParam == "1") {
     const dataTable = document.getElementById("dataTable");
     const tbody = dataTable.querySelector("tbody");
     tbody.innerHTML = "";
-  
+
     displayData();
-  } else if (myParam == '2') {
+  } else if (myParam == "2") {
     displayFavData();
-  } else if(myParam=='3'){    
+  } else if (myParam == "3") {
     displaySkipData();
   }
 }
 
 function updateData() {
-
   try {
     changeFavDataState.forEach((item) => {
       updateIsFavFlag(item.id, item.isFav);
     });
-  
+
     changeSkipDataState.forEach((item) => {
       updateIsSkipFlag(item.id, item.isSkip);
     });
-  
+
     deleteData.forEach((item) => {
       deleteDBData(item.id);
     });
-  
+
     hideUpdateOption();
     loadUpdatedTable();
-    createToast(
-      "Data updated!",
-      "success-toast",
-      3000
-    ); // 3000ms duration
+    showToast("Data updated !!"); 
 
     var navbarToggle = document.querySelector(".navbar-toggler");
     var navbarCollapse = document.querySelector(".navbar-collapse");
 
-       if (navbarCollapse.classList.contains("show")) {
-         navbarCollapse.classList.remove("show");
-     } else {
-         navbarCollapse.classList.add("show");
-     }
+    if (navbarCollapse.classList.contains("show")) {
+      navbarCollapse.classList.remove("show");
+    } else {
+      navbarCollapse.classList.add("show");
+    }
   } catch (error) {
-    createToast(
-      error.message,
-      "error-toast",
-      3000
-    ); // 3000ms duration
-  }  
+    createToast(error.message); // 3000ms duration
+  }
 }
 
 function undoData() {
@@ -349,22 +468,23 @@ function undoData() {
   deleteData.length = 0;
 
   var navbarToggle = document.querySelector(".navbar-toggler");
-    var navbarCollapse = document.querySelector(".navbar-collapse");
+  var navbarCollapse = document.querySelector(".navbar-collapse");
 
-       if (navbarCollapse.classList.contains("show")) {
-         navbarCollapse.classList.remove("show");
-     } else {
-         navbarCollapse.classList.add("show");
-     }
+  if (navbarCollapse.classList.contains("show")) {
+    navbarCollapse.classList.remove("show");
+  } else {
+    navbarCollapse.classList.add("show");
+  }
 }
 
-function appendData(data) {
-
+function appendData(data,idNumber) {
   const row = document.createElement("tr");
 
   row.innerHTML = `
-                    <td>${data.id}</td>
-                    <td>${value == "true" ? data.value2 : data.value1}</td>                    
+                    <td>${idNumber}</td>
+                    <td>${
+                      value == "true" ? data.value2 : data.value1
+                    }</td>                    
                     <td><input type="checkbox" data-id="${
                       data.id
                     }" class="favorite" ${data.isFav ? "checked" : ""} /></td>
@@ -379,7 +499,6 @@ function appendData(data) {
   checkbox.addEventListener("change", (event) => {
     const id = parseInt(event.target.getAttribute("data-id"));
     let isExist = false;
-    let idNumber;
     const checked = event.target.checked;
 
     // Update the 'isFav' flag in IndexedDB
@@ -530,18 +649,17 @@ async function search() {
     const searchTerm = document.getElementById("searchInput").value;
     // Initialize an array to store matching objects
     const matchingObjects = [];
-  
-    // Create a regular expression pattern using the search term and make it case-insensitive
-    const regex = new RegExp(searchTerm, 'i');
 
-    
+    // Create a regular expression pattern using the search term and make it case-insensitive
+    const regex = new RegExp(searchTerm, "i");
+
     const transaction = db.transaction(storeName, "readonly");
     const objectStore = transaction.objectStore(storeName);
     const dataTable = document.getElementById("dataTable");
-  
+
     const tbody = dataTable.querySelector("tbody");
     tbody.innerHTML = "";
-  
+
     // Iterate through the JSON array to find objects with matching "value1" or "value2" properties
     for (const obj of jsonArray) {
       if (regex.test(obj.value1) || regex.test(obj.value2)) {
@@ -549,9 +667,9 @@ async function search() {
         const row = appendData(obj);
         tbody.appendChild(row);
       }
-    }   
+    }
 
-    if(!searchTerm){
+    if (!searchTerm) {
       loadUpdatedTable();
     }
 
@@ -560,9 +678,9 @@ async function search() {
 
     if (navbarCollapse.classList.contains("show")) {
       navbarCollapse.classList.remove("show");
-  } else {
+    } else {
       navbarCollapse.classList.add("show");
-  }
+    }
   } catch (error) {
     console.error("Error getting data:", error);
   }
@@ -583,16 +701,62 @@ async function getData() {
   return new Promise((resolve, reject) => {
     let allData = [];
 
-    const request = objectStore.getAll();
+    // Specify the subjectId and topicId you want to search for
+    var subjectId = subject; // Change this to the subjectId you want to search for
+    var topicId = topic; // Change this to the topicId you want to search for
 
-    request.onsuccess = (event) => {
+    // Create a range for the compound index
+    if(topic==0){
+      var range = IDBKeyRange.only([subjectId]);
+    }else{
+      var range = IDBKeyRange.only([subjectId, topicId]);
+    }  
+    // Use the compound index for the search
+    var request = objectStore.index(index);
+
+    const req = request.getAll(range);
+
+    req.onsuccess = (event) => {
       allData = event.target.result;
       resolve(allData);
     };
 
-    request.onerror = (event) => {
+    req.onerror = (event) => {
       console.error("Error fetching data:", event.target.error);
       reject(event.target.error);
     };
   });
+}
+
+function addUserData(newData){
+  if (!userDB) {
+    console.error("Database is not open yet.");
+    throw new Error("Database is not open yet.");
+  }  
+
+  console.log(userDB);
+
+  const transaction = userDB.transaction('userData', "readwrite");
+  const objectStore = transaction.objectStore('userData');
+
+  objectStore.count().onsuccess = (event) => {
+    const recordCount = event.target.result;
+
+    newData['id'] = recordCount + 1;
+    const request = objectStore.add(newData);
+
+    request.onsuccess = (event) => {
+      console.log("Data added successfully.");
+      showToast("Data added !!"); 
+      if(topic==0) {
+        loadUpdatedTable();
+    }
+    };
+    
+    request.onerror = (event) => {
+      console.error("Error adding data: " + event.target.error);
+    };
+  };
+
+
 }

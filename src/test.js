@@ -1,6 +1,16 @@
-const dbName = "test";
-const dbVersion = 1;
-const storeName = "indexDB";
+var dbName = "test";
+var dbVersion = 1;
+var storeName = "data";
+var keyIndex = "subjectTopicIndex"
+
+var topic = parseInt(localStorage.getItem("topic"));
+
+if (topic == 0) {
+  dbName = "user";
+  dbVersion = 1;
+  storeName = "userData";
+  keyIndex = "subjectIndex";
+}
 
 var data = null;
 var isFavOnly = false;
@@ -16,6 +26,10 @@ var answer = "";
 var timer;
 
 let db; // Reference to the IndexedDB database
+
+var subject = parseInt(localStorage.getItem("subject")) || 1;
+var topic = parseInt(localStorage.getItem("topic"));
+
 
 var indexedDB =
   window.indexedDB ||
@@ -34,7 +48,14 @@ openRequest.onupgradeneeded = (event) => {
   db = event.target.result;
   // Create the object store if it doesn't exist
   if (!db.objectStoreNames.contains(storeName)) {
-    db.createObjectStore(storeName, { keyPath: "id" });
+    var objectStore = db.createObjectStore(storeName, { keyPath: "id" });
+
+    // Create a compound index for subjectId and topicId
+    if(topic==0){    
+      objectStore.createIndex(keyIndex, ["subjectId"]);
+    }else{
+      objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+    }
   }
 };
 
@@ -46,7 +67,8 @@ openRequest.onerror = (event) => {
 openRequest.onsuccess = async function (event) {
   db = event.target.result;
 
-  getTotalSkipData();
+  try {
+    getTotalSkipData();
 
   const isShowFavOnly = document.getElementById("show_fav_only");
   isShowFavOnly.addEventListener("change", toggleIsShowFavOnly);
@@ -69,9 +91,9 @@ openRequest.onsuccess = async function (event) {
   console.log(totalData);
   console.log(favData);
 
-  isFavOnly = localStorage.getItem("showFavOnly").toString();
-  totalRightAnswer = localStorage.getItem("total_right");
-  toggleQuestion = localStorage.getItem("toggle_question");
+  isFavOnly = localStorage.getItem("showFavOnly") || "false";
+  totalRightAnswer = localStorage.getItem("total_right") || 0;
+  toggleQuestion = localStorage.getItem("toggle_question") || "false";
 
 
   document.getElementById("show_fav_only").checked = isFavOnly == "true";
@@ -85,6 +107,11 @@ openRequest.onsuccess = async function (event) {
   await getData();
 
   setTimer();
+  } catch (error) {
+    console.log(error?.message);
+  }
+
+  
 };
 
 function shuffle(array) {
@@ -118,7 +145,22 @@ async function countData() {
     // Access the object store
     const transaction = db.transaction(storeName, "readwrite");
     const objectStore = transaction.objectStore(storeName);
-    objectStore.openCursor().onsuccess = (event) => {
+
+    
+      // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic;   // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+  if(topic==0){
+    var range = IDBKeyRange.only([subjectId]);
+  }else{
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  } 
+  // Use the compound index for the search
+  var request = objectStore.index(keyIndex);
+
+    request.openCursor(range).onsuccess = (event) => {
       const cursor = event.target.result;
 
       if (cursor) {
@@ -132,7 +174,7 @@ async function countData() {
             favData.push(data);
           }
           allData++;
-          totalData.push(data);
+          totalData.push(data);        
         }
 
         cursor.continue();
@@ -215,8 +257,22 @@ function getTotalSkipData() {
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
 
+  
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic;   // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+  if(topic==0){
+    var range = IDBKeyRange.only([subjectId]);
+  }else{
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  } 
+  // Use the compound index for the search
+  var request = objectStore.index(keyIndex);
+
   // Use a cursor to iterate through the records and collect the keys
-  objectStore.openCursor().onsuccess = function (event) {
+  request.openCursor(range).onsuccess = function (event) {
     const cursor = event.target.result;
 
     if (cursor) {
@@ -336,14 +392,18 @@ function showData() {
   }
 
   const value1 = document.getElementById("value_1");
+  const value3 = document.getElementById("show_value3");
   const isFav = document.getElementById("toggle_fav");
   const isSkip = document.getElementById("toggle_skip");
+  
 
   if (toggleQuestion == "true") {
     value1.innerText = data.value2;
   } else {
     value1.innerText = data.value1;
   }
+
+  value3.innerHTML = data?.value3 ? data.value3 : "";
 
   isFav.checked = data.isFav;
   isSkip.checked = data.isSkip;

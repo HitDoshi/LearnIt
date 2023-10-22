@@ -1,6 +1,16 @@
-const dbName = "test";
-const dbVersion = 1;
-const storeName = "indexDB";
+var dbName = "test";
+var dbVersion = 1;
+var storeName = "data";
+var keyIndex = "subjectTopicIndex"
+
+var topic = parseInt(localStorage.getItem("topic"));
+
+if (topic == 0) {
+  dbName = "user";
+  dbVersion = 1;
+  storeName = "userData";
+  keyIndex = "subjectIndex";
+}
 
 const openRequest = indexedDB.open(dbName, dbVersion);
 let db; // Reference to the IndexedDB database
@@ -11,6 +21,9 @@ var questionId = null;
 var select = 0; // 0-none , 1-left , 2-right
 var questionRow = null;
 var answerRow = null;
+
+var subject = parseInt(localStorage.getItem("subject")) || 1;
+var topic = parseInt(localStorage.getItem("topic"));
 
 const color = ['#EEE685',"#9F9F5F","#808000","#48D1CC","#C0D9D9","#AFEEEE","#00B2EE","#A4D3EE","#D8BFD8","#ECC8EC",
 "#6f42c1","#fd7e14","#ffc107","#7F5A58","#3C565B","#808000","#FFFFCC","#FFDEAD","#9F8C76","#F98B88"];
@@ -29,6 +42,15 @@ openRequest.onupgradeneeded = (event) => {
   // Create the object store if it doesn't exist
   if (!db.objectStoreNames.contains(storeName)) {
     db.createObjectStore(storeName, { keyPath: "id" });
+    // Create a compound index for subjectId and topicId
+    objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+
+
+    if(topic==0){
+      objectStore.createIndex(keyIndex, ["subjectId"]);
+    }else{
+      objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+    }
   }
 };
 
@@ -39,32 +61,9 @@ openRequest.onerror = (event) => {
 openRequest.onsuccess = (event) => {
   db = event.target.result;
 
+
   // Fetch and store data from data.json if it doesn't exist in IndexedDB
-  fetch("data.json")
-    .then((response) => response.json())
-    .then((jsonData) => {
-      const transaction = db.transaction(storeName, "readwrite");
-      const objectStore = transaction.objectStore(storeName);
-
-      // Check if data.json records already exist in IndexedDB
-      objectStore.count().onsuccess = (event) => {
-        const count = event.target.result;
-        const countJsonData = jsonData.length;
-
-        console.log(jsonData);
-        if (count == 0) {
-          // Store data from data.json into IndexedDB
-          jsonData.forEach((item) => {
-            objectStore.add(item);
-          });
-        }
-      };
-
-      getData();
-    })
-    .catch((error) => {
-      console.error("Error loading JSON data: " + error);
-    });
+  getData();
 };
 
 function shuffle(array) {
@@ -102,8 +101,23 @@ function getData() {
   // const favoritesTable = document.getElementById("favoritesTable");
   // const favoritesTbody = favoritesTable.querySelector("tbody");
 
-  objectStore.getAll().onsuccess = (event) => {
+   // Specify the subjectId and topicId you want to search for
+   var subjectId = subject; // Change this to the subjectId you want to search for
+   var topicId = topic;   // Change this to the topicId you want to search for
+
+   // Create a range for the compound index
+   if(topic==0){
+    var range = IDBKeyRange.only([subjectId]);
+  }else{
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  }
+   // Use the compound index for the search
+   var request = objectStore.index(keyIndex);
+
+   request.getAll(range).onsuccess = (event) => {
     var allData = event.target.result;
+
+    console.log(allData);
 
     if (allData.length > 0) {
       allData = shuffle(allData);
@@ -133,8 +147,8 @@ function getData() {
       tbody.innerHTML = "";
 
       if(favData.length==0){
-        dataTable.style.display = 'none';        
-        suggestion.style.display = 'block';        
+        dataTable.style.display = 'none';
+        suggestion.style.display = 'block';
       }
 
       for (var i = 0; i < favData.length; i++) {

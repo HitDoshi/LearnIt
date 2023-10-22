@@ -1,111 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IndexedDB Data Management</title>
 
-    <!-- Add your stylesheet -->
-    <link rel="stylesheet" href="./styles/navBar.style.css" />
-    <link rel="stylesheet" href="./styles/table.style.css" />
-    <link rel="stylesheet" href="./styles/toast.style.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IndexedDB Data Management</title>
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    />
+  <!-- Add your stylesheet -->
+  <link rel="stylesheet" href="./styles/navBar.style.css" />
+  <link rel="stylesheet" href="./styles/table.style.css" />
+  <link rel="stylesheet" href="./styles/toast.style.css" />
 
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <style></style>
-  </head>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" id="myNavbar">
-      <a class="navbar-brand" style="color: black;">LearnIt</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="test.html"
-              >Home</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="matchPair.html">Match Pair</a>
-          </li>
-          <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
+
+  <style>
+    /* Hide the arrow in the dropdown trigger */
+  .no-arrow-dropdown-toggle::after {
+    display: none;
+  }
+
+    /* Rest of the CSS remains the same */
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" id="myNavbar">
+    <a class="navbar-brand" style="color: black;">LearnIt</a>    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="home.html">Home</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="test.html" id="test">Practice</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="matchPair.html" target="_self">Match Pair</a>
+        </li>
+        <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
           <div
             class="icon update-icon"
             style="margin-right: 20px"
             onclick="undoData();"
           >
             ↺
-          </div> -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdownMenuLink"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-              style="color: brown; font-weight: 500;"            
-            >
-              Manage Record
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="manageRecord.html?id=1"
-                >Show All</a
-              >
-              <a class="dropdown-item" href="manageRecord.html?id=2"
-                >Show Fav Only</a
-              >
-              <a class="dropdown-item" href="manageRecord.html?id=3"
-                >Show Skip Only</a
-              >
-            </div>
-          </li>
-          <div class="form-inline my-2 my-lg-0">
+          </div> -->          
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" style="color: brown; font-weight: 500;">
+            Manage Record
+          </a>          
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="manageRecord.html?id=1">Show All</a>
+            <a class="dropdown-item" href="manageRecord.html?id=2">Show Fav Only</a>
+            <a class="dropdown-item" href="manageRecord.html?id=3">Show Skip Only</a>
+          </div>
+        </li>
+        <li class="nav-item" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" style="cursor: pointer;">
+          <a class="nav-link">Add Data</a>
+        </li>
+        <!-- <div class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-1" id="searchInput" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-1" onclick="search();">Search</button>
-          </div>
-          <button class="btn btn-success mr-sm-1 my-1 my-sm-0 btn-sm icon update-icon" 
+          </div> -->
+        <button class="btn btn-success mr-sm-1 my-1 my-sm-0 btn-sm icon update-icon"
           onclick="updateData();">Update</button>
-          <button class="btn btn-danger my-2 my-sm-0 icon update-icon"  onclick="undoData();">Cancle</button>
-        </ul>
-      </div>
-    </nav>
-     
+        <button class="btn btn-danger my-2 my-sm-0 icon update-icon" onclick="undoData();">Cancle</button>
+      </ul>
+    </div>
+  </nav>
 
-    <!-- Navigation bar with hamburger icon -->
-    <!-- <div class="navbar">
+  <!-- <div style="margin-top: 100px;display: flex;width: 100%;padding-left: 10px;padding-right: 10px;">
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-short" style="align-self: center;margin-right: 5px;"
+      viewBox="0 0 16 16">
+      <path fill-rule="evenodd"
+        d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
+    </svg>
+
+    <a class="navbar-brand" style="color: black;align-self: center;">LearnIt</a>
+    <div style="margin-left: auto;align-self: center;display: flex;align-items: center;justify-content: center;">
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-plus-lg" data-toggle="modal" data-target="#exampleModalCenter"      
+        viewBox="0 0 16 16" style="margin-right: 12px;">
+        <path fill-rule="evenodd"
+          d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+      </svg>
+      
+      <div class="dropdown">
+        <span class="dropdown-toggle no-arrow-dropdown-toggle" id="menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+          </svg>
+        </span>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </div>      
+      
+
+    </div>   
+  </div> -->
+
+  <div class="toast-container" id="toastContainer"></div>
+  <div id="snackbar"></div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Add data</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <form id="addData-Form">
+            <div class="form-group">
+              <label for="value1">Value1</label>
+              <input type="text" class="form-control" id="value1" placeholder="Value 1" value="" required>
+            </div>
+            <div class="form-group">
+              <label for="value2">Value2</label>
+              <input type="text" class="form-control" id="value2" placeholder="Value 2" value="" required>
+            </div>
+            <div class="form-group">
+              <label for="value3">Value3</label>
+              <input type="text" class="form-control" id="value3" placeholder="Value 3" value="">
+            </div>            
+
+            <div class="form-row d-flex justify-content-around align-items-center">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="favourite">
+                <label class="form-check-label" for="favourite">
+                  Favourite
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="skip">
+                <label class="form-check-label" for="skip">
+                  Skip
+                </label>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelButton">CANCLE</button>
+          <button class="btn btn-primary" style="width: 50%;" type="submit" id="submitButton">ADD</button>
+        </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Navigation bar with hamburger icon -->
+  <!-- <div class="navbar">
       <div class="web-name">DB Driven Web</div>
       <div class="icon update-icon" onclick="updateData();">✓</div>
       <div
@@ -145,90 +212,87 @@
       </div>
     </div> -->
 
-    <table
-      id="dataTable"
-      style="max-width: 90%; margin: auto; margin-top: 80px"
-    >
-      <thead>
-        <tr>
-          <th style="width: fit-content; text-align: center">ID</th>
-          <th style="width: max-content; text-align: center">Value</th>          
-          <th style="width: fit-content; text-align: center">Fav</th>
-          <th style="width: fit-content; text-align: center">Skip</th>
-          <th style="width: fit-content; text-align: center">Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Data will be populated here -->
-      </tbody>
-    </table>
+  <table id="dataTable" style="max-width: 90%; margin: auto; margin-top: 80px">
+    <thead>
+      <tr>
+        <th style="width: fit-content; text-align: center">ID</th>
+        <th style="width: max-content; text-align: center">Value</th>
+        <th style="width: fit-content; text-align: center">Fav</th>
+        <th style="width: fit-content; text-align: center">Skip</th>
+        <th style="width: fit-content; text-align: center">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data will be populated here -->
+    </tbody>
+  </table>
 
-    <div class="toast-container" id="toastContainer"></div>
+  <script>
+    let isFilterSheetOpen = false;
 
-    <script>
-      let isFilterSheetOpen = false;
+       // Function to toggle the filter sheet and change the icon
+    function toggleFilterSheet() {
+      const sheet = document.getElementById("filterSheet");
+      const icon = document.getElementById("toggleIcon");
 
-      // Function to toggle the filter sheet and change the icon
-      function toggleFilterSheet() {
-        const sheet = document.getElementById("filterSheet");
-        const icon = document.getElementById("toggleIcon");
-
-        if (isFilterSheetOpen) {
-          sheet.style.display = "none";
-          icon.textContent = "☰"; // Change to hamburger icon
-        } else {
-          sheet.style.display = "block";
-          icon.textContent = "✕"; // Change to cross icon
-        }
-
-        isFilterSheetOpen = !isFilterSheetOpen;
+      if (isFilterSheetOpen) {
+        sheet.style.display = "none";
+        icon.textContent = "☰"; // Change to hamburger icon
+      } else {
+        sheet.style.display = "block";
+        icon.textContent = "✕"; // Change to cross icon
       }
 
-      // Function to select an option and change background color
-      function selectOption(option) {
-        // Reset background color for all options
-        const options = document.querySelectorAll(".filter-option");
-        options.forEach((opt) => {
-          opt.classList.remove("selected");
-        });
+      isFilterSheetOpen = !isFilterSheetOpen;
+    }
 
-        // Set background color for the selected option
-        const selectedOption = document.querySelector(`.${option}`);
-        selectedOption.classList.add("selected");
+    // Function to select an option and change background color
+    function selectOption(option) {
+      // Reset background color for all options
+      const options = document.querySelectorAll(".filter-option");
+      options.forEach((opt) => {
+        opt.classList.remove("selected");
+      });
 
-        // Close the filter sheet
-        const filterSheet = document.getElementById("filterSheet");
-        filterSheet.style.display = "none";
+      // Set background color for the selected option
+      const selectedOption = document.querySelector(`.${option}`);
+      selectedOption.classList.add("selected");
 
-        // Change the icon back to the hamburger icon
-        const icon = document.getElementById("toggleIcon");
-        icon.textContent = "☰";
+      // Close the filter sheet
+      const filterSheet = document.getElementById("filterSheet");
+      filterSheet.style.display = "none";
 
-        isFilterSheetOpen = false;
+      // Change the icon back to the hamburger icon
+      const icon = document.getElementById("toggleIcon");
+      icon.textContent = "☰";
 
-        // Add logic here to handle the selected option
-        console.log("Selected Option:", option);
-      }
+      isFilterSheetOpen = false;
+
+      // Add logic here to handle the selected option
+      console.log("Selected Option:", option);
+    }
 
 
-      // // Add a click event listener to the window
-      // window.addEventListener("click", function (event) {
-      //   const filterSheet = document.getElementById("filterSheet");
-      //   const toggleIcon = document.getElementById("toggleIcon");
+    // // Add a click event listener to the window
+    // window.addEventListener("click", function (event) {
+    //   const filterSheet = document.getElementById("filterSheet");
+    //   const toggleIcon = document.getElementById("toggleIcon");
 
-      //   // Check if the click target is outside the filter-sheet and toggle icon
-      //   if (
-      //     !filterSheet.contains(event.target) &&
-      //     !toggleIcon.contains(event.target)
-      //   ) {
-      //     filterSheet.style.display = "none"; // Hide the filter-sheet
-      //     toggleIcon.textContent = "☰";
-      //     isFilterSheetOpen = false;
-      //   }
-      // });
-    </script>
+    //   // Check if the click target is outside the filter-sheet and toggle icon
+    //   if (
+    //     !filterSheet.contains(event.target) &&
+    //     !toggleIcon.contains(event.target)
+    //   ) {
+    //     filterSheet.style.display = "none"; // Hide the filter-sheet
+    //     toggleIcon.textContent = "☰";
+    //     isFilterSheetOpen = false;
+    //   }
+    // });
+  </script>
 
-    <script src="./src/manageRecord.js"></script>
-    <script src="./src/displayToast.js"></script>
-  </body>
+
+  <script src="./src/manageRecord.js"></script>
+  <script src="./src/displayToast.js"></script>
+</body>
+
 </html>

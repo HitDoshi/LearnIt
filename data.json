@@ -1,212 +1,677 @@
 [
   {
     "id": 1,
-    "value1": "value1_1",
-    "value2": "value2_1",
+    "value1": "Bio-Topic-1 - 1",
+    "value2": "1",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 1
   },
   {
     "id": 2,
-    "value1": "value1_2",
-    "value2": "value2_2",
+    "value1": "Bio-Topic-1 - 2",
+    "value2": "2",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 1
   },
   {
     "id": 3,
-    "value1": "value1_3",
-    "value2": "value2_3",
+    "value1": "Bio-Topic-1 - 3",
+    "value2": "3",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 1
   },
   {
     "id": 4,
-    "value1": "value1_4",
-    "value2": "value2_4",
+    "value1": "Bio-Topic-1 - 4",
+    "value2": "4",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 1
   },
   {
     "id": 5,
-    "value1": "value1_5",
-    "value2": "value2_5",
+    "value1": "Bio-Topic-1 - 5",
+    "value2": "5",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 1
   },
   {
     "id": 6,
-    "value1": "value1_6",
-    "value2": "value2_6",
+    "value1": "Bio-Topic-2 - 1",
+    "value2": "1",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 2
   },
   {
     "id": 7,
-    "value1": "value1_7",
-    "value2": "value2_7",
+    "value1": "Bio-Topic-2 - 2",
+    "value2": "2",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 2
   },
   {
     "id": 8,
-    "value1": "value1_8",
-    "value2": "value2_8",
+    "value1": "Bio-Topic-2 - 3",
+    "value2": "3",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 2
   },
   {
     "id": 9,
-    "value1": "value1_9",
-    "value2": "value2_9",
+    "value1": "Bio-Topic-2 - 4",
+    "value2": "4",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 2
   },
   {
     "id": 10,
-    "value1": "value1_10",
-    "value2": "value2_10",
+    "value1": "Bio-Topic-2 - 5",
+    "value2": "5",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 2
   },
   {
     "id": 11,
-    "value1": "value1_11",
-    "value2": "value2_11",
+    "value1": "Bio-Topic-3 - 1",
+    "value2": "1",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 3
   },
   {
     "id": 12,
-    "value1": "value1_12",
-    "value2": "value2_12",
+    "value1": "Bio-Topic-3 - 2",
+    "value2": "2",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 3
   },
   {
     "id": 13,
-    "value1": "value1_13",
-    "value2": "value2_13",
+    "value1": "Bio-Topic-3 - 3",
+    "value2": "3",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 3
   },
   {
     "id": 14,
-    "value1": "value1_14",
-    "value2": "value2_14",
+    "value1": "Bio-Topic-3 - 4",
+    "value2": "4",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 3
   },
   {
     "id": 15,
-    "value1": "value1_15",
-    "value2": "value2_15",
+    "value1": "Bio-Topic-3 - 5",
+    "value2": "5",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 3
   },
   {
     "id": 16,
-    "value1": "value1_16",
-    "value2": "value2_16",
+    "value1": "Bio-Topic-4 - 1",
+    "value2": "1",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 4
   },
   {
     "id": 17,
-    "value1": "value1_17",
-    "value2": "value2_17",
+    "value1": "Bio-Topic-4 - 2",
+    "value2": "2",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 4
   },
   {
     "id": 18,
-    "value1": "value1_18",
-    "value2": "value2_18",
+    "value1": "Bio-Topic-4 - 3",
+    "value2": "3",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 4
   },
   {
     "id": 19,
-    "value1": "value1_19",
-    "value2": "value2_19",
+    "value1": "Bio-Topic-4 - 4",
+    "value2": "4",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 4
   },
   {
     "id": 20,
-    "value1": "value1_20",
-    "value2": "value2_20",
+    "value1": "Bio-Topic-4 - 5",
+    "value2": "5",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 4
   },
   {
     "id": 21,
-    "value1": "value1_21",
-    "value2": "value2_21",
+    "value1": "Bio-Topic-5 - 1",
+    "value2": "1",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 5
   },
   {
     "id": 22,
-    "value1": "value1_22",
-    "value2": "value2_22",
+    "value1": "Bio-Topic-5 - 2",
+    "value2": "2",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 5
   },
   {
     "id": 23,
-    "value1": "value1_23",
-    "value2": "value2_23",
+    "value1": "Bio-Topic-5 - 3",
+    "value2": "3",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 5
   },
   {
     "id": 24,
-    "value1": "value1_24",
-    "value2": "value2_24",
+    "value1": "Bio-Topic-5 - 4",
+    "value2": "4",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 5
   },
   {
     "id": 25,
-    "value1": "value1_25",
-    "value2": "value2_25",
+    "value1": "Bio-Topic-5 - 5",
+    "value2": "5",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 1,
+    "topicId": 5
   },
   {
     "id": 26,
-    "value1": "value1_26",
-    "value2": "value2_26",
+    "value1": "Che-Topic-1 - 1",
+    "value2": "1",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 1
   },
   {
     "id": 27,
-    "value1": "value1_27",
-    "value2": "value2_27",
+    "value1": "Che-Topic-1 - 2",
+    "value2": "2",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 1
   },
   {
     "id": 28,
-    "value1": "value1_28",
-    "value2": "value2_28",
+    "value1": "Che-Topic-1 - 3",
+    "value2": "3",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 1
   },
   {
     "id": 29,
-    "value1": "value1_29",
-    "value2": "value2_29",
+    "value1": "Che-Topic-1 - 4",
+    "value2": "4",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 1
   },
   {
     "id": 30,
-    "value1": "value1_30",
-    "value2": "value2_30",
+    "value1": "Che-Topic-1 - 5",
+    "value2": "5",
     "isFav": false,
-    "isSkip": false
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 1
+  },
+  {
+    "id": 31,
+    "value1": "Che-Topic-2 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 2
+  },
+  {
+    "id": 32,
+    "value1": "Che-Topic-2 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 2
+  },
+  {
+    "id": 33,
+    "value1": "Che-Topic-2 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 2
+  },
+  {
+    "id": 34,
+    "value1": "Che-Topic-2 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 2
+  },
+  {
+    "id": 35,
+    "value1": "Che-Topic-2 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 2
+  },
+  {
+    "id": 36,
+    "value1": "Che-Topic-3 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 3
+  },
+  {
+    "id": 37,
+    "value1": "Che-Topic-3 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 3
+  },
+  {
+    "id": 38,
+    "value1": "Che-Topic-3 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 3
+  },
+  {
+    "id": 39,
+    "value1": "Che-Topic-3 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 3
+  },
+  {
+    "id": 40,
+    "value1": "Che-Topic-3 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 3
+  },
+  {
+    "id": 41,
+    "value1": "Che-Topic-4 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 4
+  },
+  {
+    "id": 42,
+    "value1": "Che-Topic-4 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 4
+  },
+  {
+    "id": 43,
+    "value1": "Che-Topic-4 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 4
+  },
+  {
+    "id": 44,
+    "value1": "Che-Topic-4 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 4
+  },
+  {
+    "id": 45,
+    "value1": "Che-Topic-4 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 4
+  },
+  {
+    "id": 46,
+    "value1": "Che-Topic-5 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 5
+  },
+  {
+    "id": 47,
+    "value1": "Che-Topic-5 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 5
+  },
+  {
+    "id": 48,
+    "value1": "Che-Topic-5 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 5
+  },
+  {
+    "id": 49,
+    "value1": "Che-Topic-5 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 5
+  },
+  {
+    "id": 50,
+    "value1": "Che-Topic-5 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 2,
+    "topicId": 5
+  },
+  {
+    "id": 51,
+    "value1": "Phy-Topic-1 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 1
+  },
+  {
+    "id": 52,
+    "value1": "Phy-Topic-1 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 1
+  },
+  {
+    "id": 53,
+    "value1": "Phy-Topic-1 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 1
+  },
+  {
+    "id": 54,
+    "value1": "Phy-Topic-1 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 1
+  },
+  {
+    "id": 55,
+    "value1": "Phy-Topic-1 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 1
+  },
+  {
+    "id": 56,
+    "value1": "Phy-Topic-2 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 2
+  },
+  {
+    "id": 57,
+    "value1": "Phy-Topic-2 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 2
+  },
+  {
+    "id": 58,
+    "value1": "Phy-Topic-2 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 2
+  },
+  {
+    "id": 59,
+    "value1": "Phy-Topic-2 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 2
+  },
+  {
+    "id": 60,
+    "value1": "Phy-Topic-2 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 2
+  },
+  {
+    "id": 61,
+    "value1": "Phy-Topic-3 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 3
+  },
+  {
+    "id": 62,
+    "value1": "Phy-Topic-3 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 3
+  },
+  {
+    "id": 63,
+    "value1": "Phy-Topic-3 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 3
+  },
+  {
+    "id": 64,
+    "value1": "Phy-Topic-3 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 3
+  },
+  {
+    "id": 65,
+    "value1": "Phy-Topic-3 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 3
+  },
+  {
+    "id": 66,
+    "value1": "Phy-Topic-4 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 4
+  },
+  {
+    "id": 67,
+    "value1": "Phy-Topic-4 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 4
+  },
+  {
+    "id": 68,
+    "value1": "Phy-Topic-4 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 4
+  },
+  {
+    "id": 69,
+    "value1": "Phy-Topic-4 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 4
+  },
+  {
+    "id": 70,
+    "value1": "Phy-Topic-4 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 4
+  },
+  {
+    "id": 71,
+    "value1": "Phy-Topic-5 - 1",
+    "value2": "1",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 5
+  },
+  {
+    "id": 72,
+    "value1": "Phy-Topic-5 - 2",
+    "value2": "2",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 5
+  },
+  {
+    "id": 73,
+    "value1": "Phy-Topic-5 - 3",
+    "value2": "3",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 5
+  },
+  {
+    "id": 74,
+    "value1": "Phy-Topic-5 - 4",
+    "value2": "4",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 5
+  },
+  {
+    "id": 75,
+    "value1": "Phy-Topic-5 - 5",
+    "value2": "5",
+    "isFav": false,
+    "isSkip": false,
+    "subjectId": 3,
+    "topicId": 5
   }
 ]

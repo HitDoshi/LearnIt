@@ -58,9 +58,17 @@
           <li class="nav-item active">
             <a
               class="nav-link"
+              href="home.html"              
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item active">
+            <a
+              class="nav-link"
               href="test.html"
               style="color: brown; font-weight: 500"
-              >Home <span class="sr-only">(current)</span></a
+              id="test"
+              >Practice</a
             >
           </li>
           <li class="nav-item">
@@ -190,11 +198,22 @@
           Show
         </button>
       </div>
+      <br />
+
+      <div class="data-display">
+        <h6
+          id="show_value3"
+          class="text_container"
+          style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
+        ></h6>        
+      </div>
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
 
+
     <script src="./src/test.js"></script>
     <script src="./src/displayToast.js"></script>
+
   </body>
 </html>
