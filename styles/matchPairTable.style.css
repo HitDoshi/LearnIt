@@ -15,9 +15,32 @@ table {
     background-color: #f2f2f2;
   }
 
-   /* Media query for screens with a maximum width of 420px */
-   @media (max-width: 420px) {
-    table {
-      margin-top: 10px !important;
+  #mobile-navbar {
+    display: none;
+  }
+  
+  #window-navbar {
+    display: flex;
+  }
+
+  a{
+    cursor: pointer;
+  }
+  
+  /* Media query for screens with a maximum width of 420px */
+  @media (max-width: 991px) {
+    #mobile-navbar {
+      display: flex;
+      background-color: #f8f9fa;
+    }
+  
+    #window-navbar {
+      display: none;
+    }
+
+    #dataTable{
+      width: 95%;
+      margin-top: 5px;
     }
   }
+  

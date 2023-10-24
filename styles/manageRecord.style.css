@@ -1,42 +1,70 @@
 .menu-container {
-    display: inline-block;
-    position: relative;
+  display: inline-block;
+  position: relative;
+}
+
+.menu-icon {
+  cursor: pointer;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #000;
+  border-radius: 50%;
+  margin: 2px 0;
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-dropdown li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-icon.active + .menu-dropdown,
+.menu-dropdown:hover {
+  display: block;
+}
+
+#mobile-navbar {
+  display: none;
+}
+
+#window-navbar {
+  display: flex;
+}
+
+a{
+  cursor: pointer;
+}
+
+/* Media query for screens with a maximum width of 420px */
+@media (max-width: 991px) {
+  #mobile-navbar {
+    display: flex;
+    background-color: #f8f9fa;
   }
-  
-  .menu-icon {
-    cursor: pointer;
-  }
-  
-  .dot {
-    width: 8px;
-    height: 8px;
-    background-color: #000;
-    border-radius: 50%;
-    margin: 2px 0;
-  }
-  
-  .menu-dropdown {
+
+  #window-navbar {
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
-  .menu-dropdown ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+
+  #dataTable{
+    width: 95%;
+    margin-top: 5px;
   }
-  
-  .menu-dropdown li {
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .menu-icon.active + .menu-dropdown,
-  .menu-dropdown:hover {
-    display: block;
-  }
-  
+}

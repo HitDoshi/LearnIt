@@ -12,6 +12,17 @@ if (topic == 0) {
   keyIndex = "subjectIndex";
 }
 
+function replaceStateWithHistory(page) {
+  history.replaceState(null, '', page);
+  // window.location.reload();
+  window.location.href = page;
+}
+
+const backButton = document.getElementById('backButton');
+backButton.onclick = function() {
+  window.history.back();
+};
+
 const openRequest = indexedDB.open(dbName, dbVersion);
 let db; // Reference to the IndexedDB database
 var value1 = []; // skip data ==> {id,isSkip}

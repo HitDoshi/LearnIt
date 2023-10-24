@@ -37,6 +37,56 @@ var indexedDB =
 // Select the default option on page load
 window.addEventListener("load", function () {});
 
+// document.addEventListener('DOMContentLoaded', function() {
+//   // Get all the links within the navigation menu
+//   const links = document.querySelectorAll('#myNavbar a');
+
+//   // Define a click event listener for all links
+//   links.forEach(function(link) {
+//     link.addEventListener('click', function(event) {
+//       event.preventDefault(); // Prevent the default link behavior (page navigation)
+
+//       // Define a new URL for each link based on your logic
+//       let newURL = '';
+
+//       console.log(link);
+
+//       if (link.id === 'showAllLink') {
+//         newURL = 'new_url_for_show_all.html';
+//       } else if (link.id === 'matchPairLink') {
+//         newURL = 'new_url_for_match_pair.html';
+//       }
+//       // Add more conditions for other links if needed
+
+//       // Use history.replaceState to change the URL without adding a new state
+//       history.replaceState(null, '', newURL);
+
+//       // Optionally, you can update the link text or perform other actions here
+//     });
+//   });
+// });
+
+function replaceStateWithHistory(page) {
+  history.replaceState(null, '', page);
+  // window.location.reload();
+  window.location.href = page;
+}
+
+const backButton = document.getElementById('backButton');
+backButton.onclick = function() {
+  window.history.back();
+};
+
+// Check the radio button based on the 'id' parameter
+if (myParam === '1') {
+  document.getElementById('showAllRadio').checked = true;
+} else if (myParam === '2') {
+  document.getElementById('favOnlyRadio').checked = true;
+} else if (myParam === '3') {
+  document.getElementById('skipOnlyRadio').checked = true;
+}
+
+
 document
   .getElementById("addData-Form")
   .addEventListener("submit", function (event) {
@@ -457,10 +507,12 @@ function undoData() {
     checkbox.checked = false;
   });
 
-  const updateIcon = document.querySelectorAll(".update-icon");
+  const updateIcons = document.querySelectorAll(".update-icon");
 
-  updateIcon[0].style.display = "none"; // To hide the element
-  updateIcon[1].style.display = "none"; // To hide the element
+  // Loop through all the elements with the class "update-icon"
+updateIcons.forEach(function(updateIcon) {
+  updateIcon.style.display = "none"; // To make the element visible
+});
 
   //clear array data
   changeFavDataState.length = 0;
@@ -627,15 +679,19 @@ function changeUpdateOption() {
 }
 
 function displayUpdateOption() {
-  const updateIcon = document.querySelectorAll(".update-icon");
-  updateIcon[0].style.display = "block"; // To visible the element
-  updateIcon[1].style.display = "block"; // To visible the element
+  const updateIcons = document.querySelectorAll(".update-icon");
+  // Loop through all the elements with the class "update-icon"
+updateIcons.forEach(function(updateIcon) {
+  updateIcon.style.display = "block"; // To make the element visible
+});
 }
 
 function hideUpdateOption() {
-  const updateIcon = document.querySelectorAll(".update-icon");
-  updateIcon[0].style.display = "none"; // To hide the element
-  updateIcon[1].style.display = "none"; // To hide the element
+  const updateIcons = document.querySelectorAll(".update-icon");
+  // Loop through all the elements with the class "update-icon"
+  updateIcons.forEach(function(updateIcon) {
+  updateIcon.style.display = "none"; // To make the element visible
+});
 
   changeFavDataState.length = 0;
   changeSkipDataState.length = 0;

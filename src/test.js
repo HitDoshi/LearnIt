@@ -44,6 +44,12 @@ window.addEventListener("load", function () {
   clearTimeout(timer); // Clear the previous timer if it exists
 });
 
+function replaceStateWithHistory(page) {
+  history.replaceState(null, '', page);
+  // window.location.reload();
+  window.location.href = page;
+}
+
 openRequest.onupgradeneeded = (event) => {
   db = event.target.result;
   // Create the object store if it doesn't exist

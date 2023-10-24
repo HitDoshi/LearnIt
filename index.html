@@ -32,7 +32,7 @@
     </div> -->
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">LearnIt</a>
+      <a class="navbar-brand">LearnIt</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -63,7 +63,7 @@
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="matchPair.html">Match Pair</a>
+            <a class="nav-link" onclick="replaceStateWithHistory('matchPair.html');">Match Pair</a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -77,13 +77,13 @@
               Manage Record
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="manageRecord.html?id=1"
+              <a class="dropdown-item" onclick="replaceStateWithHistory('manageRecord.html?id=1');"
                 >Show All</a
               >
-              <a class="dropdown-item" href="manageRecord.html?id=2"
+              <a class="dropdown-item" onclick="replaceStateWithHistory('manageRecord.html?id=2');"
                 >Show Fav Only</a
               >
-              <a class="dropdown-item" href="manageRecord.html?id=3"
+              <a class="dropdown-item" onclick="replaceStateWithHistory('manageRecord.html?id=3');"
                 >Show Skip Only</a
               >
             </div>

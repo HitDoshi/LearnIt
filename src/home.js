@@ -15,6 +15,13 @@ var indexedDB =
 var allData = [];
 var selected_subject = 0;
 var selected_topic = 0;
+
+function replaceStateWithHistory(page) {
+  history.replaceState(null, '', page);
+  // window.location.reload();
+  window.location.href = page;
+}
+
 openRequest.onupgradeneeded = (event) => {
   db = event.target.result;
   // Create the object store if it doesn't exist

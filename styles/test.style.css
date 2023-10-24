@@ -52,3 +52,7 @@ button{
   flex-direction: row;
   justify-content: right;
 }
+
+a{
+  cursor: pointer;
+}
