@@ -56,3 +56,23 @@ button{
 a{
   cursor: pointer;
 }
+
+#mobile-navbar {
+  display: none;
+}
+
+#window-navbar {
+  display: flex;
+}
+
+/* Media query for screens with a maximum width of 420px */
+@media (max-width: 991px) {
+  #mobile-navbar {
+    display: flex;
+  }
+
+  #window-navbar {
+    display: none;
+  }
+
+}

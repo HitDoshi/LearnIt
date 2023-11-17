@@ -12,11 +12,15 @@ if (topic == 0) {
   keyIndex = "subjectIndex";
 }
 
+// replace screen function
+
 function replaceStateWithHistory(page) {
   history.replaceState(null, '', page);
   // window.location.reload();
   window.location.href = page;
 }
+
+// icon back press function
 
 const backButton = document.getElementById('backButton');
 backButton.onclick = function() {
@@ -77,6 +81,8 @@ openRequest.onsuccess = (event) => {
   getData();
 };
 
+// change Postition of value1 & value2 in array
+
 function shuffle(array) {
   let currentIndex = array.length,
     randomIndex;
@@ -96,6 +102,8 @@ function shuffle(array) {
 
   return array;
 }
+
+// Get only fav data and display it on table for match pairs.
 
 function getData() {
   if (!db) {
@@ -175,14 +183,16 @@ function appendData(data1, data2) {
 
   const td1 = document.createElement("td");
   td1.setAttribute("data-id", data1.id);
-  td1.style.backgroundColor = "white"; //gray
+  td1.style.backgroundColor = "white"; 
+  td1.style.cursor = "pointer"; 
   td1.textContent = data1.value;
 
   console.log(td1);
 
   const td2 = document.createElement("td");
   td2.setAttribute("data-id", data2.id);
-  td2.style.backgroundColor = "white"; //gray
+  td2.style.backgroundColor = "white"; 
+  td2.style.cursor = "pointer"; 
   td2.textContent = data2.value;
 
   // Add an onclick event handler to the first td element
@@ -196,6 +206,8 @@ function appendData(data1, data2) {
 
   return row;
 }
+
+// Call when value1 table item press
 
 function td1Fun() {
   const id = this.getAttribute("data-id");
@@ -241,6 +253,8 @@ function td1Fun() {
     answerRow = this;
   }
 }
+
+// Call when value2 table item press
 
 function td2Fun() {
   const id = this.getAttribute("data-id");

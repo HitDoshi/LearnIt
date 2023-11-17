@@ -38,10 +38,10 @@
 
   <body>
     <nav
-      class="navbar navbar-expand-lg navbar-light bg-light fixed-top"
+      class="navbar navbar-expand-lg fixed-top"
       id="myNavbar"
     >
-      <a class="navbar-brand" style="color: black">LearnIt</a>
+      <a class="navbar-brand" style="color: white">LearnIt</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -58,21 +58,21 @@
           <li class="nav-item active">
             <a
               class="nav-link"
-              onclick="replaceStateWithHistory('home.html');"           
-              >Home</a
+              onclick="replaceStateWithHistory('main.html');"           
+              >Main</a
             >
           </li>
           <li class="nav-item active">
             <a
               class="nav-link"
               href="test.html"
-              style="color: brown; font-weight: 500"
+              style="color: aqua; font-weight: 500"
               id="test"
               >Practice</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="matchPair.html">Match Pair</a>
+            <a class="nav-link" href="matchPair.html">Match Pairs</a>
           </li>
           <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
           <div
@@ -82,6 +82,9 @@
           >
             ↺
           </div> -->
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="manageRecord.html?id=1">Manage Records</a>
+          </li> -->
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -107,21 +110,109 @@
         </ul>
       </div>
     </nav>
+
+    <nav
+      class="navbar navbar-expand-lg fixed-top"
+      id="mobile-navbar"
+    >
+      <a class="navbar-brand" style="color: white">LearnIt</a>
+      <!-- <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button> -->
+      <div class="" id="navbarNavDropdown" style="display: flex;flex-direction: row;">
+        <ul class="navbar-nav ml-auto" style="display: flex;flex-direction: row;gap: 15px;">
+          <li class="nav-item active">
+            <!-- <a
+              class="nav-link"
+              onclick="replaceStateWithHistory('main.html');"           
+              >Main</a
+            > -->            
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16" class="nav-link" onclick="replaceStateWithHistory('main.html');" style="height: 100%;">
+              <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/>
+              <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"/>
+            </svg>
+          </li>
+          <!-- <li class="nav-item active">
+            <a
+              class="nav-link"
+              href="test.html"
+              style="color: aqua; font-weight: 500"
+              id="test"
+              >Practice</a
+            >
+          </li> -->
+          <li class="nav-item" id="toggleQuestionValue">
+            <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onclick="toggleQuestionType()" style="height: 100%;">
+              <path fill="#FFFFFF" d="M16,17.01V10h-2v7.01h-3L15,21l4,-3.99h-3zM9,3L5,6.99h3V14h2V6.99h3L9,3z"/>
+          </svg>
+          
+                          
+          </li>
+          <li class="nav-item">
+            <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onclick="window.location.href = 'matchPair.html'" style="height: 100%;">
+              <path fill="#FFFFFF" d="M9.01,14H2v2h7.01v3L13,15l-3.99,-4V14zM14.99,13v-3H22V8h-7.01V5L11,9L14.99,13z"/>
+          </svg>                    
+          </li>
+          <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
+          <div
+            class="icon update-icon"
+            style="margin-right: 20px"
+            onclick="undoData();"
+          >
+            ↺
+          </div> -->
+          
+          <li class="nav-item">            
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16" class="nav-link" onclick="window.location.href = 'manageRecord.html?id=1'" style="height: 100%;">
+              <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+          </svg>
+          
+          </li>
+          
+          <li class="nav-item" onclick="window.close();">            
+            <p class="" style="color: white;height: 100%; justify-content: center;
+            align-items: center;display: flex;">EXIT</p>
+          </li>
+          <!-- <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              id="navbarDropdownMenuLink"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Manage Record
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="manageRecord.html?id=1"
+                >Show All</a
+              >
+              <a class="dropdown-item" href="manageRecord.html?id=2"
+                >Show Fav Only</a
+              >
+              <a class="dropdown-item" href="manageRecord.html?id=3"
+                >Show Skip Only</a
+              >
+            </div>
+          </li> -->
+        </ul>
+      </div>
+    </nav>
     <div
       class="container"
       style="max-width: 500px; margin: auto; margin-top: 80px; padding: 20px"
-    >
-      <div class="status-info" style="margin-bottom: 10px;">
-        <div class="alignment">
-          <h6>Total Question-</h6>
-          <h6 id="total_question"></h6>
-        </div>
-        <div class="alignment">
-          <h6 style="color: green">Right-</h6>
-          <h6 id="total_right_attempt" style="color: green"></h6>
-        </div>
-      </div>
-      
+    >      
+
       <div class="options">
         <input type="checkbox" id="toggle_question_type" />
         <label for="toggle_question_type" class="prevent-select"
@@ -129,12 +220,21 @@
         >
       </div>      
 
-      <div class="options">
+      <div style="display: flex;flex-direction: row;flex: 2;">
+      <div class="options" style="flex: 2;">
         <input type="checkbox" id="show_fav_only" />
         <label for="show_fav_only" class="prevent-select"
           >Show Favourites Only</label
         >
       </div>      
+      <div class="status-info" style="display: flex; flex-direction: row; flex: 1;">
+        <h6 id="total_question"></h6>
+        <h6 style="margin-left: 2px;margin-right: 2px;">/</h6>
+        <h6 id="total_right_attempt" style="color: green;"></h6>
+    </div>
+    
+      
+    </div>
 
       <div class="toggle-options">
         <div style="flex:2">

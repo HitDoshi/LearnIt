@@ -24,15 +24,15 @@
   <body>
 
     
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" id="window-navbar">
-      <a class="navbar-brand" style="color: black;">LearnIt</a>
+    <nav class="navbar navbar-expand-lg" id="window-navbar">
+      <a class="navbar-brand" style="color: white;">LearnIt</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active">
-            <a class="nav-link" onclick="replaceStateWithHistory('home.html');">Home</a>
+            <a class="nav-link" onclick="replaceStateWithHistory('main.html');">Main</a>
           </li>
           <li class="nav-item active">
             <a
@@ -43,11 +43,11 @@
             >
           </li>
           <li class="nav-item"> 
-            <a class="nav-link" style="color: brown;font-weight: 500;" onclick="replaceStateWithHistory('matchPair.html');">Match Pair</a>
+            <a class="nav-link" style="color: aqua;font-weight: 500;" onclick="replaceStateWithHistory('matchPair.html');">Match Pairs</a>
           </li>            
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Manage Record
+              Manage Records
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <a class="dropdown-item" onclick="replaceStateWithHistory('manageRecord.html?id=1');">Show All</a>
@@ -59,16 +59,16 @@
       </div>
     </nav>
 
-    <nav id="mobile-navbar">
+    <nav id="mobile-navbar" style="background-color: #00569D;">
       <div style="margin-top: 10px;display: flex;width: 100%;padding-left: 10px;padding-right: 10px;">
     
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-short" style="align-self: center;margin-right: 5px;"
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-short" style="align-self: center;margin-right: 5px;color: white;"
           viewBox="0 0 16 16" id="backButton">
           <path fill-rule="evenodd"
             d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
         </svg>
     
-        <a class="navbar-brand" style="color: black;align-self: center;font-size: 20px;">LearnIt</a>
+        <a class="navbar-brand" style="color: white;align-self: center;font-size: 20px;">LearnIt</a>
         
       </div>
       </nav>
@@ -119,8 +119,7 @@
       No favorite data found!!
     </div>
 
-    <table id="dataTable" style="max-width: 1000px; margin-left: auto;
-    margin-right: auto;margin-top: 50px;" >
+    <table id="dataTable">
       <thead>
         <tr>          
           <th style="width: 50%; text-align:center">Value 1</th>

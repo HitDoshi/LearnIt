@@ -90,6 +90,14 @@ openRequest.onsuccess = async function (event) {
   );
   toggleQuestionCheckbox.addEventListener("change", toggleQuestionType);
 
+  const t = localStorage.getItem("toggle_question");
+
+  if(t == "true"){
+    document.getElementById("toggleQuestionValue").style.backgroundColor = "darkgray"
+  }else{
+    document.getElementById("toggleQuestionValue").style.backgroundColor = null
+  }
+
   await countData();
   totalData = shuffle(totalData);
   favData = shuffle(favData);
@@ -339,9 +347,18 @@ function toggleFavValue(event) {
   };
   setTimer();
 }
-function toggleQuestionType(event) {
-  toggleQuestion = event.target.checked.toString();
+function toggleQuestionType() {
+  const q = localStorage.getItem("toggle_question");
+  console.log(q);
+  toggleQuestion = q == "true" ? "false" : "true";
+  console.log(toggleQuestion);
   localStorage.setItem("toggle_question", toggleQuestion);
+
+  if(toggleQuestion == "true"){
+    const toggle = document.getElementById("toggleQuestionValue").style.backgroundColor = "darkgray"
+  }else{
+    const toggle = document.getElementById("toggleQuestionValue").style.backgroundColor = null
+  }
 
   getData();
 }
@@ -397,7 +414,8 @@ function showData() {
     return;
   }
 
-  const value1 = document.getElementById("value_1");
+  try {
+    const value1 = document.getElementById("value_1");
   const value3 = document.getElementById("show_value3");
   const isFav = document.getElementById("toggle_fav");
   const isSkip = document.getElementById("toggle_skip");
@@ -414,6 +432,9 @@ function showData() {
   isFav.checked = data.isFav;
   isSkip.checked = data.isSkip;
   setTimer();
+  } catch (error) {
+    console.log("Error:-->",error?.message);
+  }  
 }
 
 function toggleIsShowFavOnly(event) {
