@@ -1,20 +1,12 @@
-const dbName = "main";
-const dbVersion = 1;
-const storeName = "subject";
+var testDBName = "test";
+var testDBVersion = 1;
+var testStoreName = "data";
 
-const openRequest = indexedDB.open(dbName, dbVersion);
-let db; // Reference to the IndexedDB database
-
-var indexedDB =
-  window.indexedDB ||
-  window.mozIndexedDB ||
-  window.webkitIndexedDB ||
-  window.msIndexedDB ||
-  window.shimIndexedDB;
-// var request = indexedDB.deleteDatabase("test");
 var allData = [];
 var selected_subject = 0;
 var selected_topic = 0;
+var subjectData = [];
+var topicData = [];
 
 function replaceStateWithHistory(page) {
   history.replaceState(null, '', page);
@@ -22,135 +14,151 @@ function replaceStateWithHistory(page) {
   window.location.href = page;
 }
 
-openRequest.onupgradeneeded = (event) => {
-  db = event.target.result;
-  // Create the object store if it doesn't exist
-  if (!db.objectStoreNames.contains(storeName)) {
-    db.createObjectStore(storeName, { keyPath: "id" });
-  }
-};
 
-openRequest.onerror = (event) => {
-  console.error("Database error: " + event.target.errorCode);
-};
+async function openDatabase(dbName, dbVersion, storeName) {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(dbName, dbVersion);
 
-openRequest.onsuccess = (event) => {
-  db = event.target.result;
+    request.onerror = (event) => {
+      reject(event.target.error);
+    };
 
-  // Fetch and store data from data.json if it doesn't exist in IndexedDB
-  fetch("subject.json")
-    .then((response) => response.json())
-    .then((jsonData) => {
-      const transaction = db.transaction(storeName, "readwrite");
-      const objectStore = transaction.objectStore(storeName);
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
 
-      // Check if data.json records already exist in IndexedDB
-      objectStore.count().onsuccess = (event) => {
-        const count = event.target.result;
-        const countJsonData = jsonData.length;
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(storeName)) {
+        const objectStore = db.createObjectStore(storeName, { keyPath: "id" });
 
-        console.log("Subjects:- ",jsonData);
-        if (count == 0) {
-          // Store data from data.json into IndexedDB
-          jsonData.forEach((item) => {
-            objectStore.add(item);
-          });
+        if(dbName=="test"){
+            objectStore.createIndex('subjectTopicIndex', ["subjectId", "topicId"]);
         }
-      };
+        
+        // Create any needed indexes here
+      }
+    };
+  });
+}
 
-      getData();
-    })
-    .catch((error) => {
-      console.error("Error loading JSON data: " + error);
-    });
-};
+async function getQuizData() {
+  
+  const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
 
+  const SubjectID = localStorage.getItem('subject') || 1;
+
+  fetch(`https://learnit123.000webhostapp.com/api/get_quiz_data.php?SubjectID=${SubjectID}`)
+  .then((response) => response.json())
+  .then( async (jsonData) => {
+
+    const transaction = testDB.transaction(testStoreName, "readwrite");
+    const objectStore = transaction.objectStore(testStoreName);
+
+    // Check if data.json records already exist in IndexedDB
+    objectStore.count().onsuccess = (event) => {
+      const count = event.target.result;
+      
+      console.log('---->',jsonData);
+      
+      if (count == 0) {
+        // Store data from data.json into IndexedDB
+        jsonData.data.forEach((item) => {
+          item.isFav = false;
+          item.isSkip = false;
+          objectStore.add(item);
+        });
+        showToast("Download successfully !!"); 
+      }else{
+        //  if (window.confirm("Data will be reloaded. Do you want to proceed?")) {
+          // User confirmed, proceed with data reloading
+          // Delete all records from IndexedDB
+          const clearRequest = objectStore.clear();
+
+          clearRequest.onsuccess = () => {
+            // Store data from data.json into IndexedDB
+            jsonData.data.forEach((item) => {
+
+              item.isFav = false;
+              item.isSkip = false;
+              objectStore.add(item);
+            });
+            showToast("Download successfully !!"); 
+          };
+
+          clearRequest.onerror = (event) => {
+            console.error("Error clearing IndexedDB:", event.target.error);
+          // };
+        // } else {
+          // User canceled, handle accordingly (optional)
+          // console.log("User canceled data reload.");
+        }
+      }
+    };
+
+  })
+  .catch((error) => {
+    console.error("Error loading JSON data: " + error);
+  });
+
+}
+
+async function getTopicData(){
+  const SubjectID = localStorage.getItem('subject') || 1;
+
+  var xhr1 = new XMLHttpRequest();
+  var url1 = `https://learnit123.000webhostapp.com/api/get_topic_data.php?SubjectID=${SubjectID}`;
+  
+  xhr1.open('GET', url1, true);
+  
+  xhr1.onload = function () {
+    if (xhr1.status == 200) {
+        var responseData = JSON.parse(xhr1.responseText);
+        console.log(responseData);
+        topicData = responseData.data;      
+        customRenderListItems();  
+    } else {
+        console.error('Request failed with status:', xhr1.status);
+    }
+  };
+  
+  xhr1.send();
+  
+  xhr1.onerror = function (e) {
+    console.error('Request failed', e);
+  };
+  
+}
+
+getData();
 
 function getData() {
-  if (!db) {
-    console.error("Database is not open yet.");
-    return;
+
+var xhr = new XMLHttpRequest();
+var url = 'https://learnit123.000webhostapp.com/api/get_subject_data.php';
+
+xhr.open('GET', url, true);
+
+xhr.onload = function () {
+  if (xhr.status == 200) {
+      var responseData = JSON.parse(xhr.responseText);
+      console.log(responseData);
+      subjectData = responseData.data;     
+      renderListItems();
+
+      getTopicData();
+
+  } else {
+      console.error('Request failed with status:', xhr.status);
   }
+};
 
-  const transaction = db.transaction(storeName, "readonly");
-  const objectStore = transaction.objectStore(storeName);
+xhr.send();
 
-  // const favoritesTable = document.getElementById("favoritesTable");
-  // const favoritesTbody = favoritesTable.querySelector("tbody");
+xhr.onerror = function (e) {
+  console.error('Request failed', e);
+};
 
-  objectStore.getAll().onsuccess = (event) => {
-    allData = event.target.result;
-    // var subject = document.getElementById('dropdown-subject');
-    // var topic = document.getElementById('dropdown-topic');
-
-    // subject.options.length = 0;
-    // topic.options.length = 0;
-
-
-    // if (allData.length > 0) {
-    //     allData.forEach((option)=>{
-    //         var newOption = document.createElement('option');
-    //         newOption.value = option.id;
-    //         newOption.text = option.name;
-    //         subject.add(newOption);
-    //     })    
-    // }
-    
-    const selected_subject = parseInt(localStorage.getItem("subject")) || 1;
-    console.log(selected_subject);
-
-    // allData[selected_subject-1].topic.forEach((t)=>{
-    //     var newOption = document.createElement('option');
-    //     newOption.value = t.id;
-    //     newOption.text = t.task;
-    //     topic.add(newOption);
-    // });  
-
-    // var newOption = document.createElement('option');
-    // newOption.value = 0;
-    // newOption.text = "User Data";
-    // topic.add(newOption);
-
-
-    // setOption();
-    renderListItems();
-customRenderListItems();
-
-    // Handle the select dropdown change event
-//     subject
-// .addEventListener("change", function () {
-//   var selectedOption = this.value;
-//   // You can perform an action based on the selected option.
-//   console.log("Selected subject: " + selectedOption);
-//   localStorage.setItem("subject", selectedOption);
-//   localStorage.setItem("topic", 1);
-//   localStorage.setItem("total_right", 0);
-//   topic.options.length = 0;
-
-//   allData[selectedOption-1].topic.forEach((t)=>{
-//     var newOption = document.createElement('option');
-//     newOption.value = t.id;
-//     newOption.text = t.task;
-//     topic.add(newOption);
-// });  
-
-// var newOption = document.createElement('option');
-// newOption.value = 0;
-// newOption.text = "User Data";
-// topic.add(newOption);
-
-//   setOption();
-// });
-//     topic
-// .addEventListener("change", function () {
-//   var selectedOption = this.value;
-//   // You can perform an action based on the selected option.
-//   console.log("Selected topic: " + selectedOption);
-//   localStorage.setItem("topic", selectedOption);
-//   setOption();
-// });
-
-  };
   
 }
 
@@ -161,8 +169,8 @@ function setOption(){
     var subject = document.getElementById('dropdown-subject');
     var topic = document.getElementById('dropdown-topic');
 
-    subject.value = allData[selected_subject-1].id;
-    subject.text = allData[selected_subject-1].name;    
+    subject.value = subjectData[selected_subject-1].id;
+    subject.text = subjectData[selected_subject-1].name;    
 
     console.log(selected_topic==0);
 
@@ -170,8 +178,8 @@ function setOption(){
       topic.value = 0;
       topic.text = 'User Data';
     }else{
-      topic.value = allData[selected_subject-1].topic[selected_topic-1].id;
-      topic.text = allData[selected_subject-1].topic[selected_topic-1].task;
+      topic.value = topicData.id;
+      topic.text = topicData.name;
     }    
 }
 
@@ -185,7 +193,7 @@ const floatingIcon = document.querySelector(".floating-icon");
 const listItemTemplate = (text, translateValue, index) => {
   return `
     <li class="dropdown-list-item">
-      <button class="dropdown-button list-button" data-translate-value="${translateValue}%" data-value="${index + 1}">
+      <button class="dropdown-button list-button" data-translate-value="${translateValue}%" data-value="${index}">
         <span class="text-truncate">${text}</span>
       </button>
     </li>
@@ -193,14 +201,15 @@ const listItemTemplate = (text, translateValue, index) => {
 };
 
 const renderListItems = () => {
-  dropdownList.innerHTML += allData
+  console.log('--',subjectData);
+  dropdownList.innerHTML += subjectData
     .map((item, index) => {
 
       const subject = parseInt(localStorage.getItem("subject")) || 1;
 
-      if (subject - 1 == index) dropdownTitle.innerHTML = item.name;
+      if (subject == item.id) dropdownTitle.innerHTML = item.name;
       setDropdownProps(0, 0, 0);
-      return listItemTemplate(item.name, 100 * index, index);
+      return listItemTemplate(item.name, 100 * index, item.id);
     })
     .join("");
 };
@@ -213,7 +222,7 @@ const setDropdownProps = (deg, ht, opacity) => {
 
 mainButton.addEventListener("click", () => {
   const listWrapperSizes = 3.5; // margins, paddings & borders
-  const dropdownOpenHeight = 4.6 * allData.length + listWrapperSizes;
+  const dropdownOpenHeight = 4.6 * subjectData.length + listWrapperSizes;
   const currDropdownHeight = root.style.getPropertyValue("--dropdown-height") || "0";
 
   if (currDropdownHeight === "0") {
@@ -237,7 +246,8 @@ dropdownList.addEventListener("click", (e) => {
   localStorage.setItem("subject", translateValue);
   localStorage.setItem("topic", 1);
   localStorage.setItem("total_right", 0);
-  selected_subject = translateValue - 1;
+  selected_subject = translateValue;
+  getTopicData();
   customRenderListItems();
 });
 
@@ -275,16 +285,20 @@ const customListItemTemplate = (text, translateValue, index) => {
 
 const customRenderListItems = () => {
 
-  const selected_subject = localStorage.getItem('subject') - 1;
+  const selected_subject = localStorage.getItem('subject');
   
-  customDropdownList.innerHTML = allData[selected_subject].topic
+  customDropdownList.innerHTML = topicData
     .map((item, index) => {
 
       const topic = parseInt(localStorage.getItem("topic")) || 1;
 
-      if (topic - 1 === index) customDropdownTitle.innerHTML = item.task;
+      if (topic - 1 == index) {
+        customDropdownTitle.innerHTML = item.topic;
+        localStorage.setItem('topic',topic)
+
+      };
       setCustomDropdownProps(0, 0, 0);
-      return customListItemTemplate(item.task, 100 * index, index);
+      return customListItemTemplate(item.topic, 100 * index, index);
     })
     .join("");
 
@@ -301,7 +315,7 @@ const setCustomDropdownProps = (deg, ht, opacity) => {
 
 customMainButton.addEventListener("click", () => {
   const listWrapperSizes = 3.5; // margins, paddings & borders
-  const dropdownOpenHeight = 4.6 * (allData[selected_subject].topic.length+1) + listWrapperSizes;
+  const dropdownOpenHeight = 4.6 * (topicData.length+1) + listWrapperSizes;
   const currDropdownHeight = root.style.getPropertyValue("--custom-dropdown-height") || "0";
 
   if (currDropdownHeight === "0") {

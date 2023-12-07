@@ -74,7 +74,8 @@ function replaceStateWithHistory(page) {
 
 const backButton = document.getElementById('backButton');
 backButton.onclick = function() {
-  window.history.back();
+  // window.history.back();
+  window.location.href = 'test.html';
 };
 
 // Check the radio button based on the 'id' parameter
@@ -95,7 +96,7 @@ document
 
     var value1 = document.getElementById("value1").value;
     var value2 = document.getElementById("value2").value;
-    var value3 = document.getElementById("value3").value;
+    var UserDefined1 = document.getElementById("UserDefined1").value;
     var isFav = document.getElementById("favourite").checked;
     var isSkip = document.getElementById("skip").checked;
 
@@ -108,7 +109,7 @@ document
         subjectId:subject,
         value1:value1,
         value2:value2,
-        value3:value3,
+        UserDefined1:UserDefined1,
         isFav:isFav,
         isSkip:isSkip,
       })
@@ -184,14 +185,14 @@ openRequest.onsuccess = (event) => {
           displaySkipData();
         }
 
-        var navbarToggle = document.querySelector(".navbar-toggler");
-        var navbarCollapse = document.querySelector(".navbar-collapse");
+        // var navbarToggle = document.querySelector(".navbar-toggler");
+        // var navbarCollapse = document.querySelector(".navbar-collapse");
 
-        if (navbarCollapse.classList.contains("show")) {
-          navbarCollapse.classList.remove("show");
-        } else {
-          navbarCollapse.classList.add("show");
-        }
+        // if (navbarCollapse.classList.contains("show")) {
+        //   navbarCollapse.classList.remove("show");
+        // } else {
+        //   navbarCollapse.classList.add("show");
+        // }
 };
 userOpenRequest.onsuccess = (event) => {
   userDB = event.target.result;        
@@ -471,14 +472,14 @@ function updateData() {
     loadUpdatedTable();
     showToast("Data updated !!"); 
 
-    var navbarToggle = document.querySelector(".navbar-toggler");
-    var navbarCollapse = document.querySelector(".navbar-collapse");
+    // var navbarToggle = document.querySelector(".navbar-toggler");
+    // var navbarCollapse = document.querySelector(".navbar-collapse");
 
-    if (navbarCollapse.classList.contains("show")) {
-      navbarCollapse.classList.remove("show");
-    } else {
-      navbarCollapse.classList.add("show");
-    }
+    // if (navbarCollapse.classList.contains("show")) {
+    //   navbarCollapse.classList.remove("show");
+    // } else {
+    //   navbarCollapse.classList.add("show");
+    // }
   } catch (error) {
     createToast(error.message); // 3000ms duration
   }
@@ -519,14 +520,14 @@ updateIcons.forEach(function(updateIcon) {
   changeSkipDataState.length = 0;
   deleteData.length = 0;
 
-  var navbarToggle = document.querySelector(".navbar-toggler");
-  var navbarCollapse = document.querySelector(".navbar-collapse");
+  // var navbarToggle = document.querySelector(".navbar-toggler");
+  // var navbarCollapse = document.querySelector(".navbar-collapse");
 
-  if (navbarCollapse.classList.contains("show")) {
-    navbarCollapse.classList.remove("show");
-  } else {
-    navbarCollapse.classList.add("show");
-  }
+  // if (navbarCollapse.classList.contains("show")) {
+  //   navbarCollapse.classList.remove("show");
+  // } else {
+  //   navbarCollapse.classList.add("show");
+  // }
 }
 
 function appendData(data,idNumber) {
@@ -729,14 +730,14 @@ async function search() {
       loadUpdatedTable();
     }
 
-    var navbarToggle = document.querySelector(".navbar-toggler");
-    var navbarCollapse = document.querySelector(".navbar-collapse");
+    // var navbarToggle = document.querySelector(".navbar-toggler");
+    // var navbarCollapse = document.querySelector(".navbar-collapse");
 
-    if (navbarCollapse.classList.contains("show")) {
-      navbarCollapse.classList.remove("show");
-    } else {
-      navbarCollapse.classList.add("show");
-    }
+    // if (navbarCollapse.classList.contains("show")) {
+    //   navbarCollapse.classList.remove("show");
+    // } else {
+    //   navbarCollapse.classList.add("show");
+    // }
   } catch (error) {
     console.error("Error getting data:", error);
   }

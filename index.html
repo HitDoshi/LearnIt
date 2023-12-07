@@ -104,8 +104,14 @@
       localStorage.setItem("total_right", 0);
       localStorage.setItem("showFavOnly", false);
       localStorage.setItem("toggle_question", false);
-      localStorage.setItem("subject", 1);
-      localStorage.setItem("topic", 1);
+      // localStorage.setItem("subject", 1);
+      // localStorage.setItem("topic", 1);
+      if (localStorage.getItem('subject') == null) {
+          localStorage.setItem("subject", 1);
+      } 
+      if (localStorage.getItem('topic') == null) {
+          localStorage.setItem("topic", 1);
+      } 
       document.addEventListener("DOMContentLoaded", function () {
         // Simulate a click on the "Match Pair" link
         document.getElementById("test").click();

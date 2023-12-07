@@ -37,7 +37,7 @@
   </head>
 
   <body>
-    <nav
+    <!-- <nav
       class="navbar navbar-expand-lg fixed-top"
       id="myNavbar"
     >
@@ -74,17 +74,6 @@
           <li class="nav-item">
             <a class="nav-link" href="matchPair.html">Match Pairs</a>
           </li>
-          <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
-          <div
-            class="icon update-icon"
-            style="margin-right: 20px"
-            onclick="undoData();"
-          >
-            ↺
-          </div> -->
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="manageRecord.html?id=1">Manage Records</a>
-          </li> -->
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -109,13 +98,13 @@
           </li>
         </ul>
       </div>
-    </nav>
+    </nav> -->
 
     <nav
       class="navbar navbar-expand-lg fixed-top"
-      id="mobile-navbar"
+      id="myNavbar"
     >
-      <a class="navbar-brand" style="color: white">LearnIt</a>
+      <a class="navbar-brand" style="color: white;flex: 1;padding-left: 10px;">LearnIt</a>
       <!-- <button
         class="navbar-toggler"
         type="button"
@@ -179,10 +168,10 @@
           
           </li>
           
-          <li class="nav-item" onclick="window.close();">            
-            <p class="" style="color: white;height: 100%; justify-content: center;
+          <!-- <li class="nav-item" onclick="window.close();">            
+            <p class="" style="color: white;height: 100%; justify-content: center;cursor: pointer;
             align-items: center;display: flex;">EXIT</p>
-          </li>
+          </li> -->
           <!-- <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -208,12 +197,13 @@
         </ul>
       </div>
     </nav>
+
     <div
       class="container"
       style="max-width: 500px; margin: auto; margin-top: 80px; padding: 20px"
     >      
 
-      <div class="options">
+      <div class="options" id="toggle-question-window-container">
         <input type="checkbox" id="toggle_question_type" />
         <label for="toggle_question_type" class="prevent-select"
           >Based on Value-2</label
@@ -301,7 +291,7 @@
 
       <div class="data-display">
         <h6
-          id="show_value3"
+          id="show_UserDefined1"
           class="text_container"
           style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
         ></h6>        

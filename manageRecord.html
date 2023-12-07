@@ -29,6 +29,7 @@
 </head>
 
 <body>
+<!--   
   <nav class="navbar navbar-expand-lg fixed-top" id="window-navbar">
     <a class="navbar-brand" style="color: white;">LearnIt</a>    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
@@ -46,14 +47,7 @@
         <li class="nav-item active">
           <a class="nav-link" onclick="replaceStateWithHistory('matchPair.html');">Match Pairs</a>
         </li>
-        <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
-          <div
-            class="icon update-icon"
-            style="margin-right: 20px"
-            onclick="undoData();"
-          >
-            ↺
-          </div> -->          
+      
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false" style="color: aqua; font-weight: 500;">
@@ -68,16 +62,13 @@
         <li class="nav-item" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" style="cursor: pointer;">
           <a class="nav-link">Add Data</a>
         </li>
-        <!-- <div class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-1" id="searchInput" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-1" onclick="search();">Search</button>
-          </div> -->
+
         <button class="btn btn-success mr-sm-1 my-1 my-sm-0 btn-sm icon update-icon"
           onclick="updateData();">Update</button>
         <button class="btn btn-danger my-2 my-sm-0 icon update-icon" onclick="undoData();">Cancle</button>
       </ul>
     </div>
-  </nav>
+  </nav> -->
 
   <nav id="mobile-navbar" class="navbar navbar-expand-lg" style="background-color: #00569D;">
     <div style="display: flex;width: 100%;">
@@ -88,7 +79,7 @@
           d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
       </svg>
   
-      <a class="navbar-brand" style="color: white;align-self: center;font-size: 20px;">LearnIt</a>
+      <a class="navbar-brand" style="color: white;align-self: center;font-size: 20px;">Manage Records</a>
 
       <div class="ml-auto" style="display: flex; align-items: center;">
         <div style="margin-left: auto;align-self: center;display: flex;align-items: center;justify-content: center;">
@@ -161,8 +152,8 @@
               <input type="text" class="form-control" id="value2" placeholder="Value 2" value="" required>
             </div>
             <div class="form-group">
-              <label for="value3">Value3</label>
-              <input type="text" class="form-control" id="value3" placeholder="Value 3" value="">
+              <label for="UserDefined1">UserDefined1</label>
+              <input type="text" class="form-control" id="UserDefined1" placeholder="UserDefined1" value="">
             </div>            
 
             <div class="form-row d-flex justify-content-around align-items-center">

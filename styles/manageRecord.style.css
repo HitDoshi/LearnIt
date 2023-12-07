@@ -60,7 +60,7 @@ table{
 }
 
 /* Media query for screens with a maximum width of 420px */
-@media (max-width: 991px) {
+/* @media (max-width: 991px) { */
   #mobile-navbar {
     display: flex;
     background-color: #f8f9fa;
@@ -76,4 +76,4 @@ table{
     margin-left: auto;
     margin-right: auto;
   }
-}
+/* } */

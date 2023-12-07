@@ -416,7 +416,7 @@ function showData() {
 
   try {
     const value1 = document.getElementById("value_1");
-  const value3 = document.getElementById("show_value3");
+  const UserDefined1 = document.getElementById("show_UserDefined1");
   const isFav = document.getElementById("toggle_fav");
   const isSkip = document.getElementById("toggle_skip");
   
@@ -427,7 +427,7 @@ function showData() {
     value1.innerText = data.value1;
   }
 
-  value3.innerHTML = data?.value3 ? data.value3 : "";
+  UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
 
   isFav.checked = data.isFav;
   isSkip.checked = data.isSkip;

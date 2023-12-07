@@ -24,7 +24,8 @@ function replaceStateWithHistory(page) {
 
 const backButton = document.getElementById('backButton');
 backButton.onclick = function() {
-  window.history.back();
+  // window.history.back();
+  window.location.href = 'test.html';
 };
 
 const openRequest = indexedDB.open(dbName, dbVersion);
