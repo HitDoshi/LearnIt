@@ -1,310 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <!-- ... (your meta tags, stylesheets, and scripts) ... -->
 
-<head>
-  <!-- ... (your meta tags, stylesheets, and scripts) ... -->
+    <!-- <link rel="stylesheet" href="./styles/main.style.css" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- <link rel="stylesheet" href="./styles/main.style.css" /> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./styles/main.style.css" />
+    <link rel="stylesheet" href="./styles/toast.style.css" />
+    <link rel="stylesheet" href="./styles/navBar.style.css" />
 
-  <link rel="stylesheet" href="./styles/main.style.css" />
-  <link rel="stylesheet" href="./styles/toast.style.css" />
-  <link rel="stylesheet" href="./styles/navBar.style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </head>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
-</head>
-
-<body>
-  <!-- <div class="navbar">
-    
-        <a class="nav-link" href="/#" onclick="loadPage('matchPair.html')">Match pairs</a>
-        <a class="nav-link" href="/#" onclick="loadPage('manageRecord.html')">Manage Records</a>
-    </div> -->
-
-  <!-- <nav class="navbar navbar-expand-lg" id="window-navbar">
-      <a class="navbar-brand">LearnIt</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a
-              class="nav-link"
-              href="main.html"
-              style="color: aqua; font-weight: 500"
-              id="test"
-              >Main</a
-            >
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="test.html">Practice</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="matchPair.html">Match Pairs</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdownMenuLink"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Manage Records
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="manageRecord.html?id=1"
-                >Show All</a
-              >
-              <a class="dropdown-item" href="manageRecord.html?id=2"
-                >Show Fav Only</a
-              >
-              <a class="dropdown-item" href="manageRecord.html?id=3"
-                >Show Skip Only</a
-              >
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" style="color: lightcoral;user-select: none;" onclick="getQuizData()">Download</a>
-          </li>
-        </ul>
-      </div>
-    </nav> -->
-
-  <nav id="myNavbar" class="navbar navbar-expand-lg" style="background-color: #00569d">
-    <div style="
+  <body>
+    <nav
+      id="myNavbar"
+      class="navbar navbar-expand-lg"
+      style="background-color: #00569d"
+    >
+      <div
+        style="
           display: flex;
           flex: 1;
           padding-left: 10px;
           padding-right: 10px;
           flex-direction: row;
-        ">
-      <a class="navbar-brand" style="color: white; align-self: center; font-size: 20px">LearnIt</a>
-    </div>
+        "
+      >
+        <a
+          class="navbar-brand"
+          style="color: white; align-self: center; font-size: 20px"
+          >LearnIt</a
+        >
+      </div>
 
-    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
-      class="bi bi-cloud-arrow-down-fill" viewBox="0 0 16 16"
-      style="align-self: center;margin-right: 20px;color: white;cursor:pointer" data-toggle="modal"
-      data-target="#exampleModalCenter">
-      <path
-        d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
-    </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="100"
+        height="100"
+        fill="currentColor"
+        class="bi bi-cloud-arrow-down-fill"
+        viewBox="0 0 16 16"
+        style="
+          align-self: center;
+          margin-right: 20px;
+          color: white;
+          cursor: pointer;
+        "
+        data-toggle="modal"
+        data-target="#exampleModalCenter"
+      >
+        <path
+          d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z"
+        />
+      </svg>
 
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-add"
-      viewBox="0 0 16 16" style="align-self: center;margin-right: 20px;color: white;cursor:pointer;" data-toggle="modal"
-      data-target="#loginModal" id="signInIcon">
-      <path
-        d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-      <path
-        d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4" />
-    </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-person-fill-add"
+        viewBox="0 0 16 16"
+        style="
+          align-self: center;
+          margin-right: 20px;
+          color: white;
+          cursor: pointer;
+        "
+        data-toggle="modal"
+        data-target="#loginModal"
+        id="loginIcon"
+      >
+        <path
+          d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"
+        />
+        <path
+          d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"
+        />
+      </svg>
 
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16" style="align-self: center;margin-right: 20px;color: white;cursor:pointer" data-toggle="modal"
-    data-target="#signOutModal" id="signOutIcon">
-      <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
-      <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-    </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-box-arrow-right"
+        viewBox="0 0 16 16"
+        style="
+          align-self: center;
+          margin-right: 20px;
+          color: white;
+          cursor: pointer;
+        "
+        data-toggle="modal"
+        data-target="#signOutModal"
+        id="signOutIcon"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"
+        />
+        <path
+          fill-rule="evenodd"
+          d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"
+        />
+      </svg>
 
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3"
-      viewBox="0 0 16 16" style="align-self: center;margin-right: 20px;color: white;cursor:pointer" data-toggle="modal"
-      data-target="#deleteAccountModal" id="deleteIcon">
-      <path
-        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-    </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-trash3"
+        viewBox="0 0 16 16"
+        style="
+          align-self: center;
+          margin-right: 20px;
+          color: white;
+          cursor: pointer;
+        "
+        data-toggle="modal"
+        data-target="#deleteAccountModal"
+        id="deleteIcon"
+      >
+        <path
+          d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"
+        />
+      </svg>
+    </nav>
 
-  </nav>
-
-  <div class="dropdown-class" style="
+    <div
+      class="dropdown-class"
+      style="
         display: flex;
         align-items: center;
         margin-top: 20px;
         justify-content: center;
         flex-direction: column;
-      ">
-    <!-- <select class="dropdown-select" id="dropdown-subject"></select>
+      "
+    >
+      <div class="dropdown-container">
+        <button class="dropdown-button main-button">
+          <span class="dropdown-title text-truncate"></span>
+          <span class="dropdown-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </span>
+        </button>
+        <div class="dropdown-list-container">
+          <div class="dropdown-list-wrapper">
+            <ul class="dropdown-list"></ul>
+            <div class="floating-icon" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
 
       <br />
-      <select class="dropdown-select" id="dropdown-topic"></select>
-      <br /> -->
 
-    <div class="dropdown-container">
-      <button class="dropdown-button main-button">
-        <span class="dropdown-title text-truncate"></span>
-        <span class="dropdown-arrow">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path
-              d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-          </svg>
-        </span>
+      <div class="custom-dropdown">
+        <button class="custom-dropdown-button main-custom-button">
+          <span class="custom-dropdown-title text-truncate"></span>
+          <span class="custom-dropdown-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </span>
+        </button>
+        <div class="custom-dropdown-list-container">
+          <div class="custom-dropdown-list-wrapper">
+            <ul class="custom-dropdown-list"></ul>
+            <div class="custom-floating-icon" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+      <br />
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        id="next-button"
+        onclick="replaceStateWithHistory('test.html')"
+      >
+        NEXT
       </button>
-      <div class="dropdown-list-container">
-        <div class="dropdown-list-wrapper">
-          <ul class="dropdown-list"></ul>
-          <div class="floating-icon" aria-hidden="true"></div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Download</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Subject data will be reloaded. Do you want to proceed?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="getQuizData()"
+              data-dismiss="modal"
+              style="background-color: #00569d"
+            >
+              OK
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <br />
+    <div class="toast-container" id="toastContainer"></div>
+    <div id="snackbar"></div>
 
-    <div class="custom-dropdown">
-      <button class="custom-dropdown-button main-custom-button">
-        <span class="custom-dropdown-title text-truncate"></span>
-        <span class="custom-dropdown-arrow">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path
-              d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-          </svg>
-        </span>
-      </button>
-      <div class="custom-dropdown-list-container">
-        <div class="custom-dropdown-list-wrapper">
-          <ul class="custom-dropdown-list"></ul>
-          <div class="custom-floating-icon" aria-hidden="true"></div>
-        </div>
-      </div>
-    </div>
-    <br>
+    <!-- Login Modal -->
 
-    <button type="button" class="btn btn-secondary" id="next-button" onclick="replaceStateWithHistory('test.html')">
-      NEXT
-    </button>
-    <!-- <button
-          onclick=""
-          id="next_button"
-          type="button"
-          class="btn btn-secondary"
-          style="outline: none; box-shadow: none;width: 80px;"
-        >
-          Done
-        </button> -->
-  </div>
-
-  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Download</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          Subject data will be reloaded. Do you want to proceed?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" onclick="getQuizData()" data-dismiss="modal"
-            style="background-color: #00569d;">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast-container" id="toastContainer"></div>
-  <div id="snackbar"></div>
-
-  <!-- Login Modal -->
-  <!-- 
-  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Login</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-
-          <form class="needs-validation" novalidate>
-            <div class="mb-3">
-              <label for="validationCustom01" class="form-label">Username/Email</label>
-              <input class="form-control input-sm" id="loginEmail" type="text" value="" autocomplete="current-password" required
-                style="width: 100%;">
-            </div>
-
-            <div class="mb-2">
-              <label for="validationCustom02" class="form-label">Password</label>
-              <div class="input-group">
-                <input type="password" class="form-control input-sm" id="loginPassword" placeholder="Enter your password" autocomplete="current-password"
-                  required>
-                <div class="input-group-append">
-                  <span class="input-group-text">
-                    <i class="fa fa-eye-slash" id="togglePassword"></i>
-                  </span>
+    <div
+      class="modal fade"
+      id="loginModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="loginModalTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginModalLongTitle">LogIn</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form
+              class="needs-validation"
+              novalidate
+              onsubmit="logInFunction(); return false;"
+              id="loginForm"
+            >
+              <div class="mb-4">
+                <label for="loginEmail" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control input-sm"
+                  id="loginEmail"
+                  required
+                  style="width: 100%"
+                  autocomplete="username"
+                />
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
                 </div>
               </div>
-            </div>
-
-            <div class="mb-3" style="display: flex;">
-              <label
-                style="margin-left: auto;font-size:14px;text-decoration: underline;cursor: pointer;user-select: none;"
-                id="forgotPassLink">Forgot password?</label>
-            </div>
-
-            <div class="mb-4 text-center">
-              <button class="btn btn-primary" type="submit"
-                style="background-color: #00569d;width: 100%;">Login</button>
-            </div>
-          </form>
-
-          <div style="display: flex;">
-            <label style="margin-left: auto;margin-right: auto;font-size:14px;" id="signupLink">Don’t have an account?
-              <span style="color: #00569d;font-weight: 500;">Signup</span></label>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div> -->
-
-  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">SignIn</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form class="needs-validation" novalidate onsubmit="submitForm(); return false;" id="loginForm">
-
-            <div class="mb-4">
-              <label for="signUpEmail" class="form-label">Email</label>
-              <input type="email" class="form-control input-sm" id="signUpEmail" required style="width: 100%;">
-              <div class="invalid-feedback">
-                Please enter a valid email address.
-              </div>
-            </div>
-            <!--                     
+              <!--                     
                     <div class="mb-2">
                       <label for="validationCustom02" class="form-label">Password</label>
                       <div class="input-group">
@@ -321,377 +331,458 @@
                       </div>
                     </div> -->
 
-            <div class="mb-4">
-              <label for="loginPassword" class="form-label">Password</label>
+              <div class="mb-4">
+                <label for="loginPassword" class="form-label">Password</label>
 
-              <input type="password" class="form-control input-sm" id="loginPassword" autocomplete="current-password" 
-                style="width: 100%;" required>
-              <!-- <div class="input-group-append">
+                <input
+                  type="password"
+                  class="form-control input-sm"
+                  id="loginPassword"
+                  autocomplete="current-password"
+                  style="width: 100%"
+                  required
+                />
+                <!-- <div class="input-group-append">
                           <span class="input-group-text">
                             <i class="fa fa-eye-slash" id="togglePassword"></i>
                           </span>
                         </div> -->
-              <div class="invalid-feedback">
-                Please enter a password.
+                <div class="invalid-feedback">Please enter a password.</div>
               </div>
-            </div>
 
-            <div class="mb-3" style="display: flex;">
+              <div class="mb-3" style="display: flex">
+                <label
+                  style="
+                    margin-left: auto;
+                    font-size: 14px;
+                    text-decoration: underline;
+                    cursor: pointer;
+                    user-select: none;
+                  "
+                  id="forgotPassLink"
+                  >Forgot password?</label
+                >
+              </div>
+
+              <div class="mb-4 text-center">
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  style="background-color: #00569d; width: 100%"
+                  id="loginButton"
+                >
+                  <span id="loginButtonText">Login</span>
+                  <span
+                    class="spinner-border spinner-border-sm d-none"
+                    role="status"
+                    aria-hidden="true"
+                    id="spinner"
+                  ></span>
+                </button>
+              </div>
+            </form>
+
+            <div style="display: flex">
               <label
-                style="margin-left: auto;font-size:14px;text-decoration: underline;cursor: pointer;user-select: none;"
-                id="forgotPassLink">Forgot password?</label>
+                style="margin-left: auto; margin-right: auto; font-size: 14px"
+                id="signupLink"
+                >Don’t have an account?
+                <span style="color: #00569d; font-weight: 500"
+                  >SignUp</span
+                ></label
+              >
             </div>
-
-            <div class="mb-4 text-center">
-              <button class="btn btn-primary" type="submit"
-                style="background-color: #00569d;width: 100%;" id="loginButton">
-                <span id="loginButtonText">Login</span>
-                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
-
-              </button>
-                
-            </div>
-          </form>
-
-          <div style="display: flex;">
-            <label style="margin-left: auto;margin-right: auto;font-size:14px;" id="signupLink">Don’t have an account?
-              <span style="color: #00569d;font-weight: 500;">Signup</span></label>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Signup Modal -->
+    <!-- Signup Modal -->
 
-  <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Signup</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form class="needs-validation" novalidate>
-            <div class="mb-3" style="display: flex;">
-              <label style="margin-left: auto;margin-right: auto;font-size:12px;">To create an account, please enter
-                your email address. We will send you a link to set your password. After receiving the link, you can
-                establish your password for your account.</label>
-            </div>
-
-            <div class="mb-4">
-              <label for="signUpEmail" class="form-label">Email</label>
-              <input type="email" class="form-control input-sm" id="signUpEmail" required style="width: 100%;">
-              <div class="invalid-feedback">
-                Please enter a valid email address.
+    <div
+      class="modal fade"
+      id="signUpModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="signUpModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="singupModalLongTitle">SignUp</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form
+              class="needs-validation"
+              novalidate
+              onsubmit="signUpFunction(); return false;"
+              id="signUpForm"
+            >
+              <div class="mb-3" style="display: flex">
+                <label
+                  style="margin-left: auto; margin-right: auto; font-size: 12px"
+                  >To create an account, please enter your email address. We
+                  will send you a link to set your password. After receiving the
+                  link, you can establish your password for your account.</label
+                >
               </div>
-            </div>
 
-            <div class="mb-4 text-center">
-              <button class="btn btn-primary" type="submit"
-                style="background-color: #00569d;width: 100%;">Signup</button>
-            </div>
-          </form>
+              <div class="mb-4">
+                <label for="signUpEmail" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control input-sm"
+                  id="signUpEmail"
+                  required
+                  style="width: 100%"
+                />
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              </div>
 
-          <div style="display: flex;">
-            <label style="margin-left: auto;margin-right: auto;font-size:14px;" id="signinLink">Already have an account?
-              <span style="color: #00569d;font-weight: 500;">SignIn</span></label>
+              <div class="mb-4 text-center">
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  id="signUpButton"
+                  style="background-color: #00569d; width: 100%"
+                >
+                  <span id="signUpButtonText">SignUp</span>
+                  <span
+                    class="spinner-border spinner-border-sm d-none"
+                    role="status"
+                    aria-hidden="true"
+                    id="spinner"
+                  ></span>
+                </button>
+              </div>
+            </form>
+
+            <div style="display: flex">
+              <label
+                style="margin-left: auto; margin-right: auto; font-size: 14px"
+                id="loginLink"
+                >Already have an account?
+                <span style="color: #00569d; font-weight: 500"
+                  >LogIn</span
+                ></label
+              >
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <!-- Forgot password modal -->
 
-  <!-- Forgot password modal -->
-
-  <div class="modal fade" id="forgotPassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-arrow-left"
-            viewBox="0 0 16 16" style="align-self: center;margin-right: 15px;font-weight:900" id="backToLogin">
-            <path fill-rule="evenodd"
-              d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
-          </svg>
-          <h5 class="modal-title" id="exampleModalLongTitle" style="user-select: none;">Forgot Password</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form class="needs-validation" novalidate>
-            <div class="mb-3" style="display: flex;">
-              <label style="margin-left: auto;margin-right: auto;font-size:12px;">To reset your password, please
-                enter your registered email id. We will send you the password reset link.</label>
-            </div>
-
-            <div class="mb-3">
-              <label for="forgotPassEmail" class="form-label">Email</label>
-              <input type="email" class="form-control input-sm" id="forgotPassEmail" required style="width: 100%;">
-              <div class="invalid-feedback">
-                Please enter a valid email address.
+    <div
+      class="modal fade"
+      id="forgotPassModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="forgotPassModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="26"
+              height="26"
+              fill="currentColor"
+              class="bi bi-arrow-left"
+              viewBox="0 0 16 16"
+              style="align-self: center; margin-right: 15px; font-weight: 900"
+              id="backToLogin"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
+              />
+            </svg>
+            <h5
+              class="modal-title"
+              id="forgotPassModalLongTitle"
+              style="user-select: none"
+            >
+              Forgot Password
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form
+              class="needs-validation"
+              novalidate
+              onsubmit="forgotPassFunction(); return false;"
+              id="forgotPassForm"
+            >
+              <div class="mb-3" style="display: flex">
+                <label
+                  style="margin-left: auto; margin-right: auto; font-size: 12px"
+                  >To reset your password, please enter your registered email
+                  id. We will send you the password reset link.</label
+                >
               </div>
-            </div>
 
-            <div class="mb-4 text-center">
-              <button class="btn btn-primary" type="submit" style="background-color: #00569d;width: 100%;">Send password
-                reset link</button>
-            </div>
-          </form>
+              <div class="mb-3">
+                <label for="forgotPassEmail" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control input-sm"
+                  id="forgotPassEmail"
+                  required
+                  style="width: 100%"
+                />
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              </div>
+
+              <div class="mb-4 text-center">
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  style="background-color: #00569d; width: 100%"
+                  id="forgotPassButton"
+                >
+                  <span id="forgotPassButtonText"
+                    >Send password reset link</span
+                  >
+                  <span
+                    class="spinner-border spinner-border-sm d-none"
+                    role="status"
+                    aria-hidden="true"
+                    id="spinner"
+                  ></span>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Signout confirmation modal-->
+    <!-- Signout confirmation modal-->
 
-  <div class="modal fade" id="signOutModal" tabindex="-1" role="dialog" aria-labelledby="signOutModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Sign Out Confirmation</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          
-            <div class="mb-3" style="display: flex;">
+    <div
+      class="modal fade"
+      id="signOutModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="signOutModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">
+              Sign Out Confirmation
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3" style="display: flex">
               Are you sure you want to sign out?
             </div>
-        
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <!-- <button type="button" class="btn btn-danger" id="confirmSignOut" onclick="signOut()">Sign Out</button> -->
-          <button class="btn btn-primary" type="button" onclick="signOut()"
-                style="background-color: #dc3545;border-width: 0;">Sign Out</button>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <!-- <button type="button" class="btn btn-danger" id="confirmSignOut" onclick="signOut()">Sign Out</button> -->
+            <button
+              class="btn btn-primary"
+              type="button"
+              onclick="signOut()"
+              style="background-color: #dc3545; border-width: 0"
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Delete account confirmation -->
+    <!-- Delete account confirmation -->
 
-  <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccountModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Delete account confirmation</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          
-            <div class="mb-3" style="display: flex;">
+    <div
+      class="modal fade"
+      id="deleteAccountModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="deleteAccountModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">
+              Delete account confirmation
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3" style="display: flex">
               Are you sure you want to delete account from LearnIt?
             </div>
-        
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <!-- <button type="button" class="btn btn-danger" id="confirmSignOut" onclick="signOut()">Sign Out</button> -->
-          <button class="btn btn-primary" type="button" onclick="deleteAccount()"
-                style="background-color: #dc3545;border-width: 0;">Delete</button>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <!-- <button type="button" class="btn btn-danger" id="confirmSignOut" onclick="signOut()">Sign Out</button> -->
+
+            <div>
+              <button
+                class="btn btn-primary"
+                type="button"
+                onclick="deleteUserFunction()"
+                id="deleteUserButton"
+                style="background-color: #dc3545; border-width: 0"
+              >
+                <span id="deleteUserButtonText">Delete</span>
+                <span
+                  class="spinner-border spinner-border-sm d-none"
+                  role="status"
+                  aria-hidden="true"
+                  id="spinner"
+                ></span>
+              </button>
+            </div>            
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <script>
+      const loginIcon = document.getElementById("loginIcon");
+      const signOutIcon = document.getElementById("signOutIcon");
+      const deleteIcon = document.getElementById("deleteIcon");
 
-  <script>
-
-    const signInIcon = document.getElementById('signInIcon');
-    const signOutIcon = document.getElementById('signOutIcon');
-    const deleteIcon = document.getElementById('deleteIcon');
-
-    toggleNavIcon();
-
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function () {
-      'use strict'
-
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      var forms = document.querySelectorAll('.needs-validation')
-
-      // Loop over them and prevent submission
-      Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-          form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-              event.preventDefault()
-              event.stopPropagation()
-            }
-
-            form.classList.add('was-validated')
-          }, false)
-        })
-    })();
-
-    function signOut(){
-      localStorage.removeItem('token');
       toggleNavIcon();
-      $('#signOutModal').modal('hide'); // Show Signin modal
-    }
 
-    function submitForm() {
-            var form = document.getElementById('loginForm');
-            if (form.checkValidity()) {
-              var email = document.getElementById('signUpEmail').value;
-              var password = document.getElementById('loginPassword').value;
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function () {
+        "use strict";
 
-              var button = document.getElementById('loginButton');
-              var spinner = document.getElementById('spinner');
-              var buttonText = document.getElementById('loginButtonText');
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll(".needs-validation");
 
-              button.disabled = true;
-              spinner.classList.remove('d-none');
-              buttonText.textContent = 'Logging in...';
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach(function (form) {
+          form.addEventListener(
+            "submit",
+            function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
 
+              form.classList.add("was-validated");
+            },
+            false
+          );
+        });
+      })();
 
-              console.log(form);
-                fetch('https://learnit123.000webhostapp.com/api/login.php', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                      email,
-                      password
-                    }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data?.success){
-                          showToast(data?.message);
-                          $('#loginModal').modal('hide'); // Show Signin modal
-                          localStorage.setItem('token',data?.data.token);
-                          console.log(data?.data?.token);
-                          toggleNavIcon();
-                        }else{
-                          showToast(data?.message);
-                        }
-                        button.disabled = false;
-                        spinner.classList.add('d-none');
-                        buttonText.textContent = 'Login';                        
-                    })
-                    .catch(error => {
-                        // console.error('Error:', error);
-                        showToast(error?.message);
-                        button.disabled = false;
-                    spinner.classList.add('d-none');
-                    buttonText.textContent = 'Login';
-                    });
-            } else {
-                form.reportValidity();
-            }
-        }
+      function signOut() {
+        localStorage.removeItem("token");
+        toggleNavIcon();
+        $("#signOutModal").modal("hide");
+      }
 
-    function deleteAccount() {
-            var form = document.getElementById('loginForm');
-            if (form.checkValidity()) {
-              var email = document.getElementById('signUpEmail').value;
-              var password = document.getElementById('loginPassword').value;
+      $(document).ready(function () {
+        // Toggle password visibility
+        $("#togglePassword").on("click", function () {
+          var passwordField = $("#password");
+          var passwordFieldType = passwordField.attr("type");
 
-              var button = document.getElementById('loginButton');
-              var spinner = document.getElementById('spinner');
-              var buttonText = document.getElementById('loginButtonText');
-
-              button.disabled = true;
-              spinner.classList.remove('d-none');
-              buttonText.textContent = 'Logging in...';
-
-
-              console.log(form);
-                fetch('https://learnit123.000webhostapp.com/api/login.php', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                      email,
-                      password
-                    }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data?.success){
-                          showToast(data?.message);
-                        }else{
-                          showToast(data?.message);
-                        }
-                        button.disabled = false;
-                        spinner.classList.add('d-none');
-                        buttonText.textContent = 'Login';
-                        $('#loginModal').modal('hide'); // Show Signin modal
-                        localStorage.setItem('token',data?.data.token);
-                        console.log(data?.data?.token);
-                        toggleNavIcon();
-                    })
-                    .catch(error => {
-                        // console.error('Error:', error);
-                        showToast(error?.message);
-                        button.disabled = false;
-                    spinner.classList.add('d-none');
-                    buttonText.textContent = 'Login';
-                    });
-            } else {
-                form.reportValidity();
-            }
-        }
-
-
-    $(document).ready(function () {
-      // Toggle password visibility
-      $("#togglePassword").on("click", function () {
-        var passwordField = $("#password");
-        var passwordFieldType = passwordField.attr("type");
-
-        if (passwordFieldType === "password") {
-          passwordField.attr("type", "text");
-          $(this).removeClass("fa-eye-slash").addClass("fa-eye");
-        } else {
-          passwordField.attr("type", "password");
-          $(this).removeClass("fa-eye").addClass("fa-eye-slash");
-        }
+          if (passwordFieldType === "password") {
+            passwordField.attr("type", "text");
+            $(this).removeClass("fa-eye-slash").addClass("fa-eye");
+          } else {
+            passwordField.attr("type", "password");
+            $(this).removeClass("fa-eye").addClass("fa-eye-slash");
+          }
+        });
       });
-    });
 
-    $(document).ready(function () {
-      // Signin link click event
-      $('#signinLink').click(function () {
-        $('#loginModal').modal('show'); // Show Signin modal
-        $('#signupModal').modal('hide'); // Hide Signup modal
+      $(document).ready(function () {
+        // login link click event
+        $("#loginLink").click(function () {
+          $("#loginModal").modal("show");
+          $("#signUpModal").modal("hide");
+        });
+        $("#signupLink").click(function () {
+          $("#loginModal").modal("hide");
+          $("#signUpModal").modal("show");
+        });
+        $("#forgotPassLink").click(function () {
+          $("#loginModal").modal("hide");
+          $("#forgotPassModal").modal("show");
+        });
+        $("#backToLogin").click(function () {
+          $("#loginModal").modal("show");
+          $("#forgotPassModal").modal("hide");
+        });
       });
-      $('#signupLink').click(function () {
-        $('#loginModal').modal('hide'); // Show Signin modal
-        $('#signupModal').modal('show'); // Hide Signup modal
-      });
-      $('#forgotPassLink').click(function () {
-        $('#loginModal').modal('hide'); // Show Signin modal
-        $('#forgotPassModal').modal('show'); // Hide Signup modal
-      });
-      $('#backToLogin').click(function () {
-        $('#loginModal').modal('show'); // Show Signin modal
-        $('#forgotPassModal').modal('hide'); // Hide Signup modal
-      });
-    });
 
-    function toggleNavIcon(){
-      signInIcon.style.display = localStorage.getItem('token') ? 'none' : 'block';
-      signOutIcon.style.display = localStorage.getItem('token') ? 'block' : 'none';
-      deleteIcon.style.display = localStorage.getItem('token') ? 'block' : 'none';
-    }
+      function toggleNavIcon() {
+        loginIcon.style.display = localStorage.getItem("token")
+          ? "none"
+          : "block";
+        signOutIcon.style.display = localStorage.getItem("token")
+          ? "block"
+          : "none";
+        deleteIcon.style.display = localStorage.getItem("token")
+          ? "block"
+          : "none";
+      }
+    </script>
 
-  </script>
-
-
-
-  <script src="./index.js"></script>
-  <script src="./src/displayToast.js"></script>
-  <script src="./src/main.js"></script>
-</body>
-
+    <script src="./index.js"></script>
+    <script src="./src/displayToast.js"></script>
+    <script src="./src/main.js"></script>
+    <script src="./src/authAPI.js"></script>
+  </body>
 </html>

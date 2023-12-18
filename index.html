@@ -36,63 +36,6 @@
 
     <nav class="navbar navbar-expand-lg">
       <a class="navbar-brand" style="color: white;">LearnIt</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a
-              class="nav-link"
-              href="main.html"
-              style="color: aqua; font-weight: 500"
-              id="test"
-              >Main</a
-            >
-          </li>
-          <li class="nav-item active">
-            <a
-              class="nav-link"
-              href="test.html"
-              >Practice</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" onclick="replaceStateWithHistory('matchPair.html');">Match Pairs</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdownMenuLink"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Manage Records
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" onclick="replaceStateWithHistory('manageRecord.html?id=1');"
-                >Show All</a
-              >
-              <a class="dropdown-item" onclick="replaceStateWithHistory('manageRecord.html?id=2');"
-                >Show Fav Only</a
-              >
-              <a class="dropdown-item" onclick="replaceStateWithHistory('manageRecord.html?id=3');"
-                >Show Skip Only</a
-              >
-            </div>
-          </li>
-        </ul>
-      </div>
     </nav>
 
     <!-- Container to load pages into -->
@@ -112,10 +55,7 @@
       if (localStorage.getItem('topic') == null) {
           localStorage.setItem("topic", 1);
       } 
-      document.addEventListener("DOMContentLoaded", function () {
-        // Simulate a click on the "Match Pair" link
-        document.getElementById("test").click();
-      });
+      window.location.href = 'main.html';
     </script>
         <!-- <script src="app.js"></script> -->
   </body>
