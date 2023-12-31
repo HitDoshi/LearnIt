@@ -67,9 +67,16 @@ window.addEventListener("load", function () {});
 // });
 
 function replaceStateWithHistory(page) {
+  
+  const topicNumber = localStorage.getItem('topic');
+  const token = localStorage.getItem('token');
+  if(topicNumber == 0 && !token){
+    showToast('Access to this section requires a login.\nPlease login first !!');
+  }else{
   history.replaceState(null, '', page);
   // window.location.reload();
   window.location.href = page;
+  }
 }
 
 const backButton = document.getElementById('backButton');
@@ -119,11 +126,11 @@ document
     form.reset();
     var navbarCollapse = document.querySelector(".navbar-collapse");
 
-        if (navbarCollapse.classList.contains("show")) {
-          navbarCollapse.classList.remove("show");
-        } else {
-          navbarCollapse.classList.add("show");
-        }
+        // if (navbarCollapse.classList.contains("show")) {
+        //   navbarCollapse.classList.remove("show");
+        // } else {
+        //   navbarCollapse.classList.add("show");
+        // }
   });
 
 document.getElementById("cancelButton").addEventListener("click", function () {

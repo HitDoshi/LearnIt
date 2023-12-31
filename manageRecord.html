@@ -92,7 +92,7 @@
             <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
           </svg>
     
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" class="bi bi-plus-lg" data-toggle="modal" data-target="#exampleModalCenter"      
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" class="bi bi-plus-lg" onclick="addUserDataModalShow()"    
             viewBox="0 0 16 16" style="margin-right: 12px;font-weight: 800;">
             <path fill-rule="evenodd"
               d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
@@ -283,6 +283,15 @@
 
       // Add logic here to handle the selected option
       console.log("Selected Option:", option);
+    }
+
+    function addUserDataModalShow(){
+      const token = localStorage.getItem('token');
+      if (token) {
+        $('#exampleModalCenter').modal('show');
+      } else {
+        showToast('Access to this section requires a login.\nPlease login first !!');
+      }
     }
 
 

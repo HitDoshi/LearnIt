@@ -8,10 +8,50 @@ var selected_topic = 0;
 var subjectData = [];
 var topicData = [];
 
+dbName = "user";
+dbVersion = 1;
+storeName = "userData";
+index = "subjectIndex";
+var userDB; 
+
+var indexedDB =
+  window.indexedDB ||
+  window.mozIndexedDB ||
+  window.webkitIndexedDB ||
+  window.msIndexedDB ||
+  window.shimIndexedDB;
+  var userOpenRequest = indexedDB.open('user', 1);
+  userOpenRequest.onupgradeneeded = (event) => {
+    userDB = event.target.result;
+    
+    // Create the object store if it doesn't exist
+    if (!userDB.objectStoreNames.contains('userData')) {
+      const objectStore = userDB.createObjectStore('userData', { keyPath: "id" });
+      // Create a compound index for subjectId and topicId
+        objectStore.createIndex('subjectIndex', ["subjectId"]);
+    }
+  };
+
+
+  userOpenRequest.onerror = (event) => {
+    console.error("Database error: " + event.target.error);
+  };
+
+  userOpenRequest.onsuccess = (event) => {
+    userDB = event.target.result;        
+  };
+  
+
 function replaceStateWithHistory(page) {
+  const topicNumber = localStorage.getItem('topic');
+  const token = localStorage.getItem('token');
+  if(topicNumber == 0 && !token){
+    showToast('Access to this section requires a login.\nPlease login first !!');
+  }else{
   history.replaceState(null, '', page);
   // window.location.reload();
   window.location.href = page;
+  }
 }
 
 
@@ -47,6 +87,7 @@ async function getQuizData() {
   const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
 
   const SubjectID = localStorage.getItem('subject') || 1;
+  $('#loadingModal').modal('show');
 
   fetch(`https://learnit123.000webhostapp.com/api/get_quiz_data.php?SubjectID=${SubjectID}`)
   .then((response) => response.json())
@@ -68,6 +109,7 @@ async function getQuizData() {
           item.isSkip = false;
           objectStore.add(item);
         });
+        $('#loadingModal').modal('hide');
         showToast("Download successfully !!"); 
       }else{
         //  if (window.confirm("Data will be reloaded. Do you want to proceed?")) {
@@ -83,6 +125,7 @@ async function getQuizData() {
               item.isSkip = false;
               objectStore.add(item);
             });
+            $('#loadingModal').modal('hide');
             showToast("Download successfully !!"); 
           };
 
@@ -94,11 +137,13 @@ async function getQuizData() {
           // console.log("User canceled data reload.");
         }
       }
+      $('#loadingModal').modal('hide');
     };
 
   })
   .catch((error) => {
     console.error("Error loading JSON data: " + error);
+    $('#loadingModal').modal('hide');
   });
 
 }
