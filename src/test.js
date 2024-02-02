@@ -518,7 +518,7 @@ function setTimer() {
 // Define a function to be executed after 5 minutes
 function timerFunction() {
   console.log("Timer completed after 5 minutes.");
-  localStorage.setItem("total_right", 0);
+  // localStorage.setItem("total_right", 0);
 
   document.getElementById("total_right_attempt").innerHTML = 0;
   // You can replace this line with any action you want to perform.
