@@ -47,6 +47,7 @@
       localStorage.setItem("total_right", 0);
       localStorage.setItem("showFavOnly", false);
       localStorage.setItem("toggle_question", false);
+      var date = localStorage.getItem("date");
       // localStorage.setItem("subject", 1);
       // localStorage.setItem("topic", 1);
       if (localStorage.getItem('subject') == null) {
@@ -55,6 +56,13 @@
       if (localStorage.getItem('topic') == null) {
           localStorage.setItem("topic", 1);
       } 
+
+      if(!date){
+        localStorage.setItem(
+      "date",
+      new Date().toLocaleString().split(",")[0].toString()
+    );
+      }
       window.location.href = 'main.html';
     </script>    
         <!-- <script src="app.js"></script> -->

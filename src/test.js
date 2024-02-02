@@ -487,6 +487,11 @@ function checkAnswer() {
       document.getElementById("total_right_attempt").innerHTML =
         totalRightAnswer;
       localStorage.setItem("total_right", totalRightAnswer);
+
+      var totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
+      totalFullDayRightAns++;
+      console.log('totalFullDayRightAns',totalFullDayRightAns);
+      localStorage.setItem("totalRightAns", totalFullDayRightAns);
     }
     enter_ans.style.backgroundColor = "green";
     enter_ans.style.color = "white";

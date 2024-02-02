@@ -3,7 +3,6 @@ dbVersion = 1;
 storeName = "userData";
 index = "subjectIndex";
 
-
 var indexedDB =
   window.indexedDB ||
   window.mozIndexedDB ||
@@ -281,7 +280,7 @@ function feedbackFunction() {
 // Open a connection to the database
 const openDB = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('user', 1);
+    const request = indexedDB.open("user", 1);
 
     request.onerror = (event) => {
       reject("Error opening database");
@@ -289,8 +288,8 @@ const openDB = () => {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      if (!db.objectStoreNames.contains('userData')) {
-        const objectStore = db.createObjectStore('userData', {
+      if (!db.objectStoreNames.contains("userData")) {
+        const objectStore = db.createObjectStore("userData", {
           keyPath: "id",
         });
         // Create a compound index for subjectId and topicId
@@ -303,7 +302,6 @@ const openDB = () => {
       console.log(db);
       resolve(db);
     };
-
   });
 };
 
@@ -311,8 +309,8 @@ const openDB = () => {
 const getDataFromDB = () => {
   return openDB().then((db) => {
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction('userData', "readonly");
-      const objectStore = transaction.objectStore('userData');
+      const transaction = db.transaction("userData", "readonly");
+      const objectStore = transaction.objectStore("userData");
 
       const request = objectStore.getAll();
 
@@ -328,7 +326,7 @@ const getDataFromDB = () => {
   });
 };
 
-async function uploadUserDataFunction() {
+async function uploadUserDataFunction(showLogs = true) {
   try {
     const token = localStorage.getItem("token");
     var button = document.getElementById("uploadUserDataButton");
@@ -338,7 +336,7 @@ async function uploadUserDataFunction() {
     button.disabled = true;
     spinner.classList.remove("d-none");
     buttonText.textContent = "Uploading...";
-    
+
     getDataFromDB()
       .then((data) => {
         console.log("Data retrieved from IndexedDB:", data);
@@ -356,13 +354,17 @@ async function uploadUserDataFunction() {
           .then((response) => response.json())
           .then((data) => {
             if (data?.success) {
-              showToast(data?.message);
+              if (showLogs) {
+                showToast(data?.message);
+              }
               $("#uploadUserDataModal").modal("hide");
               // const transaction = db.transaction('userData', "readwrite");
               // const objectStore = transaction.objectStore('userData');
               // const clearRequest = objectStore.clear();
             } else {
-              showToast(data?.message);
+              if (showLogs) {
+                showToast(data?.message);
+              }
             }
             console.log(data);
             button.disabled = false;
@@ -371,7 +373,9 @@ async function uploadUserDataFunction() {
           })
           .catch((error) => {
             console.error("Error:", error);
-            showToast(error?.message);
+            if (showLogs) {
+              showToast(error?.message);
+            }
             button.disabled = false;
             spinner.classList.add("d-none");
             buttonText.textContent = "Upload";
@@ -386,17 +390,65 @@ async function uploadUserDataFunction() {
 }
 
 function isTokenChange() {
-  var isLoggedIn = localStorage.getItem('token'); // or false depending on your authentication logic
+  var isLoggedIn = localStorage.getItem("token"); // or false depending on your authentication logic
 
   if (isLoggedIn) {
     document.getElementById("notLogInContainer").style.display = "none";
     document.getElementById("logInContainer").style.display = "block";
-    const userNameText = localStorage.getItem('username') || '-';
-    const userEmailText = localStorage.getItem('useremail') || '';
-    document.getElementById("userNameText").innerText  = userNameText;
-    document.getElementById("userEmailText").innerText  = userEmailText;
+    const userNameText = localStorage.getItem("username") || "-";
+    const userEmailText = localStorage.getItem("useremail") || "";
+    document.getElementById("userNameText").innerText = userNameText;
+    document.getElementById("userEmailText").innerText = userEmailText;
   } else {
     document.getElementById("notLogInContainer").style.display = "block";
     document.getElementById("logInContainer").style.display = "none";
   }
+}
+
+function uploadUserActivity() {
+  try {
+    const token = localStorage.getItem("token");
+    const totalRightAns = parseInt(localStorage.getItem("totalRightAns")) || 0;
+
+    fetch(
+      `https://learnit123.000webhostapp.com/api/uploadUserActivity.php?token=${token}`,
+      {
+        method: "post",
+        body: JSON.stringify({
+          totalRightAns: totalRightAns,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("uploadUserActivity", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const date = localStorage.getItem("date");
+
+if (date) {
+  const currentDate = new Date().toLocaleString().split(",")[0];
+  const storeDate = new Date(date).toLocaleString().split(",")[0];
+
+  if (currentDate > storeDate) {
+    uploadUserDataFunction(false); //showLog - false
+    uploadUserActivity();
+    localStorage.setItem(
+      "date",
+      new Date().toLocaleString().split(",")[0].toString()
+    );
+    localStorage.setItem("totalRightAns", 0);
+  }
+} else {
+  localStorage.setItem(
+    "date",
+    new Date().toLocaleString().split(",")[0].toString()
+  );
 }
