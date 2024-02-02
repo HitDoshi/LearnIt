@@ -309,7 +309,7 @@
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Cancel
           </button>
-          <button type="button" class="btn btn-primary" onclick="loadData();" data-dismiss="modal"
+          <button type="button" class="btn btn-primary" onclick="loadData()" data-dismiss="modal"
             style="background-color: #00569d">
             OK
           </button>
@@ -751,6 +751,16 @@
       });
     });
 
+document.getElementById("feedbackFormIcon").addEventListener("click", function() {
+    console.log("Input clicked");
+    document.getElementById("feedback-subject").value = "";
+    document.getElementById("feedback-message").value = "";
+    document.getElementById("feedbackForm").reset();
+    document.getElementById("feedback-username").value =
+      localStorage.getItem("username") || "";
+});
+
+
     function toggleNavIcon() {
       // loginIcon.style.display = localStorage.getItem("token")
       //   ? "none"
@@ -810,6 +820,126 @@
         document.getElementById("logInContainer").style.display = "none";
       }
     });
+    
+    
+function loadData() {
+  getQuizData().then(() => {
+    getUserData();
+  });
+}
+
+async function getQuizData() {
+  const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
+
+  const SubjectID = localStorage.getItem("subject") || 1;
+  $("#loadingModal").modal("hide");
+  console.log('SubjectID',SubjectID);
+
+  return fetch(
+    `https://learnit123.000webhostapp.com/api/get_quiz_data.php?SubjectID=${SubjectID}`
+  )
+    .then((response) => response.json())
+    .then(async (jsonData) => {
+      const transaction = testDB.transaction(testStoreName, "readwrite");
+      const objectStore = transaction.objectStore(testStoreName);
+
+      // Check if data.json records already exist in IndexedDB
+      objectStore.count().onsuccess = (event) => {
+        const count = event.target.result;
+
+        console.log("---->SubjectData", jsonData);
+
+        if (count == 0) {
+          // Store data from data.json into IndexedDB
+          jsonData.data.forEach((item) => {
+            item.isFav = false;
+            item.isSkip = false;
+            objectStore.add(item);
+          });
+          $("#loadingModal").modal("hide");
+          showToast("Download successfully !!");
+        } else {
+          // User confirmed, proceed with data reloading
+          // Delete all records from IndexedDB
+          const clearRequest = objectStore.clear();
+
+          clearRequest.onsuccess = () => {
+            // Store data from data.json into IndexedDB
+            jsonData.data.forEach((item) => {
+              item.isFav = false;
+              item.isSkip = false;
+              objectStore.add(item);
+            });
+            $("#loadingModal").modal("hide");
+            showToast("Download successfully !!");
+          };
+
+          clearRequest.onerror = (event) => {
+            console.error("Error clearing IndexedDB:", event.target.error);
+          };
+        }
+        $("#loadingModal").modal("hide");
+      };
+    })
+    .catch((error) => {
+      console.error("Error loading JSON data: " + error);
+      $("#loadingModal").modal("hide");
+    });
+}
+
+async function getUserData() {
+  userDB = await openDatabase(dbName, dbVersion, storeName);
+
+  const token = localStorage.getItem("token");
+
+  return fetch(
+    `https://learnit123.000webhostapp.com/api/get_user_data.php?token=${token}`
+  )
+    .then((response) => response.json())
+    .then(async (jsonData) => {
+      const transaction = userDB.transaction(storeName, "readwrite");
+      const objectStore = transaction.objectStore(storeName);
+
+      // Check if data.json records already exist in IndexedDB
+      objectStore.count().onsuccess = (event) => {
+        const count = event.target.result;
+
+        console.log("---->UserData", jsonData);
+
+        if (count == 0) {
+          // Store data from data.json into IndexedDB
+          jsonData.data.forEach((item) => {
+            item.isFav = false;
+            item.isSkip = false;
+            item.subjectId = parseInt(item.subjectId);
+            objectStore.add(item);
+          });
+        } else {
+          if (jsonData.data.length > 0) {
+            const clearRequest = objectStore.clear();
+
+            clearRequest.onsuccess = () => {
+              // Store data from data.json into IndexedDB
+              jsonData.data.forEach((item) => {
+                item.isFav = false;
+                item.isSkip = false;
+                item.subjectId = parseInt(item.subjectId);
+                objectStore.add(item);
+              });
+            };
+
+            clearRequest.onerror = (event) => {
+              console.error("Error clearing IndexedDB:", event.target.error);
+            };
+          }
+        }
+      };
+    })
+    .catch((error) => {
+      console.error("Error loading JSON data: " + error);
+    });
+}
+
 
   </script>
 

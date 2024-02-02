@@ -200,7 +200,7 @@
 
     <div
       class="container"
-      style="max-width: 500px; margin: auto; margin-top: 80px; padding: 20px"
+      style="max-width: 500px; margin: auto; margin-top: 50px; padding: 20px"
     >      
 
       <div class="options" id="toggle-question-window-container">
@@ -226,12 +226,18 @@
       
     </div>
 
-      <div class="toggle-options">
-        <div style="flex:2">
+      <div style="
+       display: flex;
+  flex-direction: row;
+  flex: 1;
+  gap:30px;
+  margin-top: 5px;
+  margin-bottom: 5px;">
+        <div style="">
           <input type="checkbox" id="toggle_fav" />
           <label for="toggle_fav" class="prevent-select">Favourite</label>
         </div>
-        <div style="flex: 1;">
+        <div style="">
           <input type="checkbox" id="toggle_skip" />
           <label for="toggle_skip" class="prevent-select">Skip</label>
         </div>
@@ -253,7 +259,6 @@
           Next
         </button>
       </div>
-      <br />
 
       <div class="data-entry">
         <input type="text" id="enter_ans" 
@@ -269,9 +274,8 @@
           Check
         </button>
       </div>
-      <br />
 
-      <div class="data-display">
+      <div class="data-display" style="margin-top: 10px;">
         <h6
           id="show_ans"
           class="text_container"
@@ -287,7 +291,6 @@
           Show
         </button>
       </div>
-      <br />
 
       <div class="data-display">
         <h6
