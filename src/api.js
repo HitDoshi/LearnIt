@@ -331,7 +331,14 @@ const getDataFromDB = () => {
 async function uploadUserDataFunction() {
   try {
     const token = localStorage.getItem("token");
+    var button = document.getElementById("uploadUserDataButton");
+    var spinner = document.getElementById("spinner");
+    var buttonText = document.getElementById("uploadUserDataButtonText");
 
+    button.disabled = true;
+    spinner.classList.remove("d-none");
+    buttonText.textContent = "Uploading...";
+    
     getDataFromDB()
       .then((data) => {
         console.log("Data retrieved from IndexedDB:", data);
@@ -351,17 +358,23 @@ async function uploadUserDataFunction() {
             if (data?.success) {
               showToast(data?.message);
               $("#uploadUserDataModal").modal("hide");
-              const transaction = db.transaction('userData', "readwrite");
-              const objectStore = transaction.objectStore('userData');
-              const clearRequest = objectStore.clear();
+              // const transaction = db.transaction('userData', "readwrite");
+              // const objectStore = transaction.objectStore('userData');
+              // const clearRequest = objectStore.clear();
             } else {
               showToast(data?.message);
             }
             console.log(data);
+            button.disabled = false;
+            spinner.classList.add("d-none");
+            buttonText.textContent = "Upload";
           })
           .catch((error) => {
             console.error("Error:", error);
             showToast(error?.message);
+            button.disabled = false;
+            spinner.classList.add("d-none");
+            buttonText.textContent = "Upload";
           });
       })
       .catch((error) => {
