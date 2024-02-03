@@ -20,6 +20,7 @@ var allData = 0;
 var totalSkipData = 0;
 var totalFavData = 0;
 var totalRightAnswer = 0;
+var totalFullDayRightAns = 0;
 var isRightDone = false;
 var toggleQuestion = "false";
 var answer = "";
@@ -107,6 +108,7 @@ openRequest.onsuccess = async function (event) {
 
   isFavOnly = localStorage.getItem("showFavOnly") || "false";
   totalRightAnswer = localStorage.getItem("total_right") || 0;
+  totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
   toggleQuestion = localStorage.getItem("toggle_question") || "false";
 
 
@@ -117,6 +119,7 @@ openRequest.onsuccess = async function (event) {
   document.getElementById("total_question").innerHTML =
     isFavOnly == "true" ? favData.length : totalData.length;
   document.getElementById("total_right_attempt").innerHTML = totalRightAnswer;
+  document.getElementById("total_right_by_full_days").innerHTML = totalFullDayRightAns;
 
   await getData();
 
@@ -469,16 +472,17 @@ function shwoBlankData() {
 
 function checkAnswer() {
   const enter_ans = document.getElementById("enter_ans");
+  const ans = enter_ans.value.toLowerCase().trim().toString()
 
   if (!data) {
     return;
   }
 
-  if (enter_ans.value.toLowerCase().toString() == "") {
+  if (ans == "") {
     return;
   }
   if (
-    enter_ans.value.toLowerCase().toString() == answer.toLowerCase().toString()
+    ans == answer.toLowerCase().trim().toString()
   ) {
     console.log("Right");
 
@@ -488,10 +492,11 @@ function checkAnswer() {
         totalRightAnswer;
       localStorage.setItem("total_right", totalRightAnswer);
 
-      var totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
+      totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
       totalFullDayRightAns++;
       console.log('totalFullDayRightAns',totalFullDayRightAns);
       localStorage.setItem("totalRightAns", totalFullDayRightAns);
+      document.getElementById("total_right_by_full_days").innerHTML = totalFullDayRightAns;
     }
     enter_ans.style.backgroundColor = "green";
     enter_ans.style.color = "white";
@@ -517,13 +522,13 @@ function showAnswer() {
 // Set a timer with a 5-minute delay
 function setTimer() {
   clearTimeout(timer); // Clear the previous timer if it exists
-  timer = setTimeout(timerFunction, 300000); // Set a new timer for 5 minutes
+  timer = setTimeout(timerFunction, 90000); // Set a new timer for 5 minutes
 }
 
 // Define a function to be executed after 5 minutes
 function timerFunction() {
   console.log("Timer completed after 5 minutes.");
-  // localStorage.setItem("total_right", 0);
+  localStorage.setItem("total_right", 0);
 
   document.getElementById("total_right_attempt").innerHTML = 0;
   // You can replace this line with any action you want to perform.
