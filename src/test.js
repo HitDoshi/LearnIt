@@ -1,7 +1,7 @@
 var dbName = "test";
 var dbVersion = 1;
 var storeName = "data";
-var keyIndex = "subjectTopicIndex"
+var keyIndex = "subjectTopicIndex";
 
 var topic = parseInt(localStorage.getItem("topic"));
 
@@ -31,7 +31,6 @@ let db; // Reference to the IndexedDB database
 var subject = parseInt(localStorage.getItem("subject")) || 1;
 var topic = parseInt(localStorage.getItem("topic"));
 
-
 var indexedDB =
   window.indexedDB ||
   window.mozIndexedDB ||
@@ -46,7 +45,7 @@ window.addEventListener("load", function () {
 });
 
 function replaceStateWithHistory(page) {
-  history.replaceState(null, '', page);
+  history.replaceState(null, "", page);
   // window.location.reload();
   window.location.href = page;
 }
@@ -58,9 +57,9 @@ openRequest.onupgradeneeded = (event) => {
     var objectStore = db.createObjectStore(storeName, { keyPath: "id" });
 
     // Create a compound index for subjectId and topicId
-    if(topic==0){    
+    if (topic == 0) {
       objectStore.createIndex(keyIndex, ["subjectId"]);
-    }else{
+    } else {
       objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
     }
   }
@@ -77,58 +76,58 @@ openRequest.onsuccess = async function (event) {
   try {
     getTotalSkipData();
 
-  const isShowFavOnly = document.getElementById("show_fav_only");
-  isShowFavOnly.addEventListener("change", toggleIsShowFavOnly);
+    const isShowFavOnly = document.getElementById("show_fav_only");
+    isShowFavOnly.addEventListener("change", toggleIsShowFavOnly);
 
-  const isFavChange = document.getElementById("toggle_fav");
-  isFavChange.addEventListener("change", toggleFavValue);
+    const isFavChange = document.getElementById("toggle_fav");
+    isFavChange.addEventListener("change", toggleFavValue);
 
-  const isSkipChange = document.getElementById("toggle_skip");
-  isSkipChange.addEventListener("change", toggleSkipValue);
+    const isSkipChange = document.getElementById("toggle_skip");
+    isSkipChange.addEventListener("change", toggleSkipValue);
 
-  const toggleQuestionCheckbox = document.getElementById(
-    "toggle_question_type"
-  );
-  toggleQuestionCheckbox.addEventListener("change", toggleQuestionType);
+    const toggleQuestionCheckbox = document.getElementById(
+      "toggle_question_type"
+    );
+    toggleQuestionCheckbox.addEventListener("change", toggleQuestionType);
 
-  const t = localStorage.getItem("toggle_question");
+    const t = localStorage.getItem("toggle_question");
 
-  if(t == "true"){
-    document.getElementById("toggleQuestionValue").style.backgroundColor = "darkgray"
-  }else{
-    document.getElementById("toggleQuestionValue").style.backgroundColor = null
-  }
+    if (t == "true") {
+      document.getElementById("toggleQuestionValue").style.backgroundColor =
+        "darkgray";
+    } else {
+      document.getElementById("toggleQuestionValue").style.backgroundColor =
+        null;
+    }
 
-  await countData();
-  totalData = shuffle(totalData);
-  favData = shuffle(favData);
+    await countData();
+    totalData = shuffle(totalData);
+    favData = shuffle(favData);
 
-  console.log(totalData);
-  console.log(favData);
+    console.log(totalData);
+    console.log(favData);
 
-  isFavOnly = localStorage.getItem("showFavOnly") || "false";
-  totalRightAnswer = localStorage.getItem("total_right") || 0;
-  totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
-  toggleQuestion = localStorage.getItem("toggle_question") || "false";
+    isFavOnly = localStorage.getItem("showFavOnly") || "false";
+    totalRightAnswer = localStorage.getItem("total_right") || 0;
+    totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
+    toggleQuestion = localStorage.getItem("toggle_question") || "false";
 
+    document.getElementById("show_fav_only").checked = isFavOnly == "true";
+    document.getElementById("toggle_question_type").checked =
+      toggleQuestion == "true";
 
-  document.getElementById("show_fav_only").checked = isFavOnly == "true";
-  document.getElementById("toggle_question_type").checked =
-    toggleQuestion == "true";
+    document.getElementById("total_question").innerHTML =
+      isFavOnly == "true" ? favData.length : totalData.length;
+    document.getElementById("total_right_attempt").innerHTML = totalRightAnswer;        
+    document.getElementById("total_right_by_full_days").innerHTML =
+      totalFullDayRightAns;
 
-  document.getElementById("total_question").innerHTML =
-    isFavOnly == "true" ? favData.length : totalData.length;
-  document.getElementById("total_right_attempt").innerHTML = totalRightAnswer;
-  document.getElementById("total_right_by_full_days").innerHTML = totalFullDayRightAns;
+    await getData();
 
-  await getData();
-
-  setTimer();
+    setTimer();
   } catch (error) {
     console.log(error?.message);
   }
-
-  
 };
 
 function shuffle(array) {
@@ -163,19 +162,18 @@ async function countData() {
     const transaction = db.transaction(storeName, "readwrite");
     const objectStore = transaction.objectStore(storeName);
 
-    
-      // Specify the subjectId and topicId you want to search for
-  var subjectId = subject; // Change this to the subjectId you want to search for
-  var topicId = topic;   // Change this to the topicId you want to search for
+    // Specify the subjectId and topicId you want to search for
+    var subjectId = subject; // Change this to the subjectId you want to search for
+    var topicId = topic; // Change this to the topicId you want to search for
 
-  // Create a range for the compound index
-  if(topic==0){
-    var range = IDBKeyRange.only([subjectId]);
-  }else{
-    var range = IDBKeyRange.only([subjectId, topicId]);
-  } 
-  // Use the compound index for the search
-  var request = objectStore.index(keyIndex);
+    // Create a range for the compound index
+    if (topic == 0) {
+      var range = IDBKeyRange.only([subjectId]);
+    } else {
+      var range = IDBKeyRange.only([subjectId, topicId]);
+    }
+    // Use the compound index for the search
+    var request = objectStore.index(keyIndex);
 
     request.openCursor(range).onsuccess = (event) => {
       const cursor = event.target.result;
@@ -191,7 +189,7 @@ async function countData() {
             favData.push(data);
           }
           allData++;
-          totalData.push(data);        
+          totalData.push(data);
         }
 
         cursor.continue();
@@ -215,7 +213,7 @@ function getData() {
     console.error("Database is not open yet.");
     return;
   }
-  
+
   if (
     (favData.length == 0 && isFavOnly == "true") ||
     (totalData.length == 0 && isFavOnly == "false")
@@ -274,17 +272,16 @@ function getTotalSkipData() {
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
 
-  
   // Specify the subjectId and topicId you want to search for
   var subjectId = subject; // Change this to the subjectId you want to search for
-  var topicId = topic;   // Change this to the topicId you want to search for
+  var topicId = topic; // Change this to the topicId you want to search for
 
   // Create a range for the compound index
-  if(topic==0){
+  if (topic == 0) {
     var range = IDBKeyRange.only([subjectId]);
-  }else{
+  } else {
     var range = IDBKeyRange.only([subjectId, topicId]);
-  } 
+  }
   // Use the compound index for the search
   var request = objectStore.index(keyIndex);
 
@@ -310,7 +307,7 @@ function toggleFavValue(event) {
     return;
   }
 
-  if(!data){
+  if (!data) {
     return;
   }
 
@@ -357,10 +354,14 @@ function toggleQuestionType() {
   console.log(toggleQuestion);
   localStorage.setItem("toggle_question", toggleQuestion);
 
-  if(toggleQuestion == "true"){
-    const toggle = document.getElementById("toggleQuestionValue").style.backgroundColor = "darkgray"
-  }else{
-    const toggle = document.getElementById("toggleQuestionValue").style.backgroundColor = null
+  if (toggleQuestion == "true") {
+    const toggle = (document.getElementById(
+      "toggleQuestionValue"
+    ).style.backgroundColor = "darkgray");
+  } else {
+    const toggle = (document.getElementById(
+      "toggleQuestionValue"
+    ).style.backgroundColor = null);
   }
 
   getData();
@@ -372,7 +373,7 @@ function toggleSkipValue(event) {
     return;
   }
 
-  if(!data){
+  if (!data) {
     return;
   }
 
@@ -412,32 +413,30 @@ function toggleSkipValue(event) {
 }
 
 function showData() {
-
-  if(!data){
+  if (!data) {
     return;
   }
 
   try {
     const value1 = document.getElementById("value_1");
-  const UserDefined1 = document.getElementById("show_UserDefined1");
-  const isFav = document.getElementById("toggle_fav");
-  const isSkip = document.getElementById("toggle_skip");
-  
+    const UserDefined1 = document.getElementById("show_UserDefined1");
+    const isFav = document.getElementById("toggle_fav");
+    const isSkip = document.getElementById("toggle_skip");
 
-  if (toggleQuestion == "true") {
-    value1.innerText = data.value2;
-  } else {
-    value1.innerText = data.value1;
-  }
+    if (toggleQuestion == "true") {
+      value1.innerText = data.value2;
+    } else {
+      value1.innerText = data.value1;
+    }
 
-  UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
+    UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
 
-  isFav.checked = data.isFav;
-  isSkip.checked = data.isSkip;
-  setTimer();
+    isFav.checked = data.isFav;
+    isSkip.checked = data.isSkip;
+    setTimer();
   } catch (error) {
-    console.log("Error:-->",error?.message);
-  }  
+    console.log("Error:-->", error?.message);
+  }
 }
 
 function toggleIsShowFavOnly(event) {
@@ -446,7 +445,7 @@ function toggleIsShowFavOnly(event) {
   console.log(favData.length);
   console.log(totalData.length);
   document.getElementById("total_question").innerHTML =
-    isFavOnly == "true" ? favData.length : totalData.length;
+    isFavOnly == "true" ? favData.length : totalData.length;       
 
   getData();
 }
@@ -472,7 +471,7 @@ function shwoBlankData() {
 
 function checkAnswer() {
   const enter_ans = document.getElementById("enter_ans");
-  const ans = enter_ans.value.toLowerCase().trim().toString()
+  const ans = enter_ans.value.toLowerCase().trim().toString();
 
   if (!data) {
     return;
@@ -481,9 +480,7 @@ function checkAnswer() {
   if (ans == "") {
     return;
   }
-  if (
-    ans == answer.toLowerCase().trim().toString()
-  ) {
+  if (ans == answer.toLowerCase().trim().toString()) {
     console.log("Right");
 
     if (!isRightDone) {
@@ -494,9 +491,10 @@ function checkAnswer() {
 
       totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
       totalFullDayRightAns++;
-      console.log('totalFullDayRightAns',totalFullDayRightAns);
-      localStorage.setItem("totalRightAns", totalFullDayRightAns);
-      document.getElementById("total_right_by_full_days").innerHTML = totalFullDayRightAns;
+      console.log("totalFullDayRightAns", totalFullDayRightAns);
+      localStorage.setItem("totalRightAns", totalFullDayRightAns);            
+      document.getElementById("total_right_by_full_days").innerHTML =
+        totalFullDayRightAns;
     }
     enter_ans.style.backgroundColor = "green";
     enter_ans.style.color = "white";
@@ -531,6 +529,6 @@ function timerFunction() {
   localStorage.setItem("total_right", 0);
 
   document.getElementById("total_right_attempt").innerHTML = 0;
-  totalRightAnswer = 0;
+  totalRightAnswer = 0;      
   // You can replace this line with any action you want to perform.
 }
