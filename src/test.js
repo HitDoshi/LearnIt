@@ -522,7 +522,7 @@ function showAnswer() {
 // Set a timer with a 5-minute delay
 function setTimer() {
   clearTimeout(timer); // Clear the previous timer if it exists
-  timer = setTimeout(timerFunction, 90000); // Set a new timer for 5 minutes
+  timer = setTimeout(timerFunction, 300000); // Set a new timer for 5 minutes
 }
 
 // Define a function to be executed after 5 minutes
@@ -531,5 +531,6 @@ function timerFunction() {
   localStorage.setItem("total_right", 0);
 
   document.getElementById("total_right_attempt").innerHTML = 0;
+  totalRightAnswer = 0;
   // You can replace this line with any action you want to perform.
 }

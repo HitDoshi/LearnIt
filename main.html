@@ -946,6 +946,34 @@
   <script src="./src/displayToast.js"></script>
   <script src="./src/main.js"></script>
   <script src="./src/api.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const date = localStorage.getItem("date");
+
+      if (date) {
+        const currentDate = new Date().toLocaleString().split(",")[0];
+        const storeDate = new Date(date).toLocaleString().split(",")[0];
+
+        if (currentDate > storeDate) {
+          uploadUserDataFunction(false); //showLog - false
+          uploadUserActivity();
+          localStorage.setItem(
+            "date",
+            new Date().toLocaleString().split(",")[0].toString()
+          );
+          localStorage.setItem("totalRightAns", 0);
+        }
+      } else {
+        localStorage.setItem(
+          "date",
+          new Date().toLocaleString().split(",")[0].toString()
+        );
+      }
+
+    });
+  </script>
 </body>
 
 </html>

@@ -405,7 +405,7 @@ function isTokenChange() {
   }
 }
 
-function uploadUserActivity() {
+async function uploadUserActivity() {
   try {
     const token = localStorage.getItem("token");
     const totalRightAns = parseInt(localStorage.getItem("totalRightAns")) || 0;
@@ -429,26 +429,4 @@ function uploadUserActivity() {
   } catch (error) {
     console.log(error);
   }
-}
-
-const date = localStorage.getItem("date");
-
-if (date) {
-  const currentDate = new Date().toLocaleString().split(",")[0];
-  const storeDate = new Date(date).toLocaleString().split(",")[0];
-
-  if (currentDate > storeDate) {
-    uploadUserDataFunction(false); //showLog - false
-    uploadUserActivity();
-    localStorage.setItem(
-      "date",
-      new Date().toLocaleString().split(",")[0].toString()
-    );
-    localStorage.setItem("totalRightAns", 0);
-  }
-} else {
-  localStorage.setItem(
-    "date",
-    new Date().toLocaleString().split(",")[0].toString()
-  );
 }
