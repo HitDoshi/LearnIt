@@ -409,6 +409,7 @@ async function uploadUserActivity() {
   try {
     const token = localStorage.getItem("token");
     const totalRightAns = parseInt(localStorage.getItem("totalRightAns")) || 0;
+    var date = localStorage.getItem("date");
 
     fetch(
       `https://learnit123.000webhostapp.com/api/uploadUserActivity.php?token=${token}`,
@@ -416,6 +417,7 @@ async function uploadUserActivity() {
         method: "post",
         body: JSON.stringify({
           totalRightAns: totalRightAns,
+          date: date
         }),
       }
     )
