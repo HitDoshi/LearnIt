@@ -953,8 +953,9 @@
       const date = localStorage.getItem("date");
 
       if (date) {
-        const currentDate = new Date().toLocaleString().split(",")[0];
-        const storeDate = new Date(date).toLocaleString().split(",")[0];
+        const today = new Date().toLocaleString().split(",")[0].toString();
+        const currentDate = new Date(today).getTime();
+        const storeDate = new Date(date).getTime();
 
         if (currentDate > storeDate) {
           uploadUserDataFunction(false); //showLog - false

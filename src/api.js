@@ -348,6 +348,7 @@ async function uploadUserDataFunction(showLogs = true) {
             method: "POST",
             body: JSON.stringify({
               data: data, // Use the retrieved data directly
+              timestamp: new Date().toLocaleString()
             }),
           }
         )
