@@ -30,8 +30,8 @@ backButton.onclick = function() {
 
 const openRequest = indexedDB.open(dbName, dbVersion);
 let db; // Reference to the IndexedDB database
-var value1 = []; // skip data ==> {id,isSkip}
-var value2 = []; // delete data ==> {id}
+var value1 = []; 
+var value2 = []; 
 var ansId = null;
 var questionId = null;
 var select = 0; // 0-none , 1-left , 2-right
@@ -142,9 +142,9 @@ function getData() {
     if (allData.length > 0) {
       allData = shuffle(allData);
 
-      // Filter entries where isFav is true
+      // Filter entries where isFav is true & isSkip is false
 
-      var favData = allData.filter((item) => item.isFav === true);
+      var favData = allData.filter((item) => item.isFav === true && item.isSkip === false);
 
       console.log(favData.length);
 

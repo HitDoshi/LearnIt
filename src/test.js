@@ -459,6 +459,7 @@ function nextValue() {
 function shwoBlankData() {
   document.getElementById("value_1").innerText = "";
   document.getElementById("show_ans").innerText = "";
+  document.getElementById("show_UserDefined1").innerText = "";
   const isFav = (document.getElementById("toggle_fav").checked = false);
   const isSkip = (document.getElementById("toggle_skip").checked = false);
   const enter_ans = document.getElementById("enter_ans");
