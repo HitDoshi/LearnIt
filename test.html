@@ -265,6 +265,7 @@
       <div class="data-entry">
         <input type="text" id="enter_ans" 
         style="flex: 1;max-width: 380px; white-space: normal; word-wrap: break-word;min-height: 40px;min-width:0%;"
+        autocomplete="off"
         />
         <button
           onclick="checkAnswer()"
@@ -301,6 +302,18 @@
           style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
         ></h6>        
       </div>
+
+      <div class="data-display" style="align-items: center;">
+        <label for="session_counter" class="prevent-select">Session counter will reset in:</label>
+        <h6 id="session_counter"></h6>
+      </div>
+
+      <div class="data-display" style="align-items: center;">
+        <label for="daily_counter" class="prevent-select">Daily counter will reset in:</label>
+        <h6 id="daily_counter"></h6>
+      </div>
+
+      
     </div>
 
     <div class="toast-container" id="toastContainer"></div>

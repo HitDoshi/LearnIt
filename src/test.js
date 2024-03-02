@@ -25,6 +25,9 @@ var isRightDone = false;
 var toggleQuestion = "false";
 var answer = "";
 var timer;
+var startSessionTime;
+var sessionStartTimerBasicTime = 300000; // 5 min = 300000 sec
+var sessionInterval,dailyInterval;
 
 let db; // Reference to the IndexedDB database
 
@@ -125,6 +128,12 @@ openRequest.onsuccess = async function (event) {
     await getData();
 
     setTimer();
+    // Initial call to update the counter
+    updateDailyCounter();
+
+    // Update the counter every second
+    clearInterval(dailyInterval);
+    dailyInterval = setInterval(updateDailyCounter, 1000);
   } catch (error) {
     console.log(error?.message);
   }
@@ -345,7 +354,7 @@ function toggleFavValue(event) {
       objectStore.put(data);
     }
   };
-  setTimer();
+  // setTimer();
 }
 function toggleQuestionType() {
   const q = localStorage.getItem("toggle_question");
@@ -409,7 +418,7 @@ function toggleSkipValue(event) {
       console.log(data);
     }
   };
-  setTimer();
+  // setTimer();
 }
 
 function showData() {
@@ -433,7 +442,7 @@ function showData() {
 
     isFav.checked = data.isFav;
     isSkip.checked = data.isSkip;
-    setTimer();
+    // setTimer();
   } catch (error) {
     console.log("Error:-->", error?.message);
   }
@@ -467,13 +476,12 @@ function shwoBlankData() {
   enter_ans.style.color = "black";
 
   document.getElementById("enter_ans").value = "";
-  setTimer();
+  // setTimer();
 }
 
 function checkAnswer() {
   const enter_ans = document.getElementById("enter_ans");
   const ans = enter_ans.value.toLowerCase().trim().toString();
-
   if (!data) {
     return;
   }
@@ -500,28 +508,55 @@ function checkAnswer() {
     enter_ans.style.backgroundColor = "green";
     enter_ans.style.color = "white";
     isRightDone = true;
+    setTimer();
   } else {
     enter_ans.style.backgroundColor = "red";
     enter_ans.style.color = "white";
     console.log("Wrong");
   }
-  setTimer();
+  // setTimer();
 }
 
 function showAnswer() {
   if (!data) {
     return;
   }
-
   document.getElementById("show_ans").innerText = answer;
+  // setTimer();
+}
 
-  setTimer();
+// Function to get the remaining time of the timer
+function getRemainingTime() {
+  if (!timer) return 0; // If no timer is set, return 0
+  let elapsedTime = Date.now() - startSessionTime;
+  let remainingTime = sessionStartTimerBasicTime - elapsedTime; // 300000 milliseconds = 5 minutes
+  return Math.max(0, remainingTime); // Ensure remaining time is not negative
+}
+
+// Function to update the remaining time on the screen
+function updateRemainingTime() {
+  let remainingTime = getRemainingTime();
+  // Assuming you have an HTML element with id="session_counter" to display the remaining time
+  document.getElementById('session_counter').innerText = formatTime(remainingTime);
+}
+
+// Function to format milliseconds into a readable time format (mm:ss)
+function formatTime(milliseconds) {
+  let totalSeconds = Math.floor(milliseconds / 1000);
+  let minutes = Math.floor(totalSeconds / 60);
+  let seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
 // Set a timer with a 5-minute delay
 function setTimer() {
   clearTimeout(timer); // Clear the previous timer if it exists
-  timer = setTimeout(timerFunction, 300000); // Set a new timer for 5 minutes
+  startSessionTime = Date.now(); // Store the start time
+  timer = setTimeout(timerFunction, sessionStartTimerBasicTime); // Set a new timer for 5 minutes  
+  // updateRemainingTime(); // Update the remaining time immediately after setting the timer
+  // Update the remaining time every second
+  clearInterval(sessionInterval);
+  sessionInterval = setInterval(updateRemainingTime, 1000);
 }
 
 // Define a function to be executed after 5 minutes
@@ -531,5 +566,20 @@ function timerFunction() {
 
   document.getElementById("total_right_attempt").innerHTML = 0;
   totalRightAnswer = 0;      
-  // You can replace this line with any action you want to perform.
+  setTimer();  
 }
+
+function updateDailyCounter() {
+  const now = new Date();
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999); // Set end of day to 11:59:59 PM
+
+  const remainingTime = endOfDay - now;
+  const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+  const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+  document.getElementById("daily_counter").innerText = `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+}
+
+
