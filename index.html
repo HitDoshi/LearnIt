@@ -35,7 +35,7 @@
     </div> -->
 
     <nav class="navbar navbar-expand-lg">
-      <a class="navbar-brand" style="color: white;">LearnIt</a>
+      <a class="navbar-brand" style="color: white">LearnIt</a>
     </nav>
 
     <!-- Container to load pages into -->
@@ -44,27 +44,34 @@
     </div>
 
     <script>
-      localStorage.setItem("total_right", 0);
+      // localStorage.setItem("total_right", 0);
       localStorage.setItem("showFavOnly", false);
       localStorage.setItem("toggle_question", false);
+      const timestamp = parseInt(localStorage.getItem("timestamp") || 0);
+      console.log(timestamp + 300000 > Date.now(),timestamp, Date.now());
+      if (timestamp + 300000 < Date.now()) {  // 300000 milliseconds = 5 minutes
+        localStorage.setItem("reset-timestamp", true);
+      }else{
+        localStorage.setItem("reset-timestamp", false);
+      }
       var date = localStorage.getItem("date");
       // localStorage.setItem("subject", 1);
       // localStorage.setItem("topic", 1);
-      if (localStorage.getItem('subject') == null) {
-          localStorage.setItem("subject", 1);
-      } 
-      if (localStorage.getItem('topic') == null) {
-          localStorage.setItem("topic", 1);
-      } 
-
-      if(!date){
-        localStorage.setItem(
-      "date",
-      new Date().toLocaleString().split(",")[0].toString()
-    );
+      if (localStorage.getItem("subject") == null) {
+        localStorage.setItem("subject", 1);
       }
-      window.location.href = 'main.html';
-    </script>    
-        <!-- <script src="app.js"></script> -->
+      if (localStorage.getItem("topic") == null) {
+        localStorage.setItem("topic", 1);
+      }
+
+      if (!date) {
+        localStorage.setItem(
+          "date",
+          new Date().toLocaleString().split(",")[0].toString()
+        );
+      }
+      window.location.href = "main.html";
+    </script>
+    <!-- <script src="app.js"></script> -->
   </body>
 </html>

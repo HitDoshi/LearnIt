@@ -1,16 +1,16 @@
-dbName = "user";
-dbVersion = 1;
-storeName = "userData";
-index = "subjectIndex";
+apiDBName = "user";
+apiDBVersion = 1;
+apiStoreName = "userData";
+apiIndex = "subjectIndex";
 
-var indexedDB =
+var apiIndexedDB =
   window.indexedDB ||
   window.mozIndexedDB ||
   window.webkitIndexedDB ||
   window.msIndexedDB ||
   window.shimIndexedDB;
 
-let db; // Reference to the IndexedDB database
+let apiDB; // Reference to the IndexedDB database
 
 function logInFunction() {
   try {
@@ -280,27 +280,27 @@ function feedbackFunction() {
 // Open a connection to the database
 const openDB = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("user", 1);
+    const apiRequest = apiIndexedDB.open("user", 1);
 
-    request.onerror = (event) => {
+    apiRequest.onerror = (event) => {
       reject("Error opening database");
     };
 
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if (!db.objectStoreNames.contains("userData")) {
-        const objectStore = db.createObjectStore("userData", {
+    apiRequest.onupgradeneeded = (event) => {
+      const apiDB = event.target.result;
+      if (!apiDB.objectStoreNames.contains("userData")) {
+        const apiObjectStore = apiDB.createObjectStore("userData", {
           keyPath: "id",
         });
         // Create a compound index for subjectId and topicId
-        objectStore.createIndex("subjectIndex", ["subjectId"]);
+        apiObjectStore.createIndex("subjectIndex", ["subjectId"]);
       }
     };
 
-    request.onsuccess = (event) => {
-      db = event.target.result;
-      console.log(db);
-      resolve(db);
+    apiRequest.onsuccess = (event) => {
+      apiDB = event.target.result;
+      console.log(apiDB);
+      resolve(apiDB);
     };
   });
 };
@@ -309,18 +309,18 @@ const openDB = () => {
 const getDataFromDB = () => {
   return openDB().then((db) => {
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction("userData", "readonly");
-      const objectStore = transaction.objectStore("userData");
+      const apiTransaction = db.transaction("userData", "readonly");
+      const apiObjectStore = apiTransaction.objectStore("userData");
 
-      const request = objectStore.getAll();
+      const apiRequest = apiObjectStore.getAll();
 
-      request.onerror = (event) => {
+      apiRequest.onerror = (event) => {
         reject("Error fetching data from object store");
       };
 
-      request.onsuccess = (event) => {
-        const data = event.target.result;
-        resolve(data);
+      apiRequest.onsuccess = (event) => {
+        const apiData = event.target.result;
+        resolve(apiData);
       };
     });
   });
@@ -380,6 +380,39 @@ async function uploadUserDataFunction(showLogs = true) {
             button.disabled = false;
             spinner.classList.add("d-none");
             buttonText.textContent = "Upload";
+          });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function uploadDailyUserDataFunction() {
+  try {
+    const token = localStorage.getItem("token");    
+
+    getDataFromDB()
+      .then((data) => {
+        console.log("Data retrieved from IndexedDB:", data);
+        fetch(
+          `https://learnit123.000webhostapp.com/api/uploadUserData.php?token=${token}`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              data: data, // Use the retrieved data directly
+              timestamp: new Date().toLocaleString()
+            }),
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {            
+            console.log(data);            
+          })
+          .catch((error) => {
+            console.error("Error:", error);                       
           });
       })
       .catch((error) => {

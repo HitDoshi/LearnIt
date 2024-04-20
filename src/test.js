@@ -480,6 +480,39 @@ function shwoBlankData() {
 }
 
 function checkAnswer() {
+  const remainingTime = getRemainingTime();
+  if(remainingTime == 0){
+    localStorage.setItem("timestamp",Date.now());
+    setTimer();
+    timerFunction();
+  }
+
+  const date = localStorage.getItem("date");
+
+  if (date) {
+    const today = new Date().toLocaleString().split(",")[0].toString();
+    const currentDate = new Date(today).getTime();
+    const storeDate = new Date(date).getTime();
+
+    if (currentDate > storeDate) {
+      uploadDailyUserDataFunction(false); 
+      uploadUserActivity();
+      localStorage.setItem(
+        "date",
+        new Date().toLocaleString().split(",")[0].toString()
+      );
+      localStorage.setItem("totalRightAns", 0);
+      totalRightAnswer = 0;
+      document.getElementById("total_right_attempt").innerHTML =
+        totalRightAnswer;
+    }
+  } else {
+    localStorage.setItem(
+      "date",
+      new Date().toLocaleString().split(",")[0].toString()
+    );
+  }
+
   const enter_ans = document.getElementById("enter_ans");
   const ans = enter_ans.value.toLowerCase().trim().toString();
   if (!data) {
@@ -504,6 +537,8 @@ function checkAnswer() {
       localStorage.setItem("totalRightAns", totalFullDayRightAns);            
       document.getElementById("total_right_by_full_days").innerHTML =
         totalFullDayRightAns;
+        localStorage.setItem("timestamp",Date.now())
+        setTimer();
     }
     enter_ans.style.backgroundColor = "green";
     enter_ans.style.color = "white";
@@ -526,8 +561,7 @@ function showAnswer() {
 }
 
 // Function to get the remaining time of the timer
-function getRemainingTime() {
-  if (!timer) return 0; // If no timer is set, return 0
+function getRemainingTime() {  
   let elapsedTime = Date.now() - startSessionTime;
   let remainingTime = sessionStartTimerBasicTime - elapsedTime; // 300000 milliseconds = 5 minutes
   return Math.max(0, remainingTime); // Ensure remaining time is not negative
@@ -550,12 +584,23 @@ function formatTime(milliseconds) {
 
 // Set a timer with a 5-minute delay
 function setTimer() {
-  clearTimeout(timer); // Clear the previous timer if it exists
-  startSessionTime = Date.now(); // Store the start time
-  timer = setTimeout(timerFunction, sessionStartTimerBasicTime); // Set a new timer for 5 minutes  
+  // clearTimeout(timer); // Clear the previous timer if it exists
+  // startSessionTime = Date.now(); // Store the start time  
+  // timer = setTimeout(timerFunction, sessionStartTimerBasicTime); // Set a new timer for 5 minutes  
   // updateRemainingTime(); // Update the remaining time immediately after setting the timer
   // Update the remaining time every second
   clearInterval(sessionInterval);
+
+  const reset_timestamp = localStorage.getItem("reset-timestamp");
+
+  if(reset_timestamp === 'true'){
+    localStorage.setItem("reset-timestamp",false);
+    localStorage.setItem('timestamp',Date.now())
+  }
+
+  const getSesstionTime = localStorage.getItem("timestamp") || 0;
+  
+  startSessionTime = getSesstionTime;
   sessionInterval = setInterval(updateRemainingTime, 1000);
 }
 
@@ -566,7 +611,7 @@ function timerFunction() {
 
   document.getElementById("total_right_attempt").innerHTML = 0;
   totalRightAnswer = 0;      
-  setTimer();  
+  // setTimer();  
 }
 
 function updateDailyCounter() {
