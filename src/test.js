@@ -402,6 +402,8 @@ function resetEditUserDefineValueMode() {
   isEditModeOn = 0;
   UserDefined1.disabled = true;
   showButtonId.innerHTML = "Show";
+  UserDefined1.style.backgroundColor = "lightblue";
+  UserDefined1.style.borderWidth = "0px";
 }
 
 function toggleQuestionType() {
@@ -514,6 +516,7 @@ function toggleIsShowFavOnly(event) {
 
 function nextValue() {
   shwoBlankData();
+  resetEditUserDefineValueMode();
 
   getData();
 }
@@ -621,6 +624,8 @@ function showAnswer() {
     showButtonId.innerHTML = "Save";
     isEditModeOn = 2;
     UserDefined1.disabled = false;
+    UserDefined1.style.backgroundColor = "transparent";
+    UserDefined1.style.borderWidth = "1px";
     return;
   }
 
