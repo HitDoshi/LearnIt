@@ -2,6 +2,17 @@ var testDBName = "test";
 var testDBVersion = 1;
 var testStoreName = "data";
 
+var subjectDBName = "subject";
+var subjectDBVersion = 1;
+var subjectStoreName = "subjectData";
+var subjectDB;
+
+var topicDBName = "topic";
+var topicDBVersion = 1;
+var topicStoreName = "topicData";
+var topicDB;
+var keyIndex = "subjectTopicIndex";
+
 var allData = [];
 var selected_subject = 0;
 var selected_topic = 0;
@@ -38,6 +49,72 @@ userOpenRequest.onerror = (event) => {
 
 userOpenRequest.onsuccess = (event) => {
   userDB = event.target.result;
+};
+
+var subjectDataOpenRequest = indexedDB.open("subject", subjectDBVersion);
+subjectDataOpenRequest.onupgradeneeded = (event) => {
+  subjectDB = event.target.result;
+
+  // Create the object store if it doesn't exist
+  if (!subjectDB.objectStoreNames.contains(subjectStoreName)) {
+    const objectStore = subjectDB.createObjectStore(subjectStoreName, {
+      keyPath: "id",
+    });
+    // Create a compound index for subjectId and topicId
+    // objectStore.createIndex("subjectIndex", ["id"]);
+  }
+};
+
+subjectDataOpenRequest.onerror = (event) => {
+  console.error("Database error: " + event.target.error);
+};
+
+subjectDataOpenRequest.onsuccess = (event) => {
+  subjectDB = event.target.result;
+
+  var isUserOnline = navigator.onLine;
+
+  const transaction = subjectDB.transaction(subjectStoreName, "readonly");
+  const objectStore = transaction.objectStore(subjectStoreName);
+
+  const request = objectStore.getAll();
+  request.onsuccess = (event) => {
+    console.log(event.target.result);
+    subjectData = event.target.result;
+    renderListItems();
+  };
+};
+
+var topicDataOpenRequest = indexedDB.open("topic", topicDBVersion);
+topicDataOpenRequest.onupgradeneeded = (event) => {
+  topicDB = event.target.result;
+
+  // Create the object store if it doesn't exist
+  if (!topicDB.objectStoreNames.contains(topicStoreName)) {
+    const objectStore = topicDB.createObjectStore(topicStoreName, {
+      keyPath: "id",
+    });
+    // Create a compound index for subjectId and topicId
+    objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+  }
+};
+
+topicDataOpenRequest.onerror = (event) => {
+  console.error("Database error: " + event.target.error);
+};
+
+topicDataOpenRequest.onsuccess = (event) => {
+  topicDB = event.target.result;
+
+  var isUserOnline = navigator.onLine;
+  const transaction = topicDB.transaction(topicStoreName, "readonly");
+  const objectStore = transaction.objectStore(topicStoreName);
+
+  const request = objectStore.getAll();
+  request.onsuccess = (event) => {
+    console.log(event.target.result);
+    setTopicData();
+  };
 };
 
 function replaceStateWithHistory(page) {
@@ -87,7 +164,7 @@ async function openDatabase(dbName, dbVersion, storeName) {
 async function getTopicData() {
   try {
     const subjectID = localStorage.getItem("subject") || 1;
-    const url = `https://learnit123.000webhostapp.com/api/get_topic_data.php?SubjectID=${subjectID}`;
+    const url = `https://learnit123.000webhostapp.com/api/get_topic_data.php`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -96,31 +173,103 @@ async function getTopicData() {
 
     const responseData = await response.json();
     console.log(responseData);
-    topicData = responseData.data;
-    customRenderListItems();
+
+    if (responseData.success) {
+      // topicData = responseData.data;
+
+      if (!topicDB) {
+        console.error("Database is not open yet.");
+        return;
+      }
+
+      const transaction = topicDB.transaction(topicStoreName, "readwrite");
+      const objectStore = transaction.objectStore(topicStoreName);
+
+      // Check if data.json records already exist in IndexedDB
+      objectStore.count().onsuccess = (event) => {
+        const count = event.target.result;
+
+        const clearRequest = objectStore.clear();
+
+        clearRequest.onsuccess = async () => {
+          // Store subject data from data.json into IndexedDB
+          await responseData.data.forEach((item) => {
+            objectStore.add(item);
+          });
+
+          setTopicData();
+        };
+
+        clearRequest.onerror = (event) => {
+          console.error("Error clearing IndexedDB:", event.target.error);
+        };
+      };
+    }
   } catch (error) {
     console.error("Request failed", error);
   }
 }
 
-getData();
 async function getData() {
-  try {
-    const url = "https://learnit123.000webhostapp.com/api/get_subject_data.php";
-    const response = await fetch(url);
+  var isUserOnline = navigator.onLine;
+  if (isUserOnline) {
+    try {
+      const url =
+        "https://learnit123.000webhostapp.com/api/get_subject_data.php";
+      const response = await fetch(url);
 
-    if (!response.ok) {
-      throw new Error(`Request failed with status: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Request failed with status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log(responseData);
+
+      if (responseData.success) {
+        // subjectData = responseData.data;
+
+        if (!subjectDB) {
+          subjectData = responseData.data;
+          renderListItems();
+          getTopicData();
+          console.error("Database is not open yet.");
+          return;
+        }
+
+        const transaction = subjectDB.transaction(
+          subjectStoreName,
+          "readwrite"
+        );
+        const objectStore = transaction.objectStore(subjectStoreName);
+
+        // Check if data.json records already exist in IndexedDB
+        objectStore.count().onsuccess = (event) => {
+          const count = event.target.result;
+
+          const clearRequest = objectStore.clear();
+
+          clearRequest.onsuccess = () => {
+            // Store subject data from data.json into IndexedDB
+            responseData.data.forEach((item) => {
+              objectStore.add(item);
+            });
+
+            subjectData = responseData.data;
+
+            renderListItems();
+
+            getTopicData();
+          };
+
+          clearRequest.onerror = (event) => {
+            console.error("Error clearing IndexedDB:", event.target.error);
+          };
+        };
+      }
+    } catch (error) {
+      setTopicData();
+      console.error("Request failed", error);
     }
-
-    const responseData = await response.json();
-    console.log(responseData);
-    subjectData = responseData.data;
-    renderListItems();
-
-    getTopicData();
-  } catch (error) {
-    console.error("Request failed", error);
   }
 }
 
@@ -164,7 +313,7 @@ const listItemTemplate = (text, translateValue, index) => {
 
 const renderListItems = () => {
   console.log("--", subjectData);
-  dropdownList.innerHTML += subjectData
+  dropdownList.innerHTML = subjectData
     .map((item, index) => {
       const subject = parseInt(localStorage.getItem("subject")) || 1;
 
@@ -210,7 +359,8 @@ dropdownList.addEventListener("click", (e) => {
   localStorage.setItem("total_right", 0);
   selected_subject = translateValue;
   getTopicData();
-  customRenderListItems();
+  setTopicData();
+  // customRenderListItems();
 });
 
 dropdownList.addEventListener("mousemove", (e) => {
@@ -268,6 +418,38 @@ const customRenderListItems = () => {
     100 * 0,
     -1
   );
+};
+
+const setTopicData = () => {
+  try {
+    if (!topicDB) {
+      console.log("Topic Database is not open yet");
+      showToast("Topic Database is not open yet !!");
+      return;
+    }
+
+    topicData = [];
+
+    const selected_subject = localStorage.getItem("subject") || 1;
+
+    // Access the object store
+    const transaction = topicDB.transaction(topicStoreName, "readonly");
+    const objectStore = transaction.objectStore(topicStoreName);
+
+    const request = objectStore.getAll();
+    request.onsuccess = (event) => {
+      console.log(event.target.result);
+      event.target.result.forEach((item) => {
+        if (item.subjectId == selected_subject) {
+          topicData.push(item);
+        }
+      });
+      customRenderListItems();
+    };
+  } catch (error) {
+    console.log(error);
+    showToast(error.message);
+  }
 };
 
 const setCustomDropdownProps = (deg, ht, opacity) => {

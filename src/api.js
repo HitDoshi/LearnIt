@@ -12,6 +12,20 @@ var apiIndexedDB =
 
 let apiDB; // Reference to the IndexedDB database
 
+function signOutUser() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  localStorage.removeItem("useremail");
+  toggleNavIcon();
+  isTokenChange();
+}
+
+function userAuthMiddleware(data) {
+  if(data.status === 401 || data.status === 403 || data.status === 404) {
+    signOutUser();    
+  }
+}
+
 function logInFunction() {
   try {
     var form = document.getElementById("loginForm");
@@ -192,11 +206,7 @@ function deleteUserFunction() {
         if (data?.success) {
           showToast(data?.message);
           $("#deleteAccountModal").modal("hide"); // hide login modal
-          localStorage.removeItem("token");
-          localStorage.removeItem("username");
-          localStorage.removeItem("useremail");
-          toggleNavIcon();
-          isTokenChange();
+          signOutUser();
         } else {
           showToast(data?.message);
         }
@@ -248,6 +258,9 @@ function feedbackFunction() {
       )
         .then((response) => response.json())
         .then((data) => {
+
+          userAuthMiddleware(data);
+
           if (data?.success) {
             showToast(data?.message);
             username.value = "";
@@ -354,6 +367,9 @@ async function uploadUserDataFunction(showLogs = true) {
         )
           .then((response) => response.json())
           .then((data) => {
+
+            userAuthMiddleware(data);
+
             if (data?.success) {
               if (showLogs) {
                 showToast(data?.message);
