@@ -857,7 +857,7 @@
                 objectStore.add(item);
               });
               $("#loadingModal").modal("hide");
-              showToast("Download successfully !!");
+              showToast(`Total ${jsonData.data.length} records downloaded successfully !!`);
             } else {
               // User confirmed, proceed with data reloading
               // Delete all records from IndexedDB
@@ -871,7 +871,7 @@
                   objectStore.add(item);
                 });
                 $("#loadingModal").modal("hide");
-                showToast("Download successfully !!");
+                showToast(`Total ${jsonData.data.length} records downloaded successfully !!`);
               };
 
               clearRequest.onerror = (event) => {
@@ -884,6 +884,7 @@
         .catch((error) => {
           console.error("Error loading JSON data: " + error);
           $("#loadingModal").modal("hide");
+          showToast("Error at downloading data: " + error?.message);
         });
     }
 

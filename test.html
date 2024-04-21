@@ -296,11 +296,16 @@
       </div>
 
       <div class="data-display">
-        <h6
+        <!-- <h6
           id="show_UserDefined1"
           class="text_container"
           style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
-        ></h6>        
+        ></h6>         -->
+        <input type="text" id="show_UserDefined1" 
+        style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
+        autocomplete="off"
+        disabled
+        />
       </div>
 
       <div class="data-display" style="align-items: center;">
@@ -316,12 +321,21 @@
       
     </div>
 
-    <div class="toast-container" id="toastContainer"></div>
-
+    <div class="toast-container" id="toastContainer"></div>    
+    <div id="snackbar"></div>    
 
     <script src="./src/test.js"></script>
     <script src="./src/displayToast.js"></script>
     <script src="./src/api.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var input = document.getElementById('enter_ans');
+        input.addEventListener('input', function() {
+          this.value = this.value.toLowerCase();
+        });
+      });
+    </script>
     
   </body>
 </html>

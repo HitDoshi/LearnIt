@@ -27,7 +27,9 @@ var answer = "";
 var timer;
 var startSessionTime;
 var sessionStartTimerBasicTime = 300000; // 5 min = 300000 sec
-var sessionInterval,dailyInterval;
+var sessionInterval, dailyInterval;
+
+let isEditModeOn = 0; // 0 means off, 1 means on edit , 2 means on save
 
 let db; // Reference to the IndexedDB database
 
@@ -42,6 +44,9 @@ var indexedDB =
   window.shimIndexedDB;
 // var request = indexedDB.deleteDatabase("test");
 const openRequest = indexedDB.open(dbName, dbVersion);
+
+const showButtonId = document.getElementById("show_button");
+const UserDefined1 = document.getElementById("show_UserDefined1");
 
 window.addEventListener("load", function () {
   clearTimeout(timer); // Clear the previous timer if it exists
@@ -121,7 +126,7 @@ openRequest.onsuccess = async function (event) {
 
     document.getElementById("total_question").innerHTML =
       isFavOnly == "true" ? favData.length : totalData.length;
-    document.getElementById("total_right_attempt").innerHTML = totalRightAnswer;        
+    document.getElementById("total_right_attempt").innerHTML = totalRightAnswer;
     document.getElementById("total_right_by_full_days").innerHTML =
       totalFullDayRightAns;
 
@@ -325,37 +330,80 @@ function toggleFavValue(event) {
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
 
-  if (isChecked) {
-    favData.push(data);
-  } else {
-    favData.forEach((item, index) => {
-      if (item.id == data.id) {
-        favData.splice(index, 1);
-      }
-    });
-  }
-
-  console.log(favData.length);
-
-  totalData.forEach((item, index) => {
-    if (item.id == data.id) {
-      item.isFav = isChecked;
-    }
-  });
-
-  totalData = shuffle(totalData);
-  favData = shuffle(favData);
-
   const request = objectStore.get(data.id);
   request.onsuccess = (event) => {
     const data = event.target.result;
     if (data) {
       data.isFav = isChecked;
-      objectStore.put(data);
+      const updateRequest = objectStore.put(data);
+      updateRequest.onsuccess = () => {
+        if (isChecked) {
+          favData.push(data);
+        } else {
+          favData.forEach((item, index) => {
+            if (item.id == data.id) {
+              favData.splice(index, 1);
+            }
+          });
+        }
+
+        totalData.forEach((item, index) => {
+          if (item.id == data.id) {
+            item.isFav = isChecked;
+          }
+        });
+
+        totalData = shuffle(totalData);
+        favData = shuffle(favData);
+      };
+      updateRequest.onerror = () => {
+        showToast("Error while updating data !!");
+      };
     }
   };
   // setTimer();
 }
+function saveUserDefineValue1() {
+  if (!db) {
+    console.error("Database is not open yet.");
+    return;
+  }
+
+  if (!data) {
+    return;
+  }
+
+  const transaction = db.transaction(storeName, "readwrite");
+  const objectStore = transaction.objectStore(storeName);
+
+  const request = objectStore.get(data.id);
+  request.onsuccess = (event) => {
+    const existingData = event.target.result;
+    if (existingData) {
+      const updatedUserDefined1 = UserDefined1.value || "";
+      console.log(updatedUserDefined1);
+      existingData.UserDefined1 = updatedUserDefined1;
+      const updateRequest = objectStore.put(existingData);
+      updateRequest.onsuccess = () => {
+        totalData.forEach((item, index) => {
+          if (item.id == data.id) {
+            item.UserDefined1 = updatedUserDefined1;
+          }
+        });
+      };
+      updateRequest.onerror = () => {
+        showToast("Error while updating data !!");
+      };
+    }
+  };
+}
+
+function resetEditUserDefineValueMode() {
+  isEditModeOn = 0;
+  UserDefined1.disabled = true;
+  showButtonId.innerHTML = "Show";
+}
+
 function toggleQuestionType() {
   const q = localStorage.getItem("toggle_question");
   console.log(q);
@@ -391,18 +439,6 @@ function toggleSkipValue(event) {
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
 
-  totalData.forEach((item, index) => {
-    if (item.id == data.id) {
-      totalData.splice(index, 1);
-    }
-  });
-
-  favData.forEach((item, index) => {
-    if (item.id == data.id) {
-      favData.splice(index, 1);
-    }
-  });
-
   const request = objectStore.get(data.id);
   request.onsuccess = (event) => {
     const data = event.target.result;
@@ -414,8 +450,24 @@ function toggleSkipValue(event) {
         totalFavData--;
       }
       data.isSkip = isChecked;
-      objectStore.put(data);
-      console.log(data);
+
+      const updateRequest = objectStore.put(data);
+      updateRequest.onsuccess = () => {
+        totalData.forEach((item, index) => {
+          if (item.id == data.id) {
+            totalData.splice(index, 1);
+          }
+        });
+
+        favData.forEach((item, index) => {
+          if (item.id == data.id) {
+            favData.splice(index, 1);
+          }
+        });
+      };
+      updateRequest.onerror = () => {
+        showToast("Error while updating data !!");
+      };
     }
   };
   // setTimer();
@@ -428,7 +480,7 @@ function showData() {
 
   try {
     const value1 = document.getElementById("value_1");
-    const UserDefined1 = document.getElementById("show_UserDefined1");
+    // const UserDefined1 = document.getElementById("show_UserDefined1");
     const isFav = document.getElementById("toggle_fav");
     const isSkip = document.getElementById("toggle_skip");
 
@@ -438,7 +490,8 @@ function showData() {
       value1.innerText = data.value1;
     }
 
-    UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
+    // UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
+    UserDefined1.value = data?.UserDefined1 ? data.UserDefined1 : "";
 
     isFav.checked = data.isFav;
     isSkip.checked = data.isSkip;
@@ -454,7 +507,7 @@ function toggleIsShowFavOnly(event) {
   console.log(favData.length);
   console.log(totalData.length);
   document.getElementById("total_question").innerHTML =
-    isFavOnly == "true" ? favData.length : totalData.length;       
+    isFavOnly == "true" ? favData.length : totalData.length;
 
   getData();
 }
@@ -468,7 +521,7 @@ function nextValue() {
 function shwoBlankData() {
   document.getElementById("value_1").innerText = "";
   document.getElementById("show_ans").innerText = "";
-  document.getElementById("show_UserDefined1").innerText = "";
+  document.getElementById("show_UserDefined1").value = "";
   const isFav = (document.getElementById("toggle_fav").checked = false);
   const isSkip = (document.getElementById("toggle_skip").checked = false);
   const enter_ans = document.getElementById("enter_ans");
@@ -481,8 +534,8 @@ function shwoBlankData() {
 
 function checkAnswer() {
   const remainingTime = getRemainingTime();
-  if(remainingTime == 0){
-    localStorage.setItem("timestamp",Date.now());
+  if (remainingTime == 0) {
+    localStorage.setItem("timestamp", Date.now());
     setTimer();
     timerFunction();
   }
@@ -495,7 +548,7 @@ function checkAnswer() {
     const storeDate = new Date(date).getTime();
 
     if (currentDate > storeDate) {
-      uploadDailyUserDataFunction(false); 
+      uploadDailyUserDataFunction(false);
       uploadUserActivity();
       localStorage.setItem(
         "date",
@@ -534,11 +587,11 @@ function checkAnswer() {
       totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
       totalFullDayRightAns++;
       console.log("totalFullDayRightAns", totalFullDayRightAns);
-      localStorage.setItem("totalRightAns", totalFullDayRightAns);            
+      localStorage.setItem("totalRightAns", totalFullDayRightAns);
       document.getElementById("total_right_by_full_days").innerHTML =
         totalFullDayRightAns;
-        localStorage.setItem("timestamp",Date.now())
-        setTimer();
+      localStorage.setItem("timestamp", Date.now());
+      setTimer();
     }
     enter_ans.style.backgroundColor = "green";
     enter_ans.style.color = "white";
@@ -557,11 +610,30 @@ function showAnswer() {
     return;
   }
   document.getElementById("show_ans").innerText = answer;
+
+  if (isEditModeOn === 0) {
+    showButtonId.innerHTML = "Edit";
+    isEditModeOn = 1;
+    return;
+  }
+
+  if (isEditModeOn === 1) {
+    showButtonId.innerHTML = "Save";
+    isEditModeOn = 2;
+    UserDefined1.disabled = false;
+    return;
+  }
+
+  if (isEditModeOn === 2) {
+    saveUserDefineValue1();
+    resetEditUserDefineValueMode();
+    return;
+  }
   // setTimer();
 }
 
 // Function to get the remaining time of the timer
-function getRemainingTime() {  
+function getRemainingTime() {
   let elapsedTime = Date.now() - startSessionTime;
   let remainingTime = sessionStartTimerBasicTime - elapsedTime; // 300000 milliseconds = 5 minutes
   return Math.max(0, remainingTime); // Ensure remaining time is not negative
@@ -571,7 +643,8 @@ function getRemainingTime() {
 function updateRemainingTime() {
   let remainingTime = getRemainingTime();
   // Assuming you have an HTML element with id="session_counter" to display the remaining time
-  document.getElementById('session_counter').innerText = formatTime(remainingTime);
+  document.getElementById("session_counter").innerText =
+    formatTime(remainingTime);
 }
 
 // Function to format milliseconds into a readable time format (mm:ss)
@@ -579,27 +652,29 @@ function formatTime(milliseconds) {
   let totalSeconds = Math.floor(milliseconds / 1000);
   let minutes = Math.floor(totalSeconds / 60);
   let seconds = totalSeconds % 60;
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  return `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
 }
 
 // Set a timer with a 5-minute delay
 function setTimer() {
   // clearTimeout(timer); // Clear the previous timer if it exists
-  // startSessionTime = Date.now(); // Store the start time  
-  // timer = setTimeout(timerFunction, sessionStartTimerBasicTime); // Set a new timer for 5 minutes  
+  // startSessionTime = Date.now(); // Store the start time
+  // timer = setTimeout(timerFunction, sessionStartTimerBasicTime); // Set a new timer for 5 minutes
   // updateRemainingTime(); // Update the remaining time immediately after setting the timer
   // Update the remaining time every second
   clearInterval(sessionInterval);
 
-  const reset_timestamp = localStorage.getItem("reset-timestamp");
+  // const reset_timestamp = localStorage.getItem("reset-timestamp");
 
-  if(reset_timestamp === 'true'){
-    localStorage.setItem("reset-timestamp",false);
-    localStorage.setItem('timestamp',Date.now())
-  }
+  // if (reset_timestamp === "true") {
+  //   localStorage.setItem("reset-timestamp", false);
+  //   localStorage.setItem("timestamp", Date.now());
+  // }
 
   const getSesstionTime = localStorage.getItem("timestamp") || 0;
-  
+
   startSessionTime = getSesstionTime;
   sessionInterval = setInterval(updateRemainingTime, 1000);
 }
@@ -610,8 +685,8 @@ function timerFunction() {
   localStorage.setItem("total_right", 0);
 
   document.getElementById("total_right_attempt").innerHTML = 0;
-  totalRightAnswer = 0;      
-  // setTimer();  
+  totalRightAnswer = 0;
+  // setTimer();
 }
 
 function updateDailyCounter() {
@@ -624,7 +699,9 @@ function updateDailyCounter() {
   const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
-  document.getElementById("daily_counter").innerText = `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+  document.getElementById("daily_counter").innerText = `${hours
+    .toString()
+    .padStart(2, "0")} : ${minutes.toString().padStart(2, "0")} : ${seconds
+    .toString()
+    .padStart(2, "0")}`;
 }
-
-
