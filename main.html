@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="./styles/main.style.css" />
   <link rel="stylesheet" href="./styles/toast.style.css" />
   <link rel="stylesheet" href="./styles/navBar.style.css" />
+  <link rel="stylesheet" href="./styles/loader.style.css" />
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
@@ -671,6 +672,19 @@
     </div>
   </div>
 
+  <!-- Loading Modal -->
+
+  <div class="modal fade" id="modal-loading" data-backdrop="static">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="max-width: 150px; margin: 0 auto;">
+      <div class="modal-content">
+        <div class="modal-body text-center" style="display: flex;flex-direction: row;align-items: center;justify-content: center;gap: 12px;">
+          <div class="loading-spinner"></div>
+           <div>Loading</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const loginIcon = document.getElementById("loginIcon");
     // const signOutIcon = document.getElementById("signOutIcon");
@@ -823,8 +837,8 @@
 
 
     function loadData() {
-      getQuizData().then(() => {
-        getUserData();
+      getUserData().then(() => {
+        getQuizData();
       });
     }
 
@@ -832,7 +846,9 @@
       const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
 
       const SubjectID = localStorage.getItem("subject") || 1;
-      $("#loadingModal").modal("hide");
+      $("#modal-loading").modal("show");
+      // Wait for a short delay to ensure the modal is fully shown
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       console.log('SubjectID', SubjectID);
 
       return fetch(
@@ -856,7 +872,7 @@
                 item.isSkip = false;
                 objectStore.add(item);
               });
-              $("#loadingModal").modal("hide");
+              $("#modal-loading").modal("hide");
               showToast(`Total ${jsonData.data.length} records downloaded successfully !!`);
             } else {
               // User confirmed, proceed with data reloading
@@ -870,7 +886,7 @@
                   item.isSkip = false;
                   objectStore.add(item);
                 });
-                $("#loadingModal").modal("hide");
+                $("#modal-loading").modal("hide");
                 showToast(`Total ${jsonData.data.length} records downloaded successfully !!`);
               };
 
@@ -878,12 +894,12 @@
                 console.error("Error clearing IndexedDB:", event.target.error);
               };
             }
-            $("#loadingModal").modal("hide");
+            $("#modal-loading").modal("hide");
           };
         })
         .catch((error) => {
           console.error("Error loading JSON data: " + error);
-          $("#loadingModal").modal("hide");
+          $("#modal-loading").modal("hide");
           showToast("Error at downloading data: " + error?.message);
         });
     }

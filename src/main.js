@@ -12,6 +12,8 @@ var topicDBVersion = 1;
 var topicStoreName = "topicData";
 var topicDB;
 var keyIndex = "subjectTopicIndex";
+var latestSubjectLoaded = false;
+var isShowLoading = false;
 
 var allData = [];
 var selected_subject = 0;
@@ -79,9 +81,13 @@ subjectDataOpenRequest.onsuccess = (event) => {
 
   const request = objectStore.getAll();
   request.onsuccess = (event) => {
+    const isUserOnline = navigator.onLine;
     console.log(event.target.result);
     subjectData = event.target.result;
-    renderListItems();
+    const isLatestSubjectLoaded = localStorage.getItem("latestSubjectLoaded");
+    if (isLatestSubjectLoaded === "true") {
+      renderListItems();
+    }
   };
 };
 
@@ -112,8 +118,12 @@ topicDataOpenRequest.onsuccess = (event) => {
 
   const request = objectStore.getAll();
   request.onsuccess = (event) => {
+    const isUserOnline = navigator.onLine;
     console.log(event.target.result);
-    setTopicData();
+    const isLatestSubjectLoaded = localStorage.getItem("latestSubjectLoaded");
+    if (isLatestSubjectLoaded === "true") {
+      setTopicData();
+    }
   };
 };
 
@@ -163,56 +173,75 @@ async function openDatabase(dbName, dbVersion, storeName) {
 
 async function getTopicData() {
   try {
-    const subjectID = localStorage.getItem("subject") || 1;
-    const url = `https://learnit123.000webhostapp.com/api/get_topic_data.php`;
-    const response = await fetch(url);
+    const isUserOnline = navigator.onLine;
+    if (isUserOnline && !latestSubjectLoaded) {
+      const subjectID = localStorage.getItem("subject") || 1;
+      const url = `https://learnit123.000webhostapp.com/api/get_topic_data.php`;
+      const response = await fetch(url);
 
-    if (!response.ok) {
-      throw new Error(`Request failed with status: ${response.status}`);
-    }
-
-    const responseData = await response.json();
-    console.log(responseData);
-
-    if (responseData.success) {
-      // topicData = responseData.data;
-
-      if (!topicDB) {
-        console.error("Database is not open yet.");
-        return;
+      if (!response.ok) {
+        throw new Error(`Request failed with status: ${response.status}`);
       }
 
-      const transaction = topicDB.transaction(topicStoreName, "readwrite");
-      const objectStore = transaction.objectStore(topicStoreName);
+      const responseData = await response.json();
+      console.log(responseData);
 
-      // Check if data.json records already exist in IndexedDB
-      objectStore.count().onsuccess = (event) => {
-        const count = event.target.result;
+      $("#modal-loading").modal("hide");
+      isShowLoading = false;
 
-        const clearRequest = objectStore.clear();
+      if (responseData.success) {
+        // topicData = responseData.data;
 
-        clearRequest.onsuccess = async () => {
-          // Store subject data from data.json into IndexedDB
-          await responseData.data.forEach((item) => {
-            objectStore.add(item);
-          });
+        if (!topicDB) {
+          console.error("Database is not open yet.");
+          return;
+        }
 
-          setTopicData();
+        const transaction = topicDB.transaction(topicStoreName, "readwrite");
+        const objectStore = transaction.objectStore(topicStoreName);
+
+        // Check if data.json records already exist in IndexedDB
+        objectStore.count().onsuccess = (event) => {
+          const count = event.target.result;
+
+          const clearRequest = objectStore.clear();
+
+          clearRequest.onsuccess = async () => {
+            // Store subject data from data.json into IndexedDB
+            await responseData.data.forEach((item) => {
+              objectStore.add(item);
+            });
+
+            latestSubjectLoaded = true;
+            localStorage.setItem("latestSubjectLoaded", true);
+
+            setTopicData();
+          };
+
+          clearRequest.onerror = (event) => {
+            console.error("Error clearing IndexedDB:", event.target.error);
+          };
         };
-
-        clearRequest.onerror = (event) => {
-          console.error("Error clearing IndexedDB:", event.target.error);
-        };
-      };
+      }
     }
   } catch (error) {
     console.error("Request failed", error);
+    showToast(error.message);
+    $("#modal-loading").modal("hide");
+    isShowLoading = false;
   }
 }
 
 async function getData() {
-  var isUserOnline = navigator.onLine;
-  if (isUserOnline) {
+  const isUserOnline = navigator.onLine;
+  const isLatestSubjectLoaded = localStorage.getItem("latestSubjectLoaded");
+  if (isUserOnline && isLatestSubjectLoaded !== "true") {
+    $("#modal-loading").modal("show");
+    isShowLoading = true;
+
+    // Wait for a short delay to ensure the modal is fully shown
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     try {
       const url =
         "https://learnit123.000webhostapp.com/api/get_subject_data.php";
@@ -233,6 +262,8 @@ async function getData() {
           renderListItems();
           getTopicData();
           console.error("Database is not open yet.");
+          $("#modal-loading").modal("hide");
+          isShowLoading = false;
           return;
         }
 
@@ -263,12 +294,18 @@ async function getData() {
 
           clearRequest.onerror = (event) => {
             console.error("Error clearing IndexedDB:", event.target.error);
+            $("#modal-loading").modal("hide");
+            isShowLoading = false;
           };
         };
+      } else {
+        $("#modal-loading").modal("hide");
+        isShowLoading = false;
       }
     } catch (error) {
-      setTopicData();
       console.error("Request failed", error);
+      $("#modal-loading").modal("hide");
+      isShowLoading = false;
     }
   }
 }
@@ -386,11 +423,13 @@ const customMainButton = document.querySelector(".custom-dropdown-button");
 const customFloatingIcon = document.querySelector(".custom-floating-icon");
 
 const customListItemTemplate = (text, translateValue, index) => {
+  if (index === -1) {
+    index = 0;
+  }
+
   return `
     <li class="custom-dropdown-list-item">
-      <button class="custom-dropdown-button list-button" data-translate-value="${translateValue}%" data-value="${
-    index + 1
-  }">
+      <button class="custom-dropdown-button list-button" data-translate-value="${translateValue}%" data-value="${index}">
         <span class="text-truncate">${text}</span>
       </button>
     </li>
@@ -404,12 +443,12 @@ const customRenderListItems = () => {
     .map((item, index) => {
       const topic = parseInt(localStorage.getItem("topic")) || 1;
 
-      if (topic - 1 == index) {
+      if (topic == item.topicId || topic == 0) {
         customDropdownTitle.innerHTML = item.topic;
         localStorage.setItem("topic", topic);
       }
       setCustomDropdownProps(0, 0, 0);
-      return customListItemTemplate(item.topic, 100 * index, index);
+      return customListItemTemplate(item.topic, 100 * index, item.topicId);
     })
     .join("");
 
@@ -448,7 +487,6 @@ const setTopicData = () => {
     };
   } catch (error) {
     console.log(error);
-    showToast(error.message);
   }
 };
 
@@ -498,4 +536,19 @@ customDropdownList.addEventListener("mousemove", (e) => {
     x - iconSize / 2 + "px"
   );
   root.style.setProperty("--custom-floating-icon-top", y - iconSize / 2 + "px");
+});
+
+$(document).ready(function () {
+  $("#modal-loading").on("show.bs.modal", function () {
+    // Do something when the modal is shown
+    console.log("Modal is shown");
+    if (!isShowLoading) {
+      $("#modal-loading").modal("hide");
+    }
+  });
+
+  $("#modal-loading").on("hide.bs.modal", function () {
+    // Do something when the modal is hidden
+    console.log("Modal is hidden");
+  });
 });
