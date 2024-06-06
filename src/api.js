@@ -42,7 +42,7 @@ function logInFunction() {
       buttonText.textContent = "Logging in...";
 
       console.log(form);
-      fetch("https://learnit123.000webhostapp.com/api/login.php", {
+      fetch(`${API_URL}/api/login.php`, {
         method: "POST",
         body: JSON.stringify({
           email,
@@ -96,7 +96,7 @@ function signUpFunction() {
       buttonText.textContent = "Signing up...";
 
       console.log(form);
-      fetch("https://learnit123.000webhostapp.com/api/signup.php", {
+      fetch(`${API_URL}/api/signup.php`, {
         method: "POST",
         body: JSON.stringify({
           email,
@@ -147,7 +147,7 @@ function forgotPassFunction() {
 
       console.log(form);
       fetch(
-        "https://learnit123.000webhostapp.com/api/requestForgotPassword.php",
+        `${API_URL}/api/requestForgotPassword.php`,
         {
           method: "POST",
           body: JSON.stringify({
@@ -196,7 +196,7 @@ function deleteUserFunction() {
     const token = localStorage.getItem("token");
 
     fetch(
-      `https://learnit123.000webhostapp.com/api/deleteAccount.php?token=${token}`,
+      `${API_URL}/api/deleteAccount.php?token=${token}`,
       {
         method: "GET",
       }
@@ -246,7 +246,7 @@ function feedbackFunction() {
       const token = localStorage.getItem("token");
 
       fetch(
-        `https://learnit123.000webhostapp.com/api/feedback.php?token=${token}`,
+        `${API_URL}/api/feedback.php?token=${token}`,
         {
           method: "post",
           body: JSON.stringify({
@@ -356,7 +356,7 @@ async function uploadUserDataFunction(showLogs = true) {
 
         // Continue with the fetch request inside the .then block
         fetch(
-          `https://learnit123.000webhostapp.com/api/uploadUserData.php?token=${token}`,
+          `${API_URL}/api/uploadUserData.php?token=${token}`,
           {
             method: "POST",
             body: JSON.stringify({
@@ -414,7 +414,7 @@ async function uploadDailyUserDataFunction() {
       .then((data) => {
         console.log("Data retrieved from IndexedDB:", data);
         fetch(
-          `https://learnit123.000webhostapp.com/api/uploadUserData.php?token=${token}`,
+          `${API_URL}/api/uploadUserData.php?token=${token}`,
           {
             method: "POST",
             body: JSON.stringify({
@@ -462,7 +462,7 @@ async function uploadUserActivity() {
     var date = localStorage.getItem("date");
 
     fetch(
-      `https://learnit123.000webhostapp.com/api/uploadUserActivity.php?token=${token}`,
+      `${API_URL}/api/uploadUserActivity.php?token=${token}`,
       {
         method: "post",
         body: JSON.stringify({

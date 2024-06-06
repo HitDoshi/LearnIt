@@ -1,0 +1,1 @@
+var API_URL = "https://learnit123.fun"

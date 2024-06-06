@@ -176,7 +176,7 @@ async function getTopicData() {
     const isUserOnline = navigator.onLine;
     if (isUserOnline && !latestSubjectLoaded) {
       const subjectID = localStorage.getItem("subject") || 1;
-      const url = `https://learnit123.000webhostapp.com/api/get_topic_data.php`;
+      const url = `${API_URL}/api/get_topic_data.php`;
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -244,7 +244,7 @@ async function getData() {
 
     try {
       const url =
-        "https://learnit123.000webhostapp.com/api/get_subject_data.php";
+        `${API_URL}/api/get_subject_data.php`;
       const response = await fetch(url);
 
       if (!response.ok) {
