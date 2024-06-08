@@ -172,6 +172,9 @@ async function countData() {
       return;
     }
 
+    totalData = [];
+    favData = [];
+
     // Access the object store
     const transaction = db.transaction(storeName, "readwrite");
     const objectStore = transaction.objectStore(storeName);
@@ -195,7 +198,7 @@ async function countData() {
       if (cursor) {
         const data = cursor.value;
 
-        if (data.isSkip) {
+        if (data.isSkip || data.showInDays != 0) {
           totalSkipData++;
         } else {
           if (data.isFav) {
@@ -475,6 +478,58 @@ function toggleSkipValue(event) {
   // setTimer();
 }
 
+async function changeShowInDaysValue() {
+  if (!db) {
+    console.error("Database is not open yet.");
+    return;
+  }
+
+  if (!data) {
+    return;
+  }
+
+  const showInDaysValue = document.getElementById("showInDays").value;
+
+  const transaction = db.transaction(storeName, "readwrite");
+  const objectStore = transaction.objectStore(storeName);
+
+  const request = objectStore.get(data.id);
+  request.onsuccess = (event) => {
+    const data = event.target.result;
+    if (data) {
+      // if (showInDaysValue != 0 && !data.isSkip) {
+      //   allData--;
+      // }
+      // if (data.isFav && !data.isSkip && showInDaysValue != 0) {
+      //   totalFavData--;
+      // }
+      console.log(allData);
+      data.showInDays = parseInt(showInDaysValue);
+
+      const updateRequest = objectStore.put(data);
+      updateRequest.onsuccess = () => {
+        if (!data.isSkip && showInDaysValue != 0) {
+          totalData.forEach((item, index) => {
+            if (item.id == data.id) {
+              totalData.splice(index, 1);
+            }
+          });
+
+          favData.forEach((item, index) => {
+            if (item.id == data.id) {
+              favData.splice(index, 1);
+            }
+          });
+        }
+      };
+      updateRequest.onerror = () => {
+        showToast("Error while updating data !!");
+      };
+    }
+  };
+  // setTimer();
+}
+
 function showData() {
   if (!data) {
     return;
@@ -485,6 +540,7 @@ function showData() {
     // const UserDefined1 = document.getElementById("show_UserDefined1");
     const isFav = document.getElementById("toggle_fav");
     const isSkip = document.getElementById("toggle_skip");
+    const showInDays = document.getElementById("showInDays");
 
     if (toggleQuestion == "true") {
       value1.innerText = data.value2;
@@ -497,6 +553,8 @@ function showData() {
 
     isFav.checked = data.isFav;
     isSkip.checked = data.isSkip;
+    showInDays.value = data.showInDays;
+
     // setTimer();
   } catch (error) {
     console.log("Error:-->", error?.message);
@@ -514,11 +572,14 @@ function toggleIsShowFavOnly(event) {
   getData();
 }
 
-function nextValue() {
+async function nextValue() {
+  changeShowInDaysValue();
   shwoBlankData();
   resetEditUserDefineValueMode();
 
-  getData();
+  await countData();
+
+  await getData();
 }
 
 function shwoBlankData() {
@@ -532,6 +593,7 @@ function shwoBlankData() {
   enter_ans.style.color = "black";
 
   document.getElementById("enter_ans").value = "";
+  document.getElementById("showInDays").value = 0;
   // setTimer();
 }
 
@@ -551,6 +613,37 @@ function checkAnswer() {
     const storeDate = new Date(date).getTime();
 
     if (currentDate > storeDate) {
+      const transaction = db.transaction(storeName, "readwrite");
+      const objectStore = transaction.objectStore(storeName);
+
+      // Open a cursor to iterate over all items in the store
+      try {
+        const request = objectStore.openCursor();
+        request.onsuccess = (event) => {
+          const cursor = event.target.result;
+          if (cursor) {
+            const data = cursor.value;
+            if (data.showInDays > 0) {
+              // Only update if isFav is not already false
+              data.showInDays = data.showInDays - 1;
+              const updateRequest = objectStore.put(data);
+              updateRequest.onsuccess = () => {
+                console.log("ShowInDays updated successfully");
+              };
+              updateRequest.onerror = () => {
+                showToast("Error while updating data !!");
+              };
+            }
+            cursor.continue(); // Move to the next item
+          }
+        };
+        request.onerror = () => {
+          showToast("Error while retrieving data !!");
+        };
+      } catch (error) {
+        console.log('Error in showInDays update !',error);
+      }
+
       uploadDailyUserDataFunction(false);
       uploadUserActivity();
       localStorage.setItem(

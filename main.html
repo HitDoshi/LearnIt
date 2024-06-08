@@ -872,6 +872,7 @@
               jsonData.data.forEach((item) => {
                 item.isFav = false;
                 item.isSkip = false;
+                item.showInDays = 0;
                 objectStore.add(item);
               });
               $("#modal-loading").modal("hide");
@@ -886,6 +887,7 @@
                 jsonData.data.forEach((item) => {
                   item.isFav = false;
                   item.isSkip = false;
+                  item.showInDays = 0;
                   objectStore.add(item);
                 });
                 $("#modal-loading").modal("hide");

@@ -101,11 +101,10 @@
       </div>
     </nav> -->
 
-    <nav
-      class="navbar navbar-expand-lg fixed-top"
-      id="myNavbar"
-    >
-      <a class="navbar-brand" style="color: white;flex: 1;padding-left: 10px;">LearnIt</a>
+    <nav class="navbar navbar-expand-lg fixed-top" id="myNavbar">
+      <a class="navbar-brand" style="color: white; flex: 1; padding-left: 10px"
+        >LearnIt</a
+      >
       <!-- <button
         class="navbar-toggler"
         type="button"
@@ -117,17 +116,38 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button> -->
-      <div class="" id="navbarNavDropdown" style="display: flex;flex-direction: row;">
-        <ul class="navbar-nav ml-auto" style="display: flex;flex-direction: row;gap: 15px;">
+      <div
+        class=""
+        id="navbarNavDropdown"
+        style="display: flex; flex-direction: row"
+      >
+        <ul
+          class="navbar-nav ml-auto"
+          style="display: flex; flex-direction: row; gap: 15px"
+        >
           <li class="nav-item active">
             <!-- <a
               class="nav-link"
               onclick="replaceStateWithHistory('main.html');"           
               >Main</a
-            > -->            
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16" class="nav-link" onclick="replaceStateWithHistory('main.html');" style="height: 100%;">
-              <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/>
-              <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"/>
+            > -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-house-fill"
+              viewBox="0 0 16 16"
+              class="nav-link"
+              onclick="replaceStateWithHistory('main.html');"
+              style="height: 100%"
+            >
+              <path
+                d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"
+              />
+              <path
+                d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"
+              />
             </svg>
           </li>
           <!-- <li class="nav-item active">
@@ -141,17 +161,35 @@
           </li> -->
           <li class="nav-item" id="toggleQuestionValue">
             <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onclick="toggleQuestionType()" style="height: 100%;">
-              <path fill="#FFFFFF" d="M16,17.01V10h-2v7.01h-3L15,21l4,-3.99h-3zM9,3L5,6.99h3V14h2V6.99h3L9,3z"/>
-          </svg>
-          
-                          
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              onclick="toggleQuestionType()"
+              style="height: 100%"
+            >
+              <path
+                fill="#FFFFFF"
+                d="M16,17.01V10h-2v7.01h-3L15,21l4,-3.99h-3zM9,3L5,6.99h3V14h2V6.99h3L9,3z"
+              />
+            </svg>
           </li>
           <li class="nav-item">
             <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onclick="window.location.href = 'matchPair.html'" style="height: 100%;">
-              <path fill="#FFFFFF" d="M9.01,14H2v2h7.01v3L13,15l-3.99,-4V14zM14.99,13v-3H22V8h-7.01V5L11,9L14.99,13z"/>
-          </svg>                    
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              onclick="window.location.href = 'matchPair.html'"
+              style="height: 100%"
+            >
+              <path
+                fill="#FFFFFF"
+                d="M9.01,14H2v2h7.01v3L13,15l-3.99,-4V14zM14.99,13v-3H22V8h-7.01V5L11,9L14.99,13z"
+              />
+            </svg>
           </li>
           <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
           <div
@@ -161,14 +199,25 @@
           >
             ↺
           </div> -->
-          
-          <li class="nav-item">            
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16" class="nav-link" onclick="window.location.href = 'manageRecord.html?id=1'" style="height: 100%;">
-              <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
-          </svg>
-          
+
+          <li class="nav-item">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-pencil-fill"
+              viewBox="0 0 16 16"
+              class="nav-link"
+              onclick="window.location.href = 'manageRecord.html?id=1'"
+              style="height: 100%"
+            >
+              <path
+                d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"
+              />
+            </svg>
           </li>
-          
+
           <!-- <li class="nav-item" onclick="window.close();">            
             <p class="" style="color: white;height: 100%; justify-content: center;cursor: pointer;
             align-items: center;display: flex;">EXIT</p>
@@ -202,95 +251,146 @@
     <div
       class="container"
       style="max-width: 500px; margin: auto; margin-top: 50px; padding: 20px"
-    >      
-
+    >
       <div class="options" id="toggle-question-window-container">
         <input type="checkbox" id="toggle_question_type" />
         <label for="toggle_question_type" class="prevent-select"
           >Based on Value-2</label
         >
-      </div>              
+      </div>
 
-      <div style="display: flex;flex-direction: row;flex: 2;">
-      <div class="options" style="flex: 2;">
-        <input type="checkbox" id="show_fav_only" />
-        <label for="show_fav_only" class="prevent-select"
-          >Show Favourites Only</label
+      <div style="display: flex; flex-direction: row; flex: 2">
+        <div class="options" style="flex: 2">
+          <input type="checkbox" id="show_fav_only" />
+          <label for="show_fav_only" class="prevent-select"
+            >Show Favourites Only</label
+          >
+        </div>
+        <div
+          class="status-info"
+          style="display: flex; flex-direction: row; flex: 1"
         >
-      </div>      
-      <div class="status-info" style="display: flex; flex-direction: row; flex: 1;">
-        <h6 id="total_question"></h6>
-        <h6 style="margin-left: 2px;margin-right: 2px;">/</h6>
-        <h6 id="total_right_attempt" style="color: green;"></h6>
-        <h6 style="margin-left: 2px;margin-right: 2px;">/</h6>
-        <h6 id="total_right_by_full_days" style="color: #00569d;"></h6>
-    </div>
-    
-      
-    </div>
+          <h6 id="total_question"></h6>
+          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
+          <h6 id="total_right_attempt" style="color: green"></h6>
+          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
+          <h6 id="total_right_by_full_days" style="color: #00569d"></h6>
+        </div>
+      </div>
 
-      <div style="
-       display: flex;
-  flex-direction: row;
-  flex: 1;
-  gap:30px;
-  margin-top: 5px;
-  margin-bottom: 5px;">
-        <div style="">
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          flex: 1;
+          gap: 30px;
+          margin-top: 5px;
+          margin-bottom: 5px;
+        "
+      >
+        <div>
           <input type="checkbox" id="toggle_fav" />
           <label for="toggle_fav" class="prevent-select">Favourite</label>
         </div>
-        <div style="">
+
+        <div>
           <input type="checkbox" id="toggle_skip" />
           <label for="toggle_skip" class="prevent-select">Skip</label>
         </div>
+
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1;
+            min-height: 30px;
+          "
+        >
+          <label
+            for="show_in_days"
+            class="prevent-select"
+            style="margin-right: 5px"
+            >Show in, days:
+          </label>
+          <input
+            type="number"
+            id="showInDays"
+            autocomplete="off"
+            style="width: 60px"
+            min="0"
+            max="99"
+            pattern="[0-9]"
+          />
+        </div>
       </div>
-      
+
       <div class="data-display">
         <h6
           id="value_1"
           class="text_container prevent-select"
-          style="flex: 1;max-width: 380px; white-space: normal; word-wrap: break-word;min-height: 40px;"
+          style="
+            flex: 1;
+            max-width: 380px;
+            white-space: normal;
+            word-wrap: break-word;
+            min-height: 40px;
+          "
         ></h6>
         <button
           onclick="nextValue()"
           id="next_button"
           type="button"
           class="btn btn-secondary"
-          style="outline: none; box-shadow: none;width: 80px;"
+          style="outline: none; box-shadow: none; width: 80px"
         >
           Next
         </button>
       </div>
 
       <div class="data-entry">
-        <input type="text" id="enter_ans" 
-        style="flex: 1;max-width: 380px; white-space: normal; word-wrap: break-word;min-height: 40px;min-width:0%;"
-        autocomplete="off"
+        <input
+          type="text"
+          id="enter_ans"
+          style="
+            flex: 1;
+            max-width: 380px;
+            white-space: normal;
+            word-wrap: break-word;
+            min-height: 40px;
+            min-width: 0%;
+          "
+          autocomplete="off"
         />
         <button
           onclick="checkAnswer()"
           id="check_button"
           type="button"
           class="btn btn-secondary"
-          style="outline: none; box-shadow: none;width: 80px;"
+          style="outline: none; box-shadow: none; width: 80px"
         >
           Check
         </button>
       </div>
 
-      <div class="data-display" style="margin-top: 10px;">
+      <div class="data-display" style="margin-top: 10px">
         <h6
           id="show_ans"
           class="text_container"
-          style="flex: 1;max-width: 380px; white-space: normal; word-wrap: break-word;min-height: 40px;"
+          style="
+            flex: 1;
+            max-width: 380px;
+            white-space: normal;
+            word-wrap: break-word;
+            min-height: 40px;
+          "
         ></h6>
         <button
           onclick="showAnswer()"
           id="show_button"
           type="button"
           class="btn btn-secondary"
-          style="outline: none; box-shadow: none;width: 80px;"
+          style="outline: none; box-shadow: none; width: 80px"
         >
           Show
         </button>
@@ -302,42 +402,80 @@
           class="text_container"
           style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
         ></h6>         -->
-        <input type="text" id="show_UserDefined1" 
-        class="text_container"
-        style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;border-width: 0px;background-color: lightblue;color: black;"
-        autocomplete="off"
-        disabled
+        <input
+          type="text"
+          id="show_UserDefined1"
+          class="text_container"
+          style="
+            flex: 1;
+            white-space: normal;
+            word-wrap: break-word;
+            min-height: 40px;
+            border-width: 0px;
+            background-color: lightblue;
+            color: black;
+          "
+          autocomplete="off"
+          disabled
         />
       </div>
 
-      <div class="data-display" style="align-items: center;">
-        <label for="session_counter" class="prevent-select">Session counter will reset in:</label>
+      <div class="data-display" style="align-items: center">
+        <label for="session_counter" class="prevent-select"
+          >Session counter will reset in:</label
+        >
         <h6 id="session_counter"></h6>
       </div>
 
-      <div class="data-display" style="align-items: center;">
-        <label for="daily_counter" class="prevent-select">Daily counter will reset in:</label>
+      <div class="data-display" style="align-items: center">
+        <label for="daily_counter" class="prevent-select"
+          >Daily counter will reset in:</label
+        >
         <h6 id="daily_counter"></h6>
       </div>
-
-      
     </div>
 
-    <div class="toast-container" id="toastContainer"></div>    
-    <div id="snackbar"></div>    
+    <div class="toast-container" id="toastContainer"></div>
+    <div id="snackbar"></div>
 
     <script src="./src/test.js"></script>
     <script src="./src/displayToast.js"></script>
     <script src="./src/api.js"></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var input = document.getElementById('enter_ans');
-        input.addEventListener('input', function() {
+      document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("enter_ans");
+        input.addEventListener("input", function () {
           this.value = this.value.toLowerCase();
         });
       });
+
+      document
+        .getElementById("showInDays")
+        .addEventListener("input", function (e) {
+          let value = parseInt(e.target.value);
+          if (value < 0) {
+            e.target.value = 0;
+          } else if (value > 99) {
+            e.target.value = 99;
+          }
+        });
+
+      var input = document.getElementById("showInDays");
+      input.onkeydown = function (e) {
+        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+        if (
+          !(
+            (48 <= e.which && e.which <= 57) ||
+            (96 <= e.which && e.which <= 105)
+          )
+        ) {
+          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+          if (e.key.length === 1) {
+            e.preventDefault(); // Prevent the default action (typing)
+          }
+        }
+      };
     </script>
-    
   </body>
 </html>
