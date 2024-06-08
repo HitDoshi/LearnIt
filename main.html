@@ -873,6 +873,7 @@
                 item.isFav = false;
                 item.isSkip = false;
                 item.showInDays = 0;
+                item.lastShown = 0;
                 objectStore.add(item);
               });
               $("#modal-loading").modal("hide");
@@ -888,6 +889,7 @@
                   item.isFav = false;
                   item.isSkip = false;
                   item.showInDays = 0;
+                  item.lastShown = 0;
                   objectStore.add(item);
                 });
                 $("#modal-loading").modal("hide");

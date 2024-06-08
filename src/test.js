@@ -505,6 +505,7 @@ async function changeShowInDaysValue() {
       // }
       console.log(allData);
       data.showInDays = parseInt(showInDaysValue);
+      data.lastShown = parseInt(showInDaysValue);
 
       const updateRequest = objectStore.put(data);
       updateRequest.onsuccess = () => {
@@ -541,6 +542,7 @@ function showData() {
     const isFav = document.getElementById("toggle_fav");
     const isSkip = document.getElementById("toggle_skip");
     const showInDays = document.getElementById("showInDays");
+    const lastShown = document.getElementById("last_shown");
 
     if (toggleQuestion == "true") {
       value1.innerText = data.value2;
@@ -554,6 +556,7 @@ function showData() {
     isFav.checked = data.isFav;
     isSkip.checked = data.isSkip;
     showInDays.value = data.showInDays;
+    lastShown.innerHTML = data.lastShown;
 
     // setTimer();
   } catch (error) {
@@ -573,7 +576,10 @@ function toggleIsShowFavOnly(event) {
 }
 
 async function nextValue() {
-  changeShowInDaysValue();
+  const showInDaysValue = document.getElementById("showInDays").value;
+  if (data.showInDays != parseInt(showInDaysValue)) {
+    changeShowInDaysValue();
+  }
   shwoBlankData();
   resetEditUserDefineValueMode();
 
@@ -594,6 +600,7 @@ function shwoBlankData() {
 
   document.getElementById("enter_ans").value = "";
   document.getElementById("showInDays").value = 0;
+  document.getElementById("last_shown").innerHTML = 0;
   // setTimer();
 }
 
@@ -641,7 +648,7 @@ function checkAnswer() {
           showToast("Error while retrieving data !!");
         };
       } catch (error) {
-        console.log('Error in showInDays update !',error);
+        console.log("Error in showInDays update !", error);
       }
 
       uploadDailyUserDataFunction(false);

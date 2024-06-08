@@ -263,7 +263,7 @@
         <div class="options" style="flex: 2">
           <input type="checkbox" id="show_fav_only" />
           <label for="show_fav_only" class="prevent-select"
-            >Show Favourites Only</label
+            >Favs Only</label
           >
         </div>
         <div
@@ -290,7 +290,7 @@
       >
         <div>
           <input type="checkbox" id="toggle_fav" />
-          <label for="toggle_fav" class="prevent-select">Favourite</label>
+          <label for="toggle_fav" class="prevent-select">My Fav</label>
         </div>
 
         <div>
@@ -418,6 +418,13 @@
           autocomplete="off"
           disabled
         />
+      </div>
+
+      <div class="data-display" style="align-items: center">
+        <label for="last_shown" class="prevent-select"
+          >Last shown:</label
+        >
+        <h6 id="last_shown"></h6>
       </div>
 
       <div class="data-display" style="align-items: center">

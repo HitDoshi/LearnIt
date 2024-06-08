@@ -119,6 +119,8 @@ document
         UserDefined1: UserDefined1,
         isFav: isFav,
         isSkip: isSkip,
+        showInDays : 0,
+        lastShown : 0,
       });
       // You can submit the form or perform other actions here.
     }
@@ -393,7 +395,8 @@ function showInDaysData(item) {
   request.onsuccess = (event) => {
     const data = event.target.result;
     if (data) {
-      data.showInDays = item.value || 0
+      data.showInDays = item.value || 0;
+      data.lastShown = item.value || 0;
       objectStore.put(data);
     }
   };
