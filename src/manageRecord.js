@@ -856,22 +856,53 @@ async function getData() {
     };
   });
 }
-
-function addUserData(newData) {
+async function addUserData(newData) {
   if (!userDB) {
     console.error("Database is not open yet.");
     throw new Error("Database is not open yet.");
   }
 
-  console.log(userDB);
+  let maxIdNumber = 0;
 
-  const transaction = userDB.transaction("userData", "readwrite");
+  const transaction = userDB.transaction(["userData", "userData"], "readwrite");
   const objectStore = transaction.objectStore("userData");
+  const objectStore1 = transaction.objectStore("userData");
 
-  objectStore.count().onsuccess = (event) => {
-    const recordCount = event.target.result;
+  // Function to handle cursor iteration
+  const getMaxId = () => {
+    return new Promise((resolve, reject) => {
+      const request1 = objectStore1.openCursor();
+      request1.onsuccess = (event) => {
+        const cursor1 = event.target.result;
+        if (cursor1) {
+          const data = cursor1.value;
+          console.log(data, '--');
+          if (data.id > maxIdNumber) {
+            maxIdNumber = data.id;
+          }
+          cursor1.continue(); // Move to the next item
+        } else {
+          resolve(maxIdNumber);
+        }
+      };
+      request1.onerror = () => {
+        reject("Error while retrieving data !!");
+      };
+    });
+  };
 
-    newData["id"] = recordCount + 1;
+  try {
+    maxIdNumber = await getMaxId();
+    console.log(maxIdNumber);
+
+    // Count the number of records
+    const countRequest = objectStore.count();
+    const recordCount = await new Promise((resolve, reject) => {
+      countRequest.onsuccess = (event) => resolve(event.target.result);
+      countRequest.onerror = (event) => reject(event.target.error);
+    });
+
+    newData["id"] = maxIdNumber + 1;
     const request = objectStore.add(newData);
 
     request.onsuccess = (event) => {
@@ -885,5 +916,18 @@ function addUserData(newData) {
     request.onerror = (event) => {
       console.error("Error adding data: " + event.target.error);
     };
-  };
+
+    transaction.oncomplete = () => {
+      console.log("Transaction completed successfully.");
+    };
+
+    transaction.onerror = (event) => {
+      console.error("Transaction error: " + event.target.error);
+    };
+
+  } catch (error) {
+    console.error("Error in showInDays update !", error);
+    showToast("Error while retrieving data !!");
+  }
 }
+

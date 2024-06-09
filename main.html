@@ -929,13 +929,19 @@
 
             console.log("---->UserData", jsonData);
 
+            let id = 1;
+
             if (count == 0) {
               // Store data from data.json into IndexedDB
               jsonData.data.forEach((item) => {
+                item.id = id;
                 item.isFav = false;
                 item.isSkip = false;
                 item.subjectId = parseInt(item.subjectId);
+                item.showInDays = 0;
+                item.lastShown = 0;
                 objectStore.add(item);
+                id++;
               });
             } else {
               if (jsonData.data.length > 0) {
@@ -944,10 +950,14 @@
                 clearRequest.onsuccess = () => {
                   // Store data from data.json into IndexedDB
                   jsonData.data.forEach((item) => {
+                    item.id = id;
                     item.isFav = false;
                     item.isSkip = false;
                     item.subjectId = parseInt(item.subjectId);
+                    item.showInDays = 0;
+                    item.lastShown = 0;
                     objectStore.add(item);
+                    id++;
                   });
                 };
 
