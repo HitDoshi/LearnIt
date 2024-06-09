@@ -259,43 +259,10 @@
         >
       </div>
 
-      <div style="display: flex; flex-direction: row; flex: 2">
-        <div class="options" style="flex: 2">
+      <div style="display: flex; flex-direction: row;">
+        <div class="options" style="">
           <input type="checkbox" id="show_fav_only" />
-          <label for="show_fav_only" class="prevent-select"
-            >Favs Only</label
-          >
-        </div>
-        <div
-          class="status-info"
-          style="display: flex; flex-direction: row; flex: 1"
-        >
-          <h6 id="total_question"></h6>
-          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
-          <h6 id="total_right_attempt" style="color: green"></h6>
-          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
-          <h6 id="total_right_by_full_days" style="color: #00569d"></h6>
-        </div>
-      </div>
-
-      <div
-        style="
-          display: flex;
-          flex-direction: row;
-          flex: 1;
-          gap: 30px;
-          margin-top: 5px;
-          margin-bottom: 5px;
-        "
-      >
-        <div>
-          <input type="checkbox" id="toggle_fav" />
-          <label for="toggle_fav" class="prevent-select">My Fav</label>
-        </div>
-
-        <div>
-          <input type="checkbox" id="toggle_skip" />
-          <label for="toggle_skip" class="prevent-select">Skip</label>
+          <label for="show_fav_only" class="prevent-select">Favs Only</label>
         </div>
 
         <div
@@ -323,6 +290,40 @@
             pattern="[0-9]"
           />
         </div>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          flex: 1;
+          gap: 30px;
+          margin-top: 5px;
+          margin-bottom: 5px;
+        "
+      >
+        <div>
+          <input type="checkbox" id="toggle_fav" />
+          <label for="toggle_fav" class="prevent-select">My Fav</label>
+        </div>
+
+        <div>
+          <input type="checkbox" id="toggle_skip" />
+          <label for="toggle_skip" class="prevent-select">Skip</label>
+        </div>
+
+        
+        <div
+          class="status-info"
+          style="display: flex; flex-direction: row; flex: 0.65;justify-content: flex-end;"
+        >
+          <h6 id="total_question"></h6>
+          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
+          <h6 id="total_right_attempt" style="color: green"></h6>
+          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
+          <h6 id="total_right_by_full_days" style="color: #00569d"></h6>
+        </div>
+        
       </div>
 
       <div class="data-display">
@@ -421,9 +422,7 @@
       </div>
 
       <div class="data-display" style="align-items: center">
-        <label for="last_shown" class="prevent-select"
-          >Last shown:</label
-        >
+        <label for="last_shown" class="prevent-select">Last shown:</label>
         <h6 id="last_shown"></h6>
       </div>
 
@@ -453,7 +452,11 @@
       document.addEventListener("DOMContentLoaded", function () {
         var input = document.getElementById("enter_ans");
         input.addEventListener("input", function () {
+          const cursorPosition = this.selectionStart;
+
           this.value = this.value.toLowerCase();
+          this.setSelectionRange(cursorPosition, cursorPosition);
+
         });
       });
 
