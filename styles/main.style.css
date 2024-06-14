@@ -209,7 +209,7 @@ li.dropdown-list-item {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 34rem;
+  max-width: 34rem;  
 }
 
 .custom-dropdown-title-icon,
