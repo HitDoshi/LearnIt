@@ -604,7 +604,7 @@ function shwoBlankData() {
   // setTimer();
 }
 
-function checkAnswer() {
+async function checkAnswer() {
   const remainingTime = getRemainingTime();
   if (remainingTime == 0) {
     localStorage.setItem("timestamp", Date.now());
@@ -619,37 +619,41 @@ function checkAnswer() {
     const currentDate = new Date(today).getTime();
     const storeDate = new Date(date).getTime();
 
-    if (currentDate > storeDate) {
-      const transaction = db.transaction(storeName, "readwrite");
-      const objectStore = transaction.objectStore(storeName);
+    // const transaction = db.transaction(storeName, "readwrite");
+    //   const objectStore = transaction.objectStore(storeName);
 
-      // Open a cursor to iterate over all items in the store
-      try {
-        const request = objectStore.openCursor();
-        request.onsuccess = (event) => {
-          const cursor = event.target.result;
-          if (cursor) {
-            const data = cursor.value;
-            if (data.showInDays > 0) {
-              // Only update if isFav is not already false
-              data.showInDays = data.showInDays - 1;
-              const updateRequest = objectStore.put(data);
-              updateRequest.onsuccess = () => {
-                console.log("ShowInDays updated successfully");
-              };
-              updateRequest.onerror = () => {
-                showToast("Error while updating data !!");
-              };
-            }
-            cursor.continue(); // Move to the next item
-          }
-        };
-        request.onerror = () => {
-          showToast("Error while retrieving data !!");
-        };
-      } catch (error) {
-        console.log("Error in showInDays update !", error);
-      }
+    //   // Open a cursor to iterate over all items in the store
+    //   try {
+    //     const request = objectStore.openCursor();
+    //     request.onsuccess = (event) => {
+    //       const cursor = event.target.result;
+    //       if (cursor) {
+    //         const data = cursor.value;
+    //         if (data.showInDays > 0) {
+    //           // Only update if isFav is not already false
+    //           data.showInDays = data.showInDays - 1;
+    //           const updateRequest = objectStore.put(data);
+    //           updateRequest.onsuccess = () => {
+    //             console.log("ShowInDays updated successfully");
+    //           };
+    //           updateRequest.onerror = () => {
+    //             showToast("Error while updating data !!");
+    //           };
+    //         }
+    //         cursor.continue(); // Move to the next item
+    //       }
+    //     };
+    //     request.onerror = () => {
+    //       showToast("Error while retrieving data !!");
+    //     };
+    //   } catch (error) {
+    //     console.log("Error in showInDays update !", error);
+    //   }
+
+    if (currentDate > storeDate) {      
+      
+      await updateRegularShowInDaysValue();
+      await updateUserShowInDaysValue();
 
       uploadDailyUserDataFunction(false);
       uploadUserActivity();
@@ -809,4 +813,145 @@ function updateDailyCounter() {
     .padStart(2, "0")} : ${minutes.toString().padStart(2, "0")} : ${seconds
     .toString()
     .padStart(2, "0")}`;
+}
+
+async function updateUserShowInDaysValue(){
+
+  var userIndexedDB =
+  window.indexedDB ||
+  window.mozIndexedDB ||
+  window.webkitIndexedDB ||
+  window.msIndexedDB ||
+  window.shimIndexedDB;
+// var request = indexedDB.deleteDatabase("test");
+  const openRequest = userIndexedDB.open("user", "1");
+
+  let userDB;
+
+  openRequest.onupgradeneeded = (event) => {
+    userDB = event.target.result;
+    // Create the object store if it doesn't exist
+    if (!userDB.objectStoreNames.contains("userData")) {
+      var UserObjectStore = userDB.createObjectStore("userData", { keyPath: "id" });
+  
+      // Create a compound index for subjectId and topicId
+      if (topic == 0) {
+        UserObjectStore.createIndex("subjectIndex", ["subjectId"]);
+      } else {
+        UserObjectStore.createIndex("subjectIndex", ["subjectId", "topicId"]);
+      }
+    }
+  };
+  
+  openRequest.onerror = (event) => {
+    console.error("Database error: " + event.target.errorCode);
+  };
+  
+  // Handle the database open success event
+  openRequest.onsuccess = async function (event) {
+    userDB = event.target.result;
+
+    const transaction = userDB.transaction("userData", "readwrite");
+    const objectStore = transaction.objectStore("userData");
+
+    // Open a cursor to iterate over all items in the store
+    try {
+      const request = objectStore.openCursor();
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          const data = cursor.value;
+          if (data.showInDays > 0) {
+            // Only update if isFav is not already false
+            data.showInDays = data.showInDays - 1;
+            const updateRequest = objectStore.put(data);
+            updateRequest.onsuccess = () => {
+              console.log("ShowInDays updated successfully");
+            };
+            updateRequest.onerror = () => {
+              showToast("Error while updating data !!");
+            };
+          }
+          cursor.continue(); // Move to the next item
+        }
+      };
+      request.onerror = () => {
+        showToast("Error while retrieving data !!");
+      };
+    } catch (error) {
+      console.log("Error in showInDays update !", error);
+    }
+     
+  };
+  
+}
+
+async function updateRegularShowInDaysValue(){
+
+  var regularIndexedDB =
+  window.indexedDB ||
+  window.mozIndexedDB ||
+  window.webkitIndexedDB ||
+  window.msIndexedDB ||
+  window.shimIndexedDB;
+// var request = indexedDB.deleteDatabase("test");
+  const openRequest = regularIndexedDB.open("test", "1");
+
+  let regularDB;
+
+  openRequest.onupgradeneeded = (event) => {
+    regularDB = event.target.result;
+    // Create the object store if it doesn't exist
+    if (!regularDB.objectStoreNames.contains("data")) {
+      var RegularObjectStore = regularDB.createObjectStore("data", { keyPath: "id" });
+  
+      // Create a compound index for subjectId and topicId
+      if (topic == 0) {
+        RegularObjectStore.createIndex("subjectTopicIndex", ["subjectId"]);
+      } else {
+        RegularObjectStore.createIndex("subjectTopicIndex", ["subjectId", "topicId"]);
+      }
+    }
+  };
+  
+  openRequest.onerror = (event) => {
+    console.error("Database error: " + event.target.errorCode);
+  };
+  
+  // Handle the database open success event
+  openRequest.onsuccess = async function (event) {
+    regularDB = event.target.result;
+
+    const transaction = regularDB.transaction("data", "readwrite");
+    const objectStore = transaction.objectStore("data");
+
+    // Open a cursor to iterate over all items in the store
+    try {
+      const request = objectStore.openCursor();
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          const data = cursor.value;
+          if (data.showInDays > 0) {
+            // Only update if isFav is not already false
+            data.showInDays = data.showInDays - 1;
+            const updateRequest = objectStore.put(data);
+            updateRequest.onsuccess = () => {
+              console.log("ShowInDays updated successfully");
+            };
+            updateRequest.onerror = () => {
+              showToast("Error while updating data !!");
+            };
+          }
+          cursor.continue(); // Move to the next item
+        }
+      };
+      request.onerror = () => {
+        showToast("Error while retrieving data !!");
+      };
+    } catch (error) {
+      console.log("Error in showInDays update !", error);
+    }     
+  };
+  
 }

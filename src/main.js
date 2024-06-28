@@ -379,6 +379,8 @@ const customSubjectOptionTemplate = (text, translateValue, index, selected = fal
 const customSubjectRenderSelectOptions = () => {
   const selectedSubject = parseInt(localStorage.getItem("subject")) || 1;
 
+  subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
   const options = subjectData
     .map((item, index) => {
       const isSelected = selectedSubject === parseInt(item.id);
@@ -399,6 +401,7 @@ const handleSelectSubjectChange = (event) => {
   console.log(`Selected Option: ${selectedOption}`);
 
   localStorage.setItem("subject", selectedValue);
+  localStorage.setItem("topic",1);
   setTopicData();
   
   // Perform actions based on the selected value
@@ -569,7 +572,7 @@ const customOptionTemplate = (text, translateValue, index, selected = false) => 
 };
 
 const customRenderSelectOptions = () => {
-  const selectedTopic = parseInt(localStorage.getItem("topic")) || 1;
+  const selectedTopic = parseInt(localStorage.getItem("topic") || 1);
 
   const options = topicData
     .map((item, index) => {
@@ -579,7 +582,7 @@ const customRenderSelectOptions = () => {
     .join("");
 
   customDropdownSelect.innerHTML = options;
-  customDropdownSelect.innerHTML += customOptionTemplate("User Data", 100 * 0, -1, selectedTopic === -1);
+  customDropdownSelect.innerHTML += customOptionTemplate("User Data", 100 * 0, -1, selectedTopic === 0);
 };
 
 const setTopicData = () => {
@@ -606,6 +609,8 @@ const setTopicData = () => {
           topicData.push(item);
         }
       });
+
+      topicData.sort((a, b) => parseInt(a.topicId) - parseInt(b.topicId));
       customRenderSelectOptions();
     };
   } catch (error) {

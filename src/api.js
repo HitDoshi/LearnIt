@@ -319,7 +319,7 @@ const openDB = () => {
 };
 
 // Retrieve data from the database
-const getDataFromDB = () => {
+const getDataFromDB = async () => {
   return openDB().then((db) => {
     return new Promise((resolve, reject) => {
       const apiTransaction = db.transaction("userData", "readonly");
