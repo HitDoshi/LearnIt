@@ -27,15 +27,13 @@ button{
 
 .data-display {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  flex-direction: row;  
 }
 
 
 .data-entry {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  flex-direction: row;  
 }
 
 .toggle-options{
