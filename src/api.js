@@ -20,6 +20,27 @@ function signOutUser() {
   isTokenChange();
 }
 
+function getLocation() {  
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      console.log('Geolocation is not supported by your browser');
+      reject(new Error('Geolocation is not supported by your browser'));
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          resolve({lat, lon});
+        },
+        (error) => {
+          console.log('Unable to retrieve your location');
+          reject(new Error('Unable to retrieve your location'));
+        }
+      );
+    }
+  });
+}
+
 function userAuthMiddleware(data) {
   if(data.status === 401 || data.status === 403 || data.status === 404) {
     signOutUser();    
@@ -461,13 +482,22 @@ async function uploadUserActivity() {
     const totalRightAns = parseInt(localStorage.getItem("totalRightAns")) || 0;
     var date = localStorage.getItem("date");
 
+    const location = await getLocation().catch((error) => {
+      console.error("Error:", error);
+      return {lat: null, lon: null};
+    });
+    const {lat = null, lon = null} = location;
+    console.log("lat", lat, "lon", lon);
+
     fetch(
       `${API_URL}/api/uploadUserActivity.php?token=${token}`,
       {
         method: "post",
         body: JSON.stringify({
           totalRightAns: totalRightAns,
-          date: date
+          date: date,
+          latitude: lat,
+          longitude: lon
         }),
       }
     )
