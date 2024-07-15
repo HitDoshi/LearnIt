@@ -144,7 +144,7 @@ function getData() {
 
       // Filter entries where isFav is true & isSkip is false
 
-      var favData = allData.filter((item) => item.isFav === true && item.isSkip === false);
+      var favData = allData.filter((item) => item.isFav === true && item.isSkip === false && item.showInDays === 0);
 
       console.log(favData.length);
 
