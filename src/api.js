@@ -497,7 +497,8 @@ async function uploadUserActivity() {
           totalRightAns: totalRightAns,
           date: date,
           latitude: lat,
-          longitude: lon
+          longitude: lon,
+          plateform: 'Web'
         }),
       }
     )
