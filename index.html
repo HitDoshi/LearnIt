@@ -70,7 +70,7 @@
       if (!date) {
         localStorage.setItem(
           "date",
-          new Date().toLocaleString().split(",")[0].toString()
+          new Date().toISOString().split('T')[0].toString()
         );
       }      
       window.location.href = "main.html";

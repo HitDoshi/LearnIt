@@ -382,7 +382,7 @@ async function uploadUserDataFunction(showLogs = true) {
             method: "POST",
             body: JSON.stringify({
               data: data, // Use the retrieved data directly
-              timestamp: new Date().toLocaleString()
+              // timestamp: new Date().toLocaleString()
             }),
           }
         )
@@ -495,7 +495,7 @@ async function uploadUserActivity() {
         method: "post",
         body: JSON.stringify({
           totalRightAns: totalRightAns,
-          date: date,
+          // date: date,
           latitude: lat,
           longitude: lon,
           plateform: 'Web'

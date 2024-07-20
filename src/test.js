@@ -659,7 +659,7 @@ async function checkAnswer() {
       uploadUserActivity();
       localStorage.setItem(
         "date",
-        new Date().toLocaleString().split(",")[0].toString()
+        new Date().toISOString().split('T')[0].toString()
       );
       localStorage.setItem("totalRightAns", 0);
       totalRightAnswer = 0;
