@@ -12,12 +12,15 @@
 }
 
 .prevent-select {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */  
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
 }
 
-button{
+button {
   width: fit-content;
   height: fit-content;
   padding-left: 10px;
@@ -27,16 +30,16 @@ button{
 
 .data-display {
   display: flex;
-  flex-direction: row;  
+  flex-direction: row;
 }
 
 
 .data-entry {
   display: flex;
-  flex-direction: row;  
+  flex-direction: row;
 }
 
-.toggle-options{
+.toggle-options {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -45,16 +48,21 @@ button{
   margin-bottom: 5px;
 }
 
-.alignment{
+.alignment {
   display: flex;
   flex-direction: row;
   justify-content: right;
 }
 
-a{
+a {
   cursor: pointer;
 }
 
+.upload-container {}
+
+#fileInput {
+  margin-bottom: 10px;
+}
 
 /* #mobile-navbar {
   display: none;
@@ -66,16 +74,22 @@ a{
 
 /* Media query for screens with a maximum width of 420px */
 /* @media (max-width: 991px) { */
-  #mobile-navbar {
-    display: flex;
-  }
+#mobile-navbar {
+  display: flex;
+}
 
-  #window-navbar {
-    display: none;
-  }
+#window-navbar {
+  display: none;
+}
 
-  #toggle-question-window-container{
-    display: none;
+#toggle-question-window-container {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .audio-pick {
+    flex-direction: column;
   }
+}
 
 /* } */

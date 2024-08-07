@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./styles/navBar.style.css" />
     <link rel="stylesheet" href="./styles/toast.style.css" />
     <link rel="stylesheet" href="./styles/test.style.css" />
+    <link rel="stylesheet" href="./styles/loader.style.css" />
 
     <link
       rel="stylesheet"
@@ -151,7 +152,8 @@
           align-self: center;
           margin-right: 14px;
           color: white;
-          cursor: pointer;"
+          cursor: pointer;
+        "
       >
         <path
           d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"
@@ -180,7 +182,8 @@
           align-self: center;
           margin-right: 14px;
           color: white;
-          cursor: pointer;"
+          cursor: pointer;
+        "
         id="toggleQuestionValue"
       >
         <path
@@ -200,7 +203,8 @@
           align-self: center;
           margin-right: 14px;
           color: white;
-          cursor: pointer;"
+          cursor: pointer;
+        "
       >
         <path
           fill="#FFFFFF"
@@ -226,10 +230,7 @@
         viewBox="0 0 16 16"
         class="nav-link"
         onclick="window.location.href = 'manageRecord.html?id=1'"
-        style="
-          align-self: center;          
-          color: white;
-          cursor: pointer;"
+        style="align-self: center; color: white; cursor: pointer"
       >
         <path
           d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"
@@ -275,7 +276,7 @@
         >
       </div>
 
-      <div style="display: flex; flex-direction: row;">
+      <div style="display: flex; flex-direction: row">
         <div class="options" style="">
           <input type="checkbox" id="show_fav_only" />
           <label for="show_fav_only" class="prevent-select">Favs Only</label>
@@ -318,12 +319,12 @@
           margin-bottom: 5px;
         "
       >
-        <div style="margin-right: 12px;">
+        <div style="margin-right: 12px">
           <input type="checkbox" id="toggle_fav" />
           <label for="toggle_fav" class="prevent-select">My Fav</label>
         </div>
 
-        <div style="margin-right: 12px;">
+        <div style="margin-right: 12px">
           <input type="checkbox" id="toggle_skip" />
           <label for="toggle_skip" class="prevent-select">Skip</label>
         </div>
@@ -344,7 +345,6 @@
           <h6 id="total_right_by_full_days" style="color: #00569d"></h6>
           <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
           <h6 id="last_shown" style=""></h6>
-          
         </div>
       </div>
 
@@ -451,7 +451,7 @@
         <h6 id="last_shown"></h6>
       </div> -->
 
-      <div class="data-display" style="align-items: center;margin-top: 10px;">
+      <div class="data-display" style="align-items: center; margin-top: 10px">
         <label for="session_counter" class="prevent-select"
           >Session counter will reset in:&nbsp;</label
         >
@@ -463,6 +463,77 @@
           >Daily counter will reset in:&nbsp;</label
         >
         <h6 id="daily_counter"></h6>
+      </div>
+      <div class="upload-container">
+        <div id="file-info">
+          <!-- Initial empty state -->
+          <div
+            id="empty-state"
+            style="display: flex; justify-content: space-between"
+            class="audio-pick"
+          >
+            <input type="file" id="fileInput" accept=".wav" required />
+            <button
+              onclick="uploadFile()"
+              id="uploadButton"
+              type="button"
+              class="btn btn-secondary"
+              style="outline: none; box-shadow: none; width: 80px"
+            >
+              Upload
+            </button>
+          </div>
+
+          <!-- Display when a file is uploaded -->
+          <div id="file-display" style="display: none;justify-content: space-between;align-items: center;">
+            <a href="#" id="fileNameLink" onclick="triggerFileInput(event)"></a>
+
+            <div>              
+                <button
+                  id="playPauseButton"
+                  class="btn btn-primary btn-play"
+                  style="min-width: 80px"
+                >
+                  <span class="icon-play">&#9654;</span>
+                  <span class="icon-stop d-none">&#10074;&#10074;</span>
+                  <span class="text">Play</span>
+                </button>
+              </button>
+              <button
+                onclick="uploadFile()"
+                id="uploadButton"
+                type="button"
+                class="btn btn-secondary uploadButton"
+                style="outline: none; box-shadow: none; width: 80px;"
+              >
+                Upload
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="modal-loading" data-backdrop="static">
+          <div
+            class="modal-dialog modal-sm modal-dialog-centered"
+            style="max-width: 180px; margin: 0 auto"
+          >
+            <div class="modal-content">
+              <div
+                class="modal-body text-center"
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 12px;
+                "
+              >
+                <div class="loading-spinner"></div>
+                <div>Uploading...</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

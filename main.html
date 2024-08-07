@@ -949,12 +949,14 @@
             if (count == 0) {
               // Store data from data.json into IndexedDB
               jsonData.data.forEach((item) => {
+                item.questionId = parseInt(item.id);
                 item.id = id;
                 item.isFav = false;
                 item.isSkip = false;
                 item.subjectId = parseInt(item.subjectId);
                 item.showInDays = 0;
                 item.lastShown = 0;
+                item.fileName = item.audio_file_name;
                 objectStore.add(item);
                 id++;
               });
@@ -965,12 +967,14 @@
                 clearRequest.onsuccess = () => {
                   // Store data from data.json into IndexedDB
                   jsonData.data.forEach((item) => {
+                    item.questionId = parseInt(item.id);
                     item.id = id;
                     item.isFav = false;
                     item.isSkip = false;
                     item.subjectId = parseInt(item.subjectId);
                     item.showInDays = 0;
                     item.lastShown = 0;
+                    item.fileName = item.audio_file_name;
                     objectStore.add(item);
                     id++;
                   });

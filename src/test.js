@@ -4,12 +4,18 @@ var storeName = "data";
 var keyIndex = "subjectTopicIndex";
 
 var topic = parseInt(localStorage.getItem("topic"));
+var subject = parseInt(localStorage.getItem("subject")) || 1;
+
 
 if (topic == 0) {
   dbName = "user";
   dbVersion = 1;
   storeName = "userData";
   keyIndex = "subjectIndex";
+}else{
+  if(!topic){
+    topic = 1;
+  }
 }
 
 var data = null;
@@ -29,12 +35,17 @@ var startSessionTime;
 var sessionStartTimerBasicTime = 300000; // 5 min = 300000 sec
 var sessionInterval, dailyInterval;
 
+let currentFile = null;
+let audioPlayer = null;
+let isPlaying = false;
+const audioElement = document.getElementById("audio");
+const playPauseButton = document.getElementById("playPauseButton");
+const fileNameLink = document.getElementById("fileNameLink");
+const uploadButton = document.getElementsByClassName("uploadButton");
+
 let isEditModeOn = 0; // 0 means off, 1 means on edit , 2 means on save
 
 let db; // Reference to the IndexedDB database
-
-var subject = parseInt(localStorage.getItem("subject")) || 1;
-var topic = parseInt(localStorage.getItem("topic"));
 
 var indexedDB =
   window.indexedDB ||
@@ -49,6 +60,9 @@ const showButtonId = document.getElementById("show_button");
 const UserDefined1 = document.getElementById("show_UserDefined1");
 
 window.addEventListener("load", function () {
+  if (topic != 0) {
+    document.getElementById("file-info").style.display = "none";
+  }
   clearTimeout(timer); // Clear the previous timer if it exists
 });
 
@@ -558,6 +572,28 @@ function showData() {
     showInDays.value = data.showInDays;
     lastShown.innerHTML = data.lastShown;
 
+    console.log(data);
+
+    if (data?.fileName) {
+      fileNameLink.textContent = data.fileName;
+      document.getElementById("empty-state").style.display = "none";
+      document.getElementById("file-display").style.display = "flex";
+      audioPlayer = new Audio(
+        encodeURI(`${API_URL}/assets/audio/${data.fileName}`)
+      );
+      console.log(encodeURI(`${API_URL}/assets/audio/${data.fileName}`));
+
+      audioPlayer.addEventListener("ended", function () {
+        isPlaying = false;
+        updatePlayPauseIcon();
+      });
+      uploadButton[0].style.display = "none";
+    } else {
+      document.getElementById("empty-state").style.display = "flex";
+      document.getElementById("file-display").style.display = "none";
+      uploadButton[0].style.display = "";
+    }
+
     // setTimer();
   } catch (error) {
     console.log("Error:-->", error?.message);
@@ -650,8 +686,7 @@ async function checkAnswer() {
     //     console.log("Error in showInDays update !", error);
     //   }
 
-    if (currentDate > storeDate) {      
-      
+    if (currentDate > storeDate) {
       await updateRegularShowInDaysValue();
       await updateUserShowInDaysValue();
 
@@ -659,7 +694,7 @@ async function checkAnswer() {
       uploadUserActivity();
       localStorage.setItem(
         "date",
-        new Date().toISOString().split('T')[0].toString()
+        new Date().toISOString().split("T")[0].toString()
       );
       localStorage.setItem("totalRightAns", 0);
       totalRightAnswer = 0;
@@ -815,15 +850,14 @@ function updateDailyCounter() {
     .padStart(2, "0")}`;
 }
 
-async function updateUserShowInDaysValue(){
-
+async function updateUserShowInDaysValue() {
   var userIndexedDB =
-  window.indexedDB ||
-  window.mozIndexedDB ||
-  window.webkitIndexedDB ||
-  window.msIndexedDB ||
-  window.shimIndexedDB;
-// var request = indexedDB.deleteDatabase("test");
+    window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB ||
+    window.shimIndexedDB;
+  // var request = indexedDB.deleteDatabase("test");
   const openRequest = userIndexedDB.open("user", "1");
 
   let userDB;
@@ -832,8 +866,10 @@ async function updateUserShowInDaysValue(){
     userDB = event.target.result;
     // Create the object store if it doesn't exist
     if (!userDB.objectStoreNames.contains("userData")) {
-      var UserObjectStore = userDB.createObjectStore("userData", { keyPath: "id" });
-  
+      var UserObjectStore = userDB.createObjectStore("userData", {
+        keyPath: "id",
+      });
+
       // Create a compound index for subjectId and topicId
       if (topic == 0) {
         UserObjectStore.createIndex("subjectIndex", ["subjectId"]);
@@ -842,11 +878,11 @@ async function updateUserShowInDaysValue(){
       }
     }
   };
-  
+
   openRequest.onerror = (event) => {
     console.error("Database error: " + event.target.errorCode);
   };
-  
+
   // Handle the database open success event
   openRequest.onsuccess = async function (event) {
     userDB = event.target.result;
@@ -881,20 +917,61 @@ async function updateUserShowInDaysValue(){
     } catch (error) {
       console.log("Error in showInDays update !", error);
     }
-     
   };
-  
 }
 
-async function updateRegularShowInDaysValue(){
+function updateAudioFileName(fileName) {
+  if (!db) {
+    console.error("Database is not open yet.");
+    return;
+  }
 
+  if (!data) {
+    return;
+  }
+
+  data.fileName = fileName;
+
+  const transaction = db.transaction(storeName, "readwrite");
+  const objectStore = transaction.objectStore(storeName);
+
+  const request = objectStore.get(data.id);
+
+  console.log(request);
+
+  request.onsuccess = (event) => {
+    const existingData = event.target.result;
+    if (existingData) {
+      existingData.fileName = fileName;
+      const updateRequest = objectStore.put(existingData);
+      updateRequest.onsuccess = () => {
+        totalData.forEach((item, index) => {
+          if (item.id == data.id) {
+            item.fileName = fileName;
+          }
+        });
+
+        favData.forEach((item, index) => {
+          if (item.id == data.id) {
+            item.fileName = fileName;
+          }
+        });
+      };
+      updateRequest.onerror = () => {
+        showToast("Error while updating data !!");
+      };
+    }
+  };
+}
+
+async function updateRegularShowInDaysValue() {
   var regularIndexedDB =
-  window.indexedDB ||
-  window.mozIndexedDB ||
-  window.webkitIndexedDB ||
-  window.msIndexedDB ||
-  window.shimIndexedDB;
-// var request = indexedDB.deleteDatabase("test");
+    window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB ||
+    window.shimIndexedDB;
+  // var request = indexedDB.deleteDatabase("test");
   const openRequest = regularIndexedDB.open("test", "1");
 
   let regularDB;
@@ -903,21 +980,26 @@ async function updateRegularShowInDaysValue(){
     regularDB = event.target.result;
     // Create the object store if it doesn't exist
     if (!regularDB.objectStoreNames.contains("data")) {
-      var RegularObjectStore = regularDB.createObjectStore("data", { keyPath: "id" });
-  
+      var RegularObjectStore = regularDB.createObjectStore("data", {
+        keyPath: "id",
+      });
+
       // Create a compound index for subjectId and topicId
       if (topic == 0) {
         RegularObjectStore.createIndex("subjectTopicIndex", ["subjectId"]);
       } else {
-        RegularObjectStore.createIndex("subjectTopicIndex", ["subjectId", "topicId"]);
+        RegularObjectStore.createIndex("subjectTopicIndex", [
+          "subjectId",
+          "topicId",
+        ]);
       }
     }
   };
-  
+
   openRequest.onerror = (event) => {
     console.error("Database error: " + event.target.errorCode);
   };
-  
+
   // Handle the database open success event
   openRequest.onsuccess = async function (event) {
     regularDB = event.target.result;
@@ -951,7 +1033,124 @@ async function updateRegularShowInDaysValue(){
       };
     } catch (error) {
       console.log("Error in showInDays update !", error);
-    }     
+    }
   };
-  
 }
+
+document
+  .getElementById("fileInput")
+  .addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (file && file.type === "audio/wav") {
+      currentFile = file;
+      fileNameLink.textContent = file.name;
+      document.getElementById("empty-state").style.display = "none";
+      document.getElementById("file-display").style.display = "flex";
+      audioPlayer = new Audio(URL.createObjectURL(file));
+      audioPlayer.addEventListener("ended", function () {
+        isPlaying = false;
+        updatePlayPauseIcon();
+      });
+      uploadButton[0].style.display = "";
+    } else {
+      console.log("Invalid file type");
+      showToast("Invalid file type");
+    }
+  });
+
+function triggerFileInput(event) {
+  event.preventDefault();
+  document.getElementById("fileInput").click();
+}
+
+function togglePlayPause() {
+  if (isPlaying) {
+    audioPlayer.pause();
+  } else {
+    audioPlayer.play();
+  }
+  isPlaying = !isPlaying;
+  updatePlayPauseIcon();
+}
+
+function updatePlayPauseIcon() {
+  // document.getElementById("playIcon").style.display = isPlaying
+  //   ? "none"
+  //   : "block";
+  // document.getElementById("pauseIcon").style.display = isPlaying
+  //   ? "block"
+  //   : "none";
+  // playPauseButton.querySelector(".text").textContent = isPlaying
+  //   ? "Pause"
+  //   : "Play";
+  playPauseButton.querySelector(".icon-play").classList.remove("d-none");
+  playPauseButton.querySelector(".icon-stop").classList.add("d-none");
+  playPauseButton.querySelector(".text").textContent = "Play";
+}
+
+async function uploadFile() {
+  if (currentFile) {
+    const formData = new FormData();
+    formData.append("file", currentFile);
+    // formData.append("id", data.questionId.toString());
+    const token = localStorage.getItem("token");
+    if (token) {
+      $("#modal-loading").modal("show");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      fetch(`${API_URL}/api/uploadAudio.php?token=${token}`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then(async (data) => {
+          $("#modal-loading").modal("hide");
+          console.log(data);
+          showToast(data?.message);
+          if (data?.success) {
+            await updateAudioFileName(data.fileName);
+            fileNameLink.textContent = data.fileName;
+            document.getElementById("empty-state").style.display = "none";
+            document.getElementById("file-display").style.display = "flex";
+            audioPlayer = new Audio(
+              encodeURI(`${API_URL}/assets/audio/${data.fileName}`)
+            );
+            audioPlayer.addEventListener("ended", function () {
+              isPlaying = false;
+              updatePlayPauseIcon();
+            });
+            currentFile = null;
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          showToast(error?.message);
+          $("#modal-loading").modal("hide");
+        });
+    } else {
+      console.log("Please login to upload file !!");
+      showToast("Please login to upload !!");
+    }
+  } else {
+    $("#modal-loading").modal("hide");
+    console.log("Please select a file");
+    showToast("Invalid file type");
+  }
+}
+
+playPauseButton.addEventListener("click", function () {
+  if (!isPlaying) {
+    isPlaying = true;
+    playPauseButton.querySelector(".icon-play").classList.add("d-none");
+    playPauseButton.querySelector(".icon-stop").classList.remove("d-none");
+    playPauseButton.querySelector(".text").textContent = "";
+    audioPlayer.play();
+  } else {
+    isPlaying = false;
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0; // Optional: Reset audio to the beginning
+    playPauseButton.querySelector(".icon-play").classList.remove("d-none");
+    playPauseButton.querySelector(".icon-stop").classList.add("d-none");
+    playPauseButton.querySelector(".text").textContent = "Play";
+  }
+});
