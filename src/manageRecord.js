@@ -396,7 +396,7 @@ function showInDaysData(item) {
     const data = event.target.result;
     if (data) {
       data.showInDays = item.value || 0;
-      data.lastShown = item.value || 0;
+      // data.lastShown = item.value || 0;
       objectStore.put(data);
     }
   };

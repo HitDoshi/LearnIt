@@ -954,8 +954,8 @@
                 item.isFav = false;
                 item.isSkip = false;
                 item.subjectId = parseInt(item.subjectId);
-                item.showInDays = 0;
-                item.lastShown = 0;
+                item.showInDays = parseInt(item.showInDays || 0);
+                item.lastShown = parseInt(item.lastShown || 0);
                 item.fileName = item.audio_file_name;
                 objectStore.add(item);
                 id++;
@@ -972,8 +972,8 @@
                     item.isFav = false;
                     item.isSkip = false;
                     item.subjectId = parseInt(item.subjectId);
-                    item.showInDays = 0;
-                    item.lastShown = 0;
+                    item.showInDays = parseInt(item.showInDays || 0);
+                    item.lastShown = parseInt(item.lastShown || 0);
                     item.fileName = item.audio_file_name;
                     objectStore.add(item);
                     id++;
