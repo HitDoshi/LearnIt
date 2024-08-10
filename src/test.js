@@ -236,6 +236,8 @@ function getData() {
   data = null;
   isRightDone = false;
   shwoBlankData();
+  currentFile = null;
+  document.getElementById('fileInput').value = '';
 
   document.getElementById("total_question").innerHTML =
     isFavOnly == "true" ? favData.length : totalData.length;
@@ -580,8 +582,7 @@ function showData() {
       document.getElementById("file-display").style.display = "flex";
       audioPlayer = new Audio(
         encodeURI(`${API_URL}/assets/audio/${data.fileName}`)
-      );
-      console.log(encodeURI(`${API_URL}/assets/audio/${data.fileName}`));
+      );      
 
       audioPlayer.addEventListener("ended", function () {
         isPlaying = false;
@@ -1051,6 +1052,7 @@ document
         isPlaying = false;
         updatePlayPauseIcon();
       });
+      uploadButton[0].style.removeProperty('display');
       uploadButton[0].style.display = "";
     } else {
       console.log("Invalid file type");
@@ -1112,6 +1114,7 @@ async function uploadFile() {
             fileNameLink.textContent = data.fileName;
             document.getElementById("empty-state").style.display = "none";
             document.getElementById("file-display").style.display = "flex";
+            uploadButton[0].style.display = "none";
             audioPlayer = new Audio(
               encodeURI(`${API_URL}/assets/audio/${data.fileName}`)
             );
@@ -1139,18 +1142,31 @@ async function uploadFile() {
 }
 
 playPauseButton.addEventListener("click", function () {
-  if (!isPlaying) {
-    isPlaying = true;
-    playPauseButton.querySelector(".icon-play").classList.add("d-none");
-    playPauseButton.querySelector(".icon-stop").classList.remove("d-none");
-    playPauseButton.querySelector(".text").textContent = "";
-    audioPlayer.play();
-  } else {
-    isPlaying = false;
-    audioPlayer.pause();
-    audioPlayer.currentTime = 0; // Optional: Reset audio to the beginning
-    playPauseButton.querySelector(".icon-play").classList.remove("d-none");
-    playPauseButton.querySelector(".icon-stop").classList.add("d-none");
-    playPauseButton.querySelector(".text").textContent = "Play";
-  }
+  try {
+    if (!isPlaying) {
+      isPlaying = true;
+      playPauseButton.querySelector(".icon-play").classList.add("d-none");
+      playPauseButton.querySelector(".icon-stop").classList.remove("d-none");
+      playPauseButton.querySelector(".text").textContent = "";
+      audioPlayer.play().catch((error) => {        
+        showToast("Failed to play audio !!");
+        isPlaying = false;
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0; // Optional: Reset audio to the beginning
+        playPauseButton.querySelector(".icon-play").classList.remove("d-none");
+        playPauseButton.querySelector(".icon-stop").classList.add("d-none");
+        playPauseButton.querySelector(".text").textContent = "Play";
+      });
+    } else {
+      isPlaying = false;
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0; // Optional: Reset audio to the beginning
+      playPauseButton.querySelector(".icon-play").classList.remove("d-none");
+      playPauseButton.querySelector(".icon-stop").classList.add("d-none");
+      playPauseButton.querySelector(".text").textContent = "Play";
+    }
+  } catch (error) {
+    console.log("Error in playPauseButton !", error);
+    
+  }  
 });

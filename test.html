@@ -486,13 +486,17 @@
 
           <!-- Display when a file is uploaded -->
           <div id="file-display" style="display: none;justify-content: space-between;align-items: center;">
-            <a href="#" id="fileNameLink" onclick="triggerFileInput(event)"></a>
+            <a href="#" id="fileNameLink" onclick="triggerFileInput(event)" style="white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 10px;
+            "></a>
 
-            <div>              
+            <div style="display: flex; align-items: center;">              
                 <button
                   id="playPauseButton"
                   class="btn btn-primary btn-play"
-                  style="min-width: 80px"
+                  style="min-width: 80px;margin-right: 10px;"
                 >
                   <span class="icon-play">&#9654;</span>
                   <span class="icon-stop d-none">&#10074;&#10074;</span>
