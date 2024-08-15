@@ -5,15 +5,15 @@ var keyIndex = "subjectTopicIndex";
 
 var topic = parseInt(localStorage.getItem("topic"));
 var subject = parseInt(localStorage.getItem("subject")) || 1;
-
+var delay = localStorage.getItem("delay");
 
 if (topic == 0) {
   dbName = "user";
   dbVersion = 1;
   storeName = "userData";
   keyIndex = "subjectIndex";
-}else{
-  if(!topic){
+} else {
+  if (!topic) {
     topic = 1;
   }
 }
@@ -22,6 +22,7 @@ var data = null;
 var isFavOnly = false;
 var favData = [];
 var totalData = [];
+var attachedAudioDataOnly = [];
 var allData = 0;
 var totalSkipData = 0;
 var totalFavData = 0;
@@ -34,14 +35,18 @@ var timer;
 var startSessionTime;
 var sessionStartTimerBasicTime = 300000; // 5 min = 300000 sec
 var sessionInterval, dailyInterval;
+var playNextAudioIntervalId;
 
 let currentFile = null;
 let audioPlayer = null;
 let isPlaying = false;
+var index = 0;
+
 const audioElement = document.getElementById("audio");
 const playPauseButton = document.getElementById("playPauseButton");
 const fileNameLink = document.getElementById("fileNameLink");
 const uploadButton = document.getElementsByClassName("uploadButton");
+const delayInput = document.getElementById("delay_input");
 
 let isEditModeOn = 0; // 0 means off, 1 means on edit , 2 means on save
 
@@ -62,7 +67,10 @@ const UserDefined1 = document.getElementById("show_UserDefined1");
 window.addEventListener("load", function () {
   if (topic != 0) {
     document.getElementById("file-info").style.display = "none";
+    document.getElementById("continuous_playback_container").style.display = "none";
   }
+
+  delayInput.value = delay;
   clearTimeout(timer); // Clear the previous timer if it exists
 });
 
@@ -237,7 +245,7 @@ function getData() {
   isRightDone = false;
   shwoBlankData();
   currentFile = null;
-  document.getElementById('fileInput').value = '';
+  document.getElementById("fileInput").value = "";
 
   document.getElementById("total_question").innerHTML =
     isFavOnly == "true" ? favData.length : totalData.length;
@@ -582,7 +590,7 @@ function showData() {
       document.getElementById("file-display").style.display = "flex";
       audioPlayer = new Audio(
         encodeURI(`${API_URL}/assets/audio/${data.fileName}`)
-      );      
+      );
 
       audioPlayer.addEventListener("ended", function () {
         isPlaying = false;
@@ -614,7 +622,7 @@ function toggleIsShowFavOnly(event) {
 
 async function nextValue() {
   const showInDaysValue = document.getElementById("showInDays").value;
-  if (data.showInDays != parseInt(showInDaysValue)) {
+  if (data != null && data?.showInDays != parseInt(showInDaysValue)) {
     changeShowInDaysValue();
   }
   shwoBlankData();
@@ -1052,7 +1060,7 @@ document
         isPlaying = false;
         updatePlayPauseIcon();
       });
-      uploadButton[0].style.removeProperty('display');
+      uploadButton[0].style.removeProperty("display");
       uploadButton[0].style.display = "";
     } else {
       console.log("Invalid file type");
@@ -1148,7 +1156,7 @@ playPauseButton.addEventListener("click", function () {
       playPauseButton.querySelector(".icon-play").classList.add("d-none");
       playPauseButton.querySelector(".icon-stop").classList.remove("d-none");
       playPauseButton.querySelector(".text").textContent = "";
-      audioPlayer.play().catch((error) => {        
+      audioPlayer.play().catch((error) => {
         showToast("Failed to play audio !!");
         isPlaying = false;
         audioPlayer.pause();
@@ -1167,6 +1175,90 @@ playPauseButton.addEventListener("click", function () {
     }
   } catch (error) {
     console.log("Error in playPauseButton !", error);
-    
-  }  
+  }
 });
+
+const playNextAudio = () => {  
+  if (index < attachedAudioDataOnly.length) {
+    const audioData = attachedAudioDataOnly[index];
+    data = audioData;
+    showData();
+    audioPlayer = new Audio(`${API_URL}/assets/audio/${audioData.fileName}`);
+    isPlaying = true;
+    console.log(data.fileName);
+    
+    audioPlayer.onended = () => {
+      playNextAudioIntervalId = setTimeout(() => {
+        index++;
+        playNextAudio();
+      }, parseInt(delay || 0) * 1000);
+    };
+    audioPlayer.play().catch((error) => {
+      showToast("Failed to play audio !!");
+      isPlaying = false;
+      playNextAudioIntervalId = setTimeout(() => {
+        index++;
+        playNextAudio();
+      }, parseInt(delay || 0) * 1000);
+    });
+  }else{
+    continuous_playback.checked = false;
+    disabledControl();
+  }
+};
+
+continuous_playback.addEventListener("change", function () {
+  clearInterval(playNextAudioIntervalId);
+
+  if (isPlaying) {
+    audioPlayer?.pause();
+  }
+
+  isPlaying = false;
+  index = 0;  
+
+  if (continuous_playback.checked) {
+    const isFavOnly = document.getElementById("show_fav_only").checked;
+
+    attachedAudioDataOnly = isFavOnly
+      ? favData.filter((item) => {
+          return item.fileName;
+        })
+      : totalData.filter((item) => {
+          return item.fileName;
+        });        
+
+    if (attachedAudioDataOnly.length === 0) {
+      showToast("No audio attached data found !!");
+      continuous_playback.checked = false;
+    } else {
+      delay = delayInput.value || 0;
+      localStorage.setItem("delay", delay);
+      playNextAudio();
+    }
+  } else {
+  }
+
+  disabledControl();
+});
+
+function disabledControl() {
+  if (continuous_playback.checked) {
+    document
+      .querySelectorAll("button, input")
+      .forEach((element) => (element.disabled = true));
+    document.getElementById("continuous_playback").disabled = false;
+    document
+      .querySelectorAll("button")
+      .forEach((button) => (button.disabled = true));
+    document.getElementById("fileNameLink").disabled = true;
+  } else {
+    document
+      .querySelectorAll("button")
+      .forEach((button) => (button.disabled = false));
+    document
+      .querySelectorAll("button, input")
+      .forEach((element) => (element.disabled = false));
+    document.getElementById("fileNameLink").disabled = false;
+  }
+}

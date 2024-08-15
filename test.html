@@ -348,6 +348,39 @@
         </div>
       </div>
 
+      <div
+      style="
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        align-items: center;
+      "
+      id="continuous_playback_container"
+    >
+      <div style="margin-right: 12px; flex-shrink: 0;">
+        <input type="checkbox" id="continuous_playback" />
+        <label for="continuous_playback" class="prevent-select">Continuous Playback</label>
+      </div>
+    
+      <input
+        type="number"
+        id="delay_input"
+        autocomplete="off"
+        min="0"
+        max="99"
+        placeholder="Delay in seconds"
+        style="
+          flex: 1;
+          min-height: 40px;
+          width: 100%;
+        "
+        pattern="[0-9]"
+      />
+    </div>
+    
+
       <div class="data-display">
         <h6
           id="value_1"
@@ -571,6 +604,34 @@
         });
 
       var input = document.getElementById("showInDays");
+      input.onkeydown = function (e) {
+        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+        if (
+          !(
+            (48 <= e.which && e.which <= 57) ||
+            (96 <= e.which && e.which <= 105)
+          )
+        ) {
+          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+          if (e.key.length === 1) {
+            e.preventDefault(); // Prevent the default action (typing)
+          }
+        }
+      };
+
+      document
+        .getElementById("delay_input")
+        .addEventListener("input", function (e) {
+          let value = parseInt(e.target.value);
+          if (value < 0) {
+            e.target.value = 0;
+          }else if (value > 100) {
+            e.target.value = 100;
+          }
+          localStorage.setItem("delay", e.target.value);
+        });
+
+      var input = document.getElementById("delay_input");
       input.onkeydown = function (e) {
         // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
         if (

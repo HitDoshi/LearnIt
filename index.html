@@ -66,6 +66,9 @@
       if (localStorage.getItem("topic") == null) {
         localStorage.setItem("topic", 1);
       }
+      if(localStorage.getItem("delay") == null){
+        localStorage.setItem("delay", 1);
+      }
 
       if (!date) {
         localStorage.setItem(
