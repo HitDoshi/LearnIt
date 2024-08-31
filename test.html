@@ -361,7 +361,7 @@
     >
       <div style="margin-right: 12px; flex-shrink: 0;">
         <input type="checkbox" id="continuous_playback" />
-        <label for="continuous_playback" class="prevent-select">Continuous Playback</label>
+        <label for="continuous_playback" class="prevent-select">Loop</label>
       </div>
     
       <input
@@ -370,14 +370,10 @@
         autocomplete="off"
         min="0"
         max="99"
-        placeholder="Delay in seconds"
-        style="
-          flex: 1;
-          min-height: 40px;
-          width: 100%;
-        "
+        placeholder="Delay"        
+        style=""
         pattern="[0-9]"
-      />
+      />      
     </div>
     
 
@@ -535,6 +531,15 @@
                   <span class="icon-stop d-none">&#10074;&#10074;</span>
                   <span class="text">Play</span>
                 </button>
+
+                <button
+                id="startStopButton"
+                class="btn btn-primary btn-play"
+                style="min-width: 80px;margin-right: 10px;display: none;"
+              >                
+                <span class="text">Stop</span>
+              </button>
+
               </button>
               <button
                 onclick="uploadFile()"

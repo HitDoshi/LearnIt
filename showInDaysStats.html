@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearnIt - ShowInDays Stats</title>
+
+  <!-- Add your stylesheet -->
+  <link rel="stylesheet" href="./styles/navBar.style.css" />
+  <link rel="stylesheet" href="./styles/table.style.css" />
+  <link rel="stylesheet" href="./styles/toast.style.css" />
+  <link rel="stylesheet" href="./styles/manageRecord.style.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+    <script src="./constant.js"></script>
+
+  <style>
+    /* Hide the arrow in the dropdown trigger */
+  .no-arrow-dropdown-toggle::after {
+    display: none;
+  }
+
+    /* Rest of the CSS remains the same */
+  </style>
+</head>
+
+<body>
+  <nav id="mobile-navbar" class="navbar navbar-expand-lg" style="background-color: #00569D;">
+    <div style="display: flex;width: 100%;">
+  
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short" style="align-self: center;margin-right: 5px;cursor: pointer;" id="backButton"
+        viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+          d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
+      </svg>
+  
+      <a class="navbar-brand" style="color: white;align-self: center;font-size: 20px;">Stats - Show In Days</a>      
+    </div>
+    </nav>
+  
+
+  <div class="toast-container" id="toastContainer"></div>
+  <div id="snackbar"></div>
+
+  <div
+      style="
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        text-align: center;
+        color: brown;
+        font-weight: 600;
+        font-size: larger;
+        display: none;
+      "
+      id="suggestion"
+    >
+      No Records Found !!
+    </div>
+
+  <table id="dataTable" style="width: 50%;margin-bottom: 20px;">
+    <thead>
+      <tr>        
+        <th style="width: fit-content; text-align: center">Show In Days</th>        
+        <th style="width: fit-content; text-align: center">Total Records</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data will be populated here -->
+    </tbody>
+  </table>
+
+  <script>
+    let isFilterSheetOpen = false;
+
+       // Function to toggle the filter sheet and change the icon
+    function toggleFilterSheet() {
+      const sheet = document.getElementById("filterSheet");
+      const icon = document.getElementById("toggleIcon");
+
+      if (isFilterSheetOpen) {
+        sheet.style.display = "none";
+        icon.textContent = "☰"; // Change to hamburger icon
+      } else {
+        sheet.style.display = "block";
+        icon.textContent = "✕"; // Change to cross icon
+      }
+
+      isFilterSheetOpen = !isFilterSheetOpen;
+    }
+
+    // Function to select an option and change background color
+    function selectOption(option) {
+      // Reset background color for all options
+      const options = document.querySelectorAll(".filter-option");
+      options.forEach((opt) => {
+        opt.classList.remove("selected");
+      });
+
+      // Set background color for the selected option
+      const selectedOption = document.querySelector(`.${option}`);
+      selectedOption.classList.add("selected");
+
+      // Close the filter sheet
+      const filterSheet = document.getElementById("filterSheet");
+      filterSheet.style.display = "none";
+
+      // Change the icon back to the hamburger icon
+      const icon = document.getElementById("toggleIcon");
+      icon.textContent = "☰";
+
+      isFilterSheetOpen = false;
+
+      // Add logic here to handle the selected option
+      console.log("Selected Option:", option);
+    }
+
+    function addUserDataModalShow(){
+      const token = localStorage.getItem('token');
+      if (token) {
+        $('#exampleModalCenter').modal('show');
+      } else {
+        showToast('Access to this section requires a login.\nPlease login first !!');
+      }
+    }
+
+
+    // // Add a click event listener to the window
+    // window.addEventListener("click", function (event) {
+    //   const filterSheet = document.getElementById("filterSheet");
+    //   const toggleIcon = document.getElementById("toggleIcon");
+
+    //   // Check if the click target is outside the filter-sheet and toggle icon
+    //   if (
+    //     !filterSheet.contains(event.target) &&
+    //     !toggleIcon.contains(event.target)
+    //   ) {
+    //     filterSheet.style.display = "none"; // Hide the filter-sheet
+    //     toggleIcon.textContent = "☰";
+    //     isFilterSheetOpen = false;
+    //   }
+    // });
+  </script>
+
+
+  <script src="./src/showInDaysStats.js"></script>
+  <script src="./src/displayToast.js"></script>
+</body>
+
+</html>
