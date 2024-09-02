@@ -521,11 +521,13 @@
             margin-right: 10px;
             "></a>
 
-            <div style="display: flex; align-items: center;">              
+            <div style="display: flex; align-items: center;gap: 20px;">  
+              
+              
                 <button
                   id="playPauseButton"
                   class="btn btn-primary btn-play"
-                  style="min-width: 80px;margin-right: 10px;"
+                  style="min-width: 80px;"
                 >
                   <span class="icon-play">&#9654;</span>
                   <span class="icon-stop d-none">&#10074;&#10074;</span>
@@ -535,10 +537,14 @@
                 <button
                 id="startStopButton"
                 class="btn btn-primary btn-play"
-                style="min-width: 80px;margin-right: 10px;display: none;"
+                style="min-width: 80px;display: none;"
               >                
                 <span class="text">Stop</span>
               </button>
+
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="red" class="bi bi-trash3-fill" viewBox="0 0 16 16" style="cursor: pointer;display: none" id="deleteAudioButton" onclick="$('#deleteAudioModal').modal('show');">
+                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+              </svg>
 
               </button>
               <button
@@ -578,6 +584,44 @@
         </div>
       </div>
     </div>
+
+    <!-- Delete audio confirmation -->
+
+  <div class="modal fade" id="deleteAudioModal" tabindex="-1" role="dialog" aria-labelledby="deleteAudioModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteAudioModalLongTitle">
+          Delete audio confirmation
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3" style="display: flex">
+          Are you sure you want to delete audio?
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Cancel
+        </button>
+        <!-- <button type="button" class="btn btn-danger" id="confirmSignOut" onclick="signOut()">Sign Out</button> -->
+        <div>
+          <button class="btn btn-primary" type="button" onclick="deleteAudio()" id="deleteAudio"
+            style="background-color: #dc3545; border-width: 0">
+            <span id="deleteAudioButtonText">Delete</span>
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
+              id="spinner"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <div class="toast-container" id="toastContainer"></div>
     <div id="snackbar"></div>
@@ -651,6 +695,13 @@
           }
         }
       };
+
+      document.getElementById('deleteAudioModal').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          // Trigger the delete button click
+          document.getElementById('deleteAudio').click();
+        }
+      });
     </script>
   </body>
 </html>

@@ -48,6 +48,7 @@ const fileNameLink = document.getElementById("fileNameLink");
 const uploadButton = document.getElementsByClassName("uploadButton");
 const delayInput = document.getElementById("delay_input");
 const startStopButton = document.getElementById("startStopButton");
+const deleteAudioButton = document.getElementById("deleteAudioButton");
 
 let isEditModeOn = 0; // 0 means off, 1 means on edit , 2 means on save
 
@@ -563,6 +564,7 @@ function showData() {
   }
 
   try {
+    currentFile = null;
     const value1 = document.getElementById("value_1");
     // const UserDefined1 = document.getElementById("show_UserDefined1");
     const isFav = document.getElementById("toggle_fav");
@@ -587,6 +589,12 @@ function showData() {
     console.log(data);
 
     if (data?.fileName) {
+      if (audioPlayer) {
+        isPlaying = false;
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }
+
       fileNameLink.textContent = data.fileName;
       document.getElementById("empty-state").style.display = "none";
       document.getElementById("file-display").style.display = "flex";
@@ -599,9 +607,11 @@ function showData() {
         updatePlayPauseIcon();
       });
       uploadButton[0].style.display = "none";
+      deleteAudioButton.style.display = "";
     } else {
       document.getElementById("empty-state").style.display = "flex";
       document.getElementById("file-display").style.display = "none";
+      deleteAudioButton.style.display = "none";
       uploadButton[0].style.display = "";
     }
 
@@ -1072,6 +1082,7 @@ document
       });
       uploadButton[0].style.removeProperty("display");
       uploadButton[0].style.display = "";
+      deleteAudioButton.style.display = "none";
     } else {
       console.log("Invalid file type");
       showToast("Invalid file type");
@@ -1133,14 +1144,9 @@ async function uploadFile() {
             document.getElementById("empty-state").style.display = "none";
             document.getElementById("file-display").style.display = "flex";
             uploadButton[0].style.display = "none";
-            audioPlayer = new Audio(
-              encodeURI(`${API_URL}/assets/audio/${data.fileName}`)
-            );
-            audioPlayer.addEventListener("ended", function () {
-              isPlaying = false;
-              updatePlayPauseIcon();
-            });
-            currentFile = null;
+            deleteAudioButton.style.display = "";
+            // showData();
+            // currentFile = null;
           }
         })
         .catch((error) => {
@@ -1167,6 +1173,8 @@ playPauseButton.addEventListener("click", function () {
       playPauseButton.querySelector(".icon-stop").classList.remove("d-none");
       playPauseButton.querySelector(".text").textContent = "";
       audioPlayer.play().catch((error) => {
+        console.log("Error in playPauseButton !", error);
+
         showToast("Failed to play audio !!");
         isPlaying = false;
         audioPlayer.pause();
@@ -1197,13 +1205,13 @@ startStopButton.addEventListener("click", function () {
 
       const isFavOnly = document.getElementById("show_fav_only").checked;
 
-      attachedAudioDataOnly = isFavOnly
-        ? favData.filter((item) => {
-            return item.fileName;
-          })
-        : totalData.filter((item) => {
-            return item.fileName;
-          });
+      // attachedAudioDataOnly = isFavOnly
+      //   ? favData.filter((item) => {
+      //       return item.fileName;
+      //     })
+      //   : totalData.filter((item) => {
+      //       return item.fileName;
+      //     });
 
       if (attachedAudioDataOnly.length === 0) {
         showToast("No audio attached data found !!");
@@ -1228,6 +1236,10 @@ startStopButton.addEventListener("click", function () {
 });
 
 const playNextAudio = () => {
+  clearInterval(playNextAudioIntervalId);
+
+  const startStopButtonText =
+    startStopButton.querySelector(".text").textContent;
 
   if (audioPlayer) {
     isPlaying = false;
@@ -1237,14 +1249,17 @@ const playNextAudio = () => {
     audioPlayer = null;
   }
 
-  const randomIndex = Math.floor(Math.random() * attachedAudioDataOnly.length);
-  index = randomIndex;
-  const audioData = attachedAudioDataOnly[index];
-  data = audioData;
-  showData();
-  audioPlayer = new Audio(`${API_URL}/assets/audio/${audioData.fileName}`);
-  isPlaying = true;
-  console.log(data.fileName);
+  if (startStopButtonText === "Stop") {
+    const randomIndex = Math.floor(
+      Math.random() * attachedAudioDataOnly.length
+    );
+    index = randomIndex;
+    const audioData = attachedAudioDataOnly[index];
+    data = audioData;
+    showData();
+    audioPlayer = new Audio(`${API_URL}/assets/audio/${audioData.fileName}`);
+    isPlaying = true;
+  }
 
   audioPlayer.onended = () => {
     if (continuous_playback.checked) {
@@ -1253,7 +1268,6 @@ const playNextAudio = () => {
         console.log("---");
       }, parseInt(delay || 0) * 1000);
     } else {
-      clearInterval(playNextAudioIntervalId);
       isPlaying = false;
       audioPlayer.currentTime = 0;
       playPauseButton.querySelector(".icon-play").classList.remove("d-none");
@@ -1269,7 +1283,6 @@ const playNextAudio = () => {
         playNextAudio();
       }, parseInt(delay || 0) * 1000);
     } else {
-      clearInterval(playNextAudioIntervalId);
       isPlaying = false;
       audioPlayer.currentTime = 0;
       playPauseButton.querySelector(".icon-play").classList.remove("d-none");
@@ -1306,12 +1319,20 @@ continuous_playback.addEventListener("change", function () {
     } else {
       delay = delayInput.value || 0;
       localStorage.setItem("delay", delay);
-      playNextAudio();
+
+      const randomIndex = Math.floor(
+        Math.random() * attachedAudioDataOnly.length
+      );
+      index = randomIndex;
+      const audioData = attachedAudioDataOnly[index];
+      data = audioData;
+      showData();
+      // playNextAudio();
     }
 
     playPauseButton.style.display = "none";
     startStopButton.style.removeProperty("display");
-    startStopButton.querySelector(".text").textContent = "Stop";
+    startStopButton.querySelector(".text").textContent = "Start";
   } else {
     playPauseButton.style.removeProperty("display");
     startStopButton.style.display = "none";
@@ -1319,6 +1340,7 @@ continuous_playback.addEventListener("change", function () {
   }
 
   disabledControl();
+  document.getElementById("continuous_playback").disabled = false;
 });
 
 function disabledControl() {
@@ -1334,6 +1356,7 @@ function disabledControl() {
 
     document.getElementById("fileNameLink").disabled = true;
     document.getElementById("fileNameLink").style.cursor = "not-allowed";
+    deleteAudioButton.onclick = null;
 
     playPauseButton.style.display = "none";
     startStopButton.style.removeProperty("display");
@@ -1349,5 +1372,43 @@ function disabledControl() {
     playPauseButton.style.removeProperty("display");
     startStopButton.style.display = "none";
     document.getElementById("fileNameLink").style.removeProperty("cursor");
+    deleteAudioButton.onclick = () => {
+      $('#deleteAudioModal').modal('show');
+    };
   }
 }
+
+const deleteAudio = () => {
+  if (!db) {
+    console.error("Database is not open yet.");
+    return;
+  }
+
+  if (!data) {
+    return;
+  }
+
+  const transaction = db.transaction(storeName, "readwrite");
+  const objectStore = transaction.objectStore(storeName);
+
+  const request = objectStore.get(data.id);
+  request.onsuccess = (event) => {
+    const data1 = event.target.result;
+    if (data1) {
+      data1.fileName = null;
+      data1.audio_file_name = null;
+
+      data = data1;
+
+      const updateRequest = objectStore.put(data1);
+      updateRequest.onsuccess = async () => {
+        showData();
+        await countData();
+        $("#deleteAudioModal").modal("hide");
+      };
+      updateRequest.onerror = () => {
+        showToast("Error while updating data !!");
+      };
+    }
+  };
+};
