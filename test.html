@@ -294,7 +294,7 @@
           <label
             for="show_in_days"
             class="prevent-select"
-            style="margin-right: 5px"
+            style="margin-right: 5px;margin-top: 2.5px;"
             >Show in, days:
           </label>
           <input
@@ -316,7 +316,7 @@
           flex: 1;
           gap: 30px;
           margin-top: 5px;
-          margin-bottom: 5px;
+          margin-bottom: 5px;          
         "
       >
         <div style="margin-right: 12px">
@@ -334,8 +334,9 @@
           style="
             display: flex;
             flex-direction: row;
-            flex: 0.65;
+            flex: 1;
             justify-content: flex-end;
+            margin-top: 5px;            
           "
         >
           <h6 id="total_question"></h6>
@@ -344,7 +345,7 @@
           <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
           <h6 id="total_right_by_full_days" style="color: #00569d"></h6>
           <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
-          <h6 id="last_shown" style=""></h6>
+          <h6 id="last_shown" style="color: brown;"></h6>
         </div>
       </div>
 
@@ -362,21 +363,37 @@
       <div style="margin-right: 12px; flex-shrink: 0;">
         <input type="checkbox" id="continuous_playback" />
         <label for="continuous_playback" class="prevent-select">Loop</label>
+      </div>  
+      
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1;
+            min-height: 30px;
+          "
+        >
+          <label
+            for="show_in_days"
+            class="prevent-select"
+            style="margin-right: 5px;margin-top: 2.5px;"
+            >Delay, sec:
+          </label>        
+          <input
+            type="number"
+            id="delay_input"
+            autocomplete="off"
+            min="0"
+            max="99"
+            placeholder="Delay"        
+            style="width: 60px"
+            pattern="[0-9]"
+          />
+        </div>
+
       </div>
     
-      <input
-        type="number"
-        id="delay_input"
-        autocomplete="off"
-        min="0"
-        max="99"
-        placeholder="Delay"        
-        style=""
-        pattern="[0-9]"
-      />      
-    </div>
-    
-
       <div class="data-display">
         <h6
           id="value_1"
@@ -501,7 +518,7 @@
             style="display: flex; justify-content: space-between"
             class="audio-pick"
           >
-            <input type="file" id="fileInput" accept=".wav" required />
+            <input type="file" id="fileInput" accept=".wav,.mp3" required />
             <button
               onclick="uploadFile()"
               id="uploadButton"

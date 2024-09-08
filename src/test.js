@@ -83,6 +83,23 @@ function replaceStateWithHistory(page) {
   window.location.href = page;
 }
 
+function convertFilename(filename) {
+
+  console.log(filename);
+  
+
+  if (filename) {
+    const splitFilename = filename.split('.');
+    const fileExtension = splitFilename[splitFilename.length - 1];
+    const realFilename = filename.split('_').slice(0, -2).join('_');
+
+    console.log(`${realFilename}${fileExtension}`);
+    return `${realFilename}.${fileExtension}`
+  }else{
+    null;
+  }
+}
+
 openRequest.onupgradeneeded = (event) => {
   db = event.target.result;
   // Create the object store if it doesn't exist
@@ -595,7 +612,7 @@ function showData() {
         audioPlayer.currentTime = 0;
       }
 
-      fileNameLink.textContent = data.fileName;
+      fileNameLink.textContent = convertFilename(data?.fileName);
       document.getElementById("empty-state").style.display = "none";
       document.getElementById("file-display").style.display = "flex";
       audioPlayer = new Audio(
@@ -1070,7 +1087,7 @@ document
   .getElementById("fileInput")
   .addEventListener("change", function (event) {
     const file = event.target.files[0];
-    if (file && file.type === "audio/wav") {
+    if (file && (file.type === "audio/wav" || file.type === "audio/mpeg")) {
       currentFile = file;
       fileNameLink.textContent = file.name;
       document.getElementById("empty-state").style.display = "none";
@@ -1140,7 +1157,7 @@ async function uploadFile() {
           showToast(data?.message);
           if (data?.success) {
             await updateAudioFileName(data.fileName);
-            fileNameLink.textContent = data.fileName;
+            fileNameLink.textContent = convertFilename(data.fileName);
             document.getElementById("empty-state").style.display = "none";
             document.getElementById("file-display").style.display = "flex";
             uploadButton[0].style.display = "none";
@@ -1373,7 +1390,7 @@ function disabledControl() {
     startStopButton.style.display = "none";
     document.getElementById("fileNameLink").style.removeProperty("cursor");
     deleteAudioButton.onclick = () => {
-      $('#deleteAudioModal').modal('show');
+      $("#deleteAudioModal").modal("show");
     };
   }
 }
