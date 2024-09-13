@@ -125,7 +125,7 @@ async function displayData() {
       if (cursor) {
         const data = cursor.value;
 
-        if (data?.showInDays != undefined || data?.showInDays != null) {
+        if ((data?.showInDays != undefined || data?.showInDays != null) && data?.isSkip == false) {
           statsData[data?.showInDays || 0]++;
         }
         cursor.continue();
