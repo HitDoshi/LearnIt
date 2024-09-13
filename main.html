@@ -961,12 +961,10 @@
                 id++;
               });
             } else {
-              if (jsonData.data.length > 0) {
-                const clearRequest = objectStore.clear();
-
+              const clearRequest = objectStore.clear();
                 clearRequest.onsuccess = () => {
                   // Store data from data.json into IndexedDB
-                  jsonData.data.forEach((item) => {
+                  jsonData?.data?.forEach((item) => {
                     item.questionId = parseInt(item.id);
                     item.id = id;
                     item.isFav = false;
@@ -983,7 +981,6 @@
                 clearRequest.onerror = (event) => {
                   console.error("Error clearing IndexedDB:", event.target.error);
                 };
-              }
             }
           };
         })
