@@ -1087,7 +1087,7 @@ document
   .getElementById("fileInput")
   .addEventListener("change", function (event) {
     const file = event.target.files[0];
-    if (file && (file.type === "audio/wav" || file.type === "audio/mpeg")) {
+    if (file && (file.type === "audio/wav" || file.type === "audio/mpeg" || file.type === "video/mp3" || file.type === "audio/mp4" || file.type === "video/mp4")) {
       currentFile = file;
       fileNameLink.textContent = file.name;
       document.getElementById("empty-state").style.display = "none";
