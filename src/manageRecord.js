@@ -94,6 +94,8 @@ if (myParam === "1") {
   document.getElementById("favOnlyRadio").checked = true;
 } else if (myParam === "3") {
   document.getElementById("skipOnlyRadio").checked = true;
+}else if(myParam === "4"){
+  document.getElementById("showCurrentRadio").checked = true;
 }
 
 document
@@ -190,7 +192,11 @@ openRequest.onsuccess = (event) => {
   } else if (myParam == "3") {
     dropdownItems[2].style.color = "green";
     displaySkipData();
+  }else if(myParam == "4"){
+    dropdownItems[3].style.color = "green";
+    displayCurrentData();
   }
+
 
   // var navbarToggle = document.querySelector(".navbar-toggler");
   // var navbarCollapse = document.querySelector(".navbar-collapse");
@@ -346,6 +352,50 @@ function displaySkipData() {
   };
 }
 
+function displayCurrentData() {
+  if (!db) {
+    console.error("Database is not open yet.");
+    return;
+  }
+
+  const transaction = db.transaction(storeName, "readonly");
+  const objectStore = transaction.objectStore(storeName);
+  const dataTable = document.getElementById("dataTable");
+
+  const tbody = dataTable.querySelector("tbody");
+  tbody.innerHTML = "";
+  // const favoritesTable = document.getElementById("favoritesTable");
+  // const favoritesTbody = favoritesTable.querySelector("tbody");
+
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic; // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+  if (topic == 0) {
+    var range = IDBKeyRange.only([subjectId]);
+  } else {
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  }
+  // Use the compound index for the search
+  var request = objectStore.index(index);
+  var idNumber = 1;
+
+  request.openCursor(range).onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (cursor) {
+      const data = cursor.value;
+
+      if (data?.showInDays == 0) {
+        const row = appendData(data, idNumber);
+        tbody.appendChild(row);
+        idNumber++;
+      }
+      cursor.continue();
+    }
+  };
+}
+
 function updateIsFavFlag(id, isFav) {
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
@@ -469,6 +519,8 @@ function loadUpdatedTable() {
     displayFavData();
   } else if (myParam == "3") {
     displaySkipData();
+  }else if (myParam == "4") {
+    displayCurrentData();
   }
 }
 
