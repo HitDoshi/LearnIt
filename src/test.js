@@ -1350,10 +1350,14 @@ continuous_playback.addEventListener("change", function () {
     playPauseButton.style.display = "none";
     startStopButton.style.removeProperty("display");
     startStopButton.querySelector(".text").textContent = "Start";
+
+    document.getElementById("total_question").innerHTML = attachedAudioDataOnly.length;
   } else {
     playPauseButton.style.removeProperty("display");
     startStopButton.style.display = "none";
     startStopButton.querySelector(".text").textContent = "Start";
+    document.getElementById("total_question").innerHTML =
+    isFavOnly == "true" ? favData.length : totalData.length;
   }
 
   disabledControl();
