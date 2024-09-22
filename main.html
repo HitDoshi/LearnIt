@@ -310,6 +310,10 @@
     </button>
   </div>
 
+  <div class="fixed-bottom d-flex justify-content-center" id="message-list" style="display: none;padding: 10px;">
+    <ul class="list-group" style="max-width: 34rem; width: 100%;"></ul>
+  </div>
+
   <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -1017,6 +1021,37 @@
           console.error("Error:", error);
         });
     }
+
+    //get messsage list and show
+    
+    fetch(`${API_URL}/api/get_message_list.php`)
+  .then((response) => response.json())
+  .then((response) => {
+    const messageList = document.getElementById("message-list");
+    const messageUl = messageList.childNodes[1];
+    messageUl.innerHTML = "";
+    messageList.style.display = "flex";
+
+    if (response.success) {
+      const urlPattern = /(\b(https?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi;
+
+      response.data.forEach((message) => {
+        const messageLi = document.createElement("li");
+        messageLi.className = "list-group-item";
+        messageLi.style.alignSelf = "center"
+
+        const messageWithLinks = message.message.replace(urlPattern, function(url) {
+          return `<a href="${url}" target="_blank" class="message-link">${url}</a>`;
+        });
+
+        messageLi.innerHTML = messageWithLinks;
+        messageUl.appendChild(messageLi);
+      });
+    }
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+  });
   </script>
 
 

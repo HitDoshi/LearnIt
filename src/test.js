@@ -1087,7 +1087,7 @@ document
   .getElementById("fileInput")
   .addEventListener("change", function (event) {
     const file = event.target.files[0];
-    if (file && (file.type === "audio/wav" || file.type === "audio/mpeg" || file.type === "video/mp3" || file.type === "audio/mp4" || file.type === "video/mp4")) {
+    if (file && (file.type === "audio/wav" || file.type === "audio/mp3" || file.type === "audio/x-m4a" || file.type === "audio/m4a")) {
       currentFile = file;
       fileNameLink.textContent = file.name;
       document.getElementById("empty-state").style.display = "none";
@@ -1100,9 +1100,9 @@ document
       uploadButton[0].style.removeProperty("display");
       uploadButton[0].style.display = "";
       deleteAudioButton.style.display = "none";
-    } else {
-      console.log("Invalid file type");
-      showToast("Invalid file type");
+    } else {      
+      console.log("Invalid file type- ", file?.type);
+      showToast("Invalid file type " + file?.type);
     }
   });
 
