@@ -342,7 +342,7 @@ function displaySkipData() {
     if (cursor) {
       const data = cursor.value;
 
-      if (data.isSkip || data.showInDays != 0) {
+      if (data.isSkip) {
         const row = appendData(data, idNumber);
         tbody.appendChild(row);
         idNumber++;
