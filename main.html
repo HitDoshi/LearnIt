@@ -1037,11 +1037,13 @@
 
       response.data.forEach((message) => {
         const messageLi = document.createElement("li");
-        messageLi.className = "list-group-item";
-        messageLi.style.alignSelf = "center"
+        messageLi.className = "list-group";
+        messageLi.style.alignSelf = "center";
+        messageLi.style.textAlign = "center";
+        messageLi.style.fontSize = "14px";
 
         const messageWithLinks = message.message.replace(urlPattern, function(url) {
-          return `<a href="${url}" target="_blank" class="message-link">${url}</a>`;
+          return `<a href="${url}" target="_blank" class="message-link" style="margin-top: 10px;margin-bottom: 10px">${url}</a>`;
         });
 
         messageLi.innerHTML = messageWithLinks;

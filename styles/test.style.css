@@ -90,6 +90,10 @@ a {
   .audio-pick {
     flex-direction: column;
   }
+
+  .counter-container{
+    width: 90% !important;
+  }
 }
 
 /* } */
