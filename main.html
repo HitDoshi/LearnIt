@@ -955,8 +955,8 @@
               jsonData.data.forEach((item) => {
                 item.questionId = parseInt(item.id);
                 item.id = id;
-                item.isFav = false;
-                item.isSkip = false;
+                item.isFav = item?.isFav == "Y" ? true : false;
+                item.isSkip = item?.isSkip == "Y" ? true : false;
                 item.subjectId = parseInt(item.subjectId);
                 item.showInDays = parseInt(item.showInDays || 0);
                 item.lastShown = parseInt(item.lastShown || 0);
@@ -971,8 +971,8 @@
                   jsonData?.data?.forEach((item) => {
                     item.questionId = parseInt(item.id);
                     item.id = id;
-                    item.isFav = false;
-                    item.isSkip = false;
+                    item.isFav = item?.isFav == "Y" ? true : false;
+                    item.isSkip = item?.isSkip == "Y" ? true : false;
                     item.subjectId = parseInt(item.subjectId);
                     item.showInDays = parseInt(item.showInDays || 0);
                     item.lastShown = parseInt(item.lastShown || 0);
