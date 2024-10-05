@@ -65,6 +65,8 @@ const openRequest = indexedDB.open(dbName, dbVersion);
 
 const showButtonId = document.getElementById("show_button");
 const UserDefined1 = document.getElementById("show_UserDefined1");
+const showAns = document.getElementById("show_ans");
+const QuestionText = document.getElementById("value_1");
 
 window.addEventListener("load", function () {
   if (topic != 0) {
@@ -410,7 +412,7 @@ function toggleFavValue(event) {
   };
   // setTimer();
 }
-function saveUserDefineValue1() {
+function saveUpdatedValue() {
   if (!db) {
     console.error("Database is not open yet.");
     return;
@@ -427,16 +429,36 @@ function saveUserDefineValue1() {
   request.onsuccess = (event) => {
     const existingData = event.target.result;
     if (existingData) {
+
+      let value1 = ""; 
+      let value2 = "";
+
+      if (toggleQuestion == "true") {
+        value1 = showAns.value;
+        value2 = QuestionText.value;
+      }else{
+        value2 = showAns.value;
+        value1 = QuestionText.value;
+      }
       const updatedUserDefined1 = UserDefined1.value || "";
-      console.log(updatedUserDefined1);
+
+      existingData.value1 = value1;
+      existingData.value2 = value2;
       existingData.UserDefined1 = updatedUserDefined1;
+      
       const updateRequest = objectStore.put(existingData);
       updateRequest.onsuccess = () => {
         totalData.forEach((item, index) => {
           if (item.id == data.id) {
+            item.value1 = value1;
+            item.value2 = value2;
             item.UserDefined1 = updatedUserDefined1;
           }
         });
+
+        data.value1 = value1;
+        data.value2 = value2;
+        data.UserDefined1 = updatedUserDefined1;
       };
       updateRequest.onerror = () => {
         showToast("Error while updating data !!");
@@ -451,6 +473,14 @@ function resetEditUserDefineValueMode() {
   showButtonId.innerHTML = "Show";
   UserDefined1.style.backgroundColor = "lightblue";
   UserDefined1.style.borderWidth = "0px";
+
+  showAns.disabled = true;
+  showAns.style.backgroundColor = "lightblue";
+  showAns.style.borderWidth = "0px";
+
+  QuestionText.disabled = true;
+  QuestionText.style.backgroundColor = "lightblue";
+  QuestionText.style.borderWidth = "0px";
 }
 
 function toggleQuestionType() {
@@ -581,8 +611,7 @@ function showData() {
   }
 
   try {
-    currentFile = null;
-    const value1 = document.getElementById("value_1");
+    currentFile = null;    
     // const UserDefined1 = document.getElementById("show_UserDefined1");
     const isFav = document.getElementById("toggle_fav");
     const isSkip = document.getElementById("toggle_skip");
@@ -590,9 +619,9 @@ function showData() {
     const lastShown = document.getElementById("last_shown");
 
     if (toggleQuestion == "true") {
-      value1.innerText = data.value2;
+      QuestionText.value = data.value2;
     } else {
-      value1.innerText = data.value1;
+      QuestionText.value = data.value1;
     }
 
     // UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
@@ -671,8 +700,8 @@ async function nextValue() {
 }
 
 function shwoBlankData() {
-  document.getElementById("value_1").innerText = "";
-  document.getElementById("show_ans").innerText = "";
+  QuestionText.value = "";
+  showAns.value = "";
   document.getElementById("show_UserDefined1").value = "";
   const isFav = (document.getElementById("toggle_fav").checked = false);
   const isSkip = (document.getElementById("toggle_skip").checked = false);
@@ -797,9 +826,9 @@ function showAnswer() {
   if (!data) {
     return;
   }
-  document.getElementById("show_ans").innerText = answer;
 
   if (isEditModeOn === 0) {
+    showAns.value = answer;
     showButtonId.innerHTML = "Edit";
     isEditModeOn = 1;
     return;
@@ -811,11 +840,20 @@ function showAnswer() {
     UserDefined1.disabled = false;
     UserDefined1.style.backgroundColor = "transparent";
     UserDefined1.style.borderWidth = "1px";
+
+    showAns.disabled = false;
+    showAns.style.backgroundColor = "transparent";
+    showAns.style.borderWidth = "1px";
+
+    QuestionText.disabled = false;  
+    QuestionText.style.backgroundColor = "transparent";
+    QuestionText.style.borderWidth = "1px";
+
     return;
   }
 
   if (isEditModeOn === 2) {
-    saveUserDefineValue1();
+    saveUpdatedValue();
     resetEditUserDefineValueMode();
     return;
   }

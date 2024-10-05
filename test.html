@@ -350,7 +350,7 @@
       </div>      
     
       <div class="data-display">
-        <h6
+        <!-- <h6
           id="value_1"
           class="text_container prevent-select"
           style="
@@ -361,7 +361,26 @@
             min-height: 40px;
             margin-right: 10px;
           "
-        ></h6>
+        ></h6> -->
+
+          <input
+            type="text"
+            id="value_1"
+            class="text_container prevent-select"
+            style="
+              flex: 1;
+              white-space: normal;
+              word-wrap: break-word;
+              min-height: 40px;
+              border-width: 0px;
+              background-color: lightblue;
+              color: black;              
+              margin-right: 10px;
+              margin-bottom: 10px;
+            "
+            autocomplete="off"
+            disabled
+          />
         <button
           onclick="nextValue()"
           id="next_button"
@@ -400,7 +419,7 @@
       </div>
 
       <div class="data-display" style="margin-top: 10px">
-        <h6
+        <!-- <h6
           id="show_ans"
           class="text_container"
           style="
@@ -411,7 +430,32 @@
             min-height: 40px;
             margin-right: 10px;
           "
-        ></h6>
+        ></h6> -->
+
+          <!-- <h6
+            id="show_UserDefined1"
+            class="text_container"
+            style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
+          ></h6>         -->
+          <input
+            type="text"
+            id="show_ans"
+            class="text_container"
+            style="
+              flex: 1;
+              white-space: normal;
+              word-wrap: break-word;
+              min-height: 40px;
+              border-width: 0px;
+              background-color: lightblue;
+              color: black;
+              margin-right: 10px;
+              margin-bottom: 10px;
+            "
+            autocomplete="off"
+            disabled
+          />
+
         <button
           onclick="showAnswer()"
           id="show_button"

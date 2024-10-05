@@ -59,8 +59,16 @@ table{
   margin-right: auto;
 }
 
-/* Media query for screens with a maximum width of 420px */
-/* @media (max-width: 991px) { */
+.table-container {
+  width: 100%; /* Adjust the width as needed */
+  overflow-x: auto; /* Enables horizontal scroll */
+}
+
+td {
+  word-break: break-word; /* Breaks long words onto the next line */
+  white-space: normal;    /* Ensures that the content wraps onto new lines */
+}
+
   #mobile-navbar {
     display: flex;
     background-color: #f8f9fa;
@@ -76,4 +84,3 @@ table{
     margin-left: auto;
     margin-right: auto;
   }
-/* } */
