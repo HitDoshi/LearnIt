@@ -79,7 +79,7 @@ window.addEventListener("load", function () {
   delayInput.value = delay;
   clearTimeout(timer); // Clear the previous timer if it exists
 
-  if (EnableAudio == "N") {
+  if (EnableAudio != "Y") {
     continuous_playback.disabled = true;
     delayInput.disabled = true;
     deleteAudioButton.disabled = true;
