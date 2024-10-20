@@ -23,7 +23,7 @@ let showInDaysDataState = [];
 var subject = parseInt(localStorage.getItem("subject")) || 1;
 
 const urlParams = new URLSearchParams(window.location.search);
-const myParam = urlParams.get("id");
+const myParam = urlParams.get("id") || "1";
 
 const value = localStorage.getItem("toggle_question"); //false means value1 show otherwise value2
 
@@ -96,6 +96,8 @@ if (myParam === "1") {
   document.getElementById("skipOnlyRadio").checked = true;
 }else if(myParam === "4"){
   document.getElementById("showCurrentRadio").checked = true;
+}else if(myParam === "5"){
+  document.getElementById("audioOnlyRadio").checked = true;
 }
 
 document
@@ -195,6 +197,9 @@ openRequest.onsuccess = (event) => {
   }else if(myParam == "4"){
     dropdownItems[3].style.color = "green";
     displayCurrentData();
+  }else if(myParam == "5"){
+    dropdownItems[4].style.color = "green";
+    displayAudioData();
   }
 
 
@@ -343,6 +348,50 @@ function displaySkipData() {
       const data = cursor.value;
 
       if (data.isSkip) {
+        const row = appendData(data, idNumber);
+        tbody.appendChild(row);
+        idNumber++;
+      }
+      cursor.continue();
+    }
+  };
+}
+
+function displayAudioData() {
+  if (!db) {
+    console.error("Database is not open yet.");
+    return;
+  }
+
+  const transaction = db.transaction(storeName, "readonly");
+  const objectStore = transaction.objectStore(storeName);
+  const dataTable = document.getElementById("dataTable");
+
+  const tbody = dataTable.querySelector("tbody");
+  tbody.innerHTML = "";
+  // const favoritesTable = document.getElementById("favoritesTable");
+  // const favoritesTbody = favoritesTable.querySelector("tbody");
+
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic; // Change this to the topicId you want to search for
+
+  // Create a range for the compound index
+  if (topic == 0) {
+    var range = IDBKeyRange.only([subjectId]);
+  } else {
+    var range = IDBKeyRange.only([subjectId, topicId]);
+  }
+  // Use the compound index for the search
+  var request = objectStore.index(index);
+  var idNumber = 1;
+
+  request.openCursor(range).onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (cursor) {
+      const data = cursor.value;
+
+      if (data?.fileName) {
         const row = appendData(data, idNumber);
         tbody.appendChild(row);
         idNumber++;
@@ -607,24 +656,20 @@ function undoData() {
 }
 
 function appendData(data, idNumber) {
+
   const row = document.createElement("tr");
 
   row.innerHTML = `
-                    <td>${idNumber}</td>
-                    <td>${
-                      value == "true" ? data.value2 : data.value1
-                    }</td>                    
-                    <td><input data-id="${data.id}" type="number" style="width: 60px;"  class="showInDays" value="${
-    data.showInDays
-  }" /></td>                    
-                    <td><input type="checkbox" data-id="${
-                      data.id
-                    }" class="favorite" ${data.isFav ? "checked" : ""} /></td>
-  <td><input type="checkbox" data-id="${data.id}" class="skip" ${
-    data.isSkip ? "checked" : ""
-  } /></td>
-  <td><input type="checkbox" data-id="${data.id}" class="delete"/></td>
-                `;
+    <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">${idNumber}</td>
+    <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">
+      ${value == "true" ? data.value2 : data.value1}
+    </td>                    
+    <td><input data-id="${data.id}" type="number" style="width: 60px;" class="showInDays" value="${data.showInDays}" /></td>                    
+    <td><input type="checkbox" data-id="${data.id}" class="favorite" ${data.isFav ? "checked" : ""} /></td>
+    <td><input type="checkbox" data-id="${data.id}" class="skip" ${data.isSkip ? "checked" : ""} /></td>
+    <td><input type="checkbox" data-id="${data.id}" class="delete"/></td>
+`;
+
 
   // Add an event listener to the fav checkbox
   const checkbox = row.querySelector('input[type="checkbox"].favorite');

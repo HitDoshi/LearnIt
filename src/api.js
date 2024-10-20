@@ -78,6 +78,7 @@ function logInFunction() {
             localStorage.setItem("token", data?.data.token);
             localStorage.setItem("username", data?.data.userName);
             localStorage.setItem("useremail", email);
+            localStorage.setItem("EnableAudio", data?.data.EnableAudio);
             toggleNavIcon();
             isTokenChange();
           } else {

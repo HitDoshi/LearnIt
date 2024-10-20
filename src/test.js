@@ -41,6 +41,7 @@ let currentFile = null;
 let audioPlayer = null;
 let isPlaying = false;
 var index = 0;
+const EnableAudio = localStorage.getItem("EnableAudio") || "N";
 
 const audioElement = document.getElementById("audio");
 const playPauseButton = document.getElementById("playPauseButton");
@@ -77,7 +78,32 @@ window.addEventListener("load", function () {
 
   delayInput.value = delay;
   clearTimeout(timer); // Clear the previous timer if it exists
+
+  if (EnableAudio == "N") {
+    continuous_playback.disabled = true;
+    delayInput.disabled = true;
+    deleteAudioButton.disabled = true;
+    document.getElementById("deleteIconContainer").disabled = true;
+    document
+      .getElementById("continuous_playback_container")
+      .addEventListener("click", () => {
+        showToast("This functionality is disabled for your account !!");
+      });
+
+    document.getElementById("delay_container").addEventListener("click", () => {
+      showToast("This functionality is disabled for your account !!");
+    });
+  }
 });
+
+function openDeleteAudioDialog(){
+
+  if(EnableAudio == "Y"){
+    $('#deleteAudioModal').modal('show');
+  }else{
+    showToast("This functionality is disabled for your account !!");
+  }  
+}
 
 function replaceStateWithHistory(page) {
   history.replaceState(null, "", page);
@@ -86,18 +112,16 @@ function replaceStateWithHistory(page) {
 }
 
 function convertFilename(filename) {
-
   console.log(filename);
-  
 
   if (filename) {
-    const splitFilename = filename.split('.');
+    const splitFilename = filename.split(".");
     const fileExtension = splitFilename[splitFilename.length - 1];
-    const realFilename = filename.split('_').slice(0, -2).join('_');
+    const realFilename = filename.split("_").slice(0, -2).join("_");
 
     console.log(`${realFilename}${fileExtension}`);
-    return `${realFilename}.${fileExtension}`
-  }else{
+    return `${realFilename}.${fileExtension}`;
+  } else {
     null;
   }
 }
@@ -429,14 +453,13 @@ function saveUpdatedValue() {
   request.onsuccess = (event) => {
     const existingData = event.target.result;
     if (existingData) {
-
-      let value1 = ""; 
+      let value1 = "";
       let value2 = "";
 
       if (toggleQuestion == "true") {
         value1 = showAns.value;
         value2 = QuestionText.value;
-      }else{
+      } else {
         value2 = showAns.value;
         value1 = QuestionText.value;
       }
@@ -445,7 +468,7 @@ function saveUpdatedValue() {
       existingData.value1 = value1;
       existingData.value2 = value2;
       existingData.UserDefined1 = updatedUserDefined1;
-      
+
       const updateRequest = objectStore.put(existingData);
       updateRequest.onsuccess = () => {
         totalData.forEach((item, index) => {
@@ -611,7 +634,7 @@ function showData() {
   }
 
   try {
-    currentFile = null;    
+    currentFile = null;
     // const UserDefined1 = document.getElementById("show_UserDefined1");
     const isFav = document.getElementById("toggle_fav");
     const isSkip = document.getElementById("toggle_skip");
@@ -845,7 +868,7 @@ function showAnswer() {
     showAns.style.backgroundColor = "transparent";
     showAns.style.borderWidth = "1px";
 
-    QuestionText.disabled = false;  
+    QuestionText.disabled = false;
     QuestionText.style.backgroundColor = "transparent";
     QuestionText.style.borderWidth = "1px";
 
@@ -1125,7 +1148,13 @@ document
   .getElementById("fileInput")
   .addEventListener("change", function (event) {
     const file = event.target.files[0];
-    if (file && (file.type === "audio/wav" || file.type === "audio/mp3" || file.type === "audio/x-m4a" || file.type === "audio/m4a")) {
+    if (
+      file &&
+      (file.type === "audio/wav" ||
+        file.type === "audio/mp3" ||
+        file.type === "audio/x-m4a" ||
+        file.type === "audio/m4a")
+    ) {
       currentFile = file;
       fileNameLink.textContent = file.name;
       document.getElementById("empty-state").style.display = "none";
@@ -1138,7 +1167,7 @@ document
       uploadButton[0].style.removeProperty("display");
       uploadButton[0].style.display = "";
       deleteAudioButton.style.display = "none";
-    } else {      
+    } else {
       console.log("Invalid file type- ", file?.type);
       showToast("Invalid file type " + file?.type);
     }
@@ -1175,76 +1204,86 @@ function updatePlayPauseIcon() {
 }
 
 async function uploadFile() {
-  if (currentFile) {
-    const formData = new FormData();
-    formData.append("file", currentFile);
-    // formData.append("id", data.questionId.toString());
-    const token = localStorage.getItem("token");
-    if (token) {
-      $("#modal-loading").modal("show");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  if (EnableAudio == "Y") {
+    if (currentFile) {
+      const formData = new FormData();
+      formData.append("file", currentFile);
+      // formData.append("id", data.questionId.toString());
+      const token = localStorage.getItem("token");
+      if (token) {
+        $("#modal-loading").modal("show");
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      fetch(`${API_URL}/api/uploadAudio.php?token=${token}`, {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then(async (data) => {
-          $("#modal-loading").modal("hide");
-          console.log(data);
-          showToast(data?.message);
-          if (data?.success) {
-            await updateAudioFileName(data.fileName);
-            fileNameLink.textContent = convertFilename(data.fileName);
-            document.getElementById("empty-state").style.display = "none";
-            document.getElementById("file-display").style.display = "flex";
-            uploadButton[0].style.display = "none";
-            deleteAudioButton.style.display = "";
-            // showData();
-            // currentFile = null;
-          }
+        fetch(`${API_URL}/api/uploadAudio.php?token=${token}`, {
+          method: "POST",
+          body: formData,
         })
-        .catch((error) => {
-          console.error("Error:", error);
-          showToast(error?.message);
-          $("#modal-loading").modal("hide");
-        });
+          .then((response) => response.json())
+          .then(async (data) => {
+            $("#modal-loading").modal("hide");
+            console.log(data);
+            showToast(data?.message);
+            if (data?.success) {
+              await updateAudioFileName(data.fileName);
+              fileNameLink.textContent = convertFilename(data.fileName);
+              document.getElementById("empty-state").style.display = "none";
+              document.getElementById("file-display").style.display = "flex";
+              uploadButton[0].style.display = "none";
+              deleteAudioButton.style.display = "";
+              // showData();
+              // currentFile = null;
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showToast(error?.message);
+            $("#modal-loading").modal("hide");
+          });
+      } else {
+        console.log("Please login to upload file !!");
+        showToast("Please login to upload !!");
+      }
     } else {
-      console.log("Please login to upload file !!");
-      showToast("Please login to upload !!");
+      $("#modal-loading").modal("hide");
+      console.log("Please select a file");
+      showToast("Invalid file type");
     }
   } else {
-    $("#modal-loading").modal("hide");
-    console.log("Please select a file");
-    showToast("Invalid file type");
+    showToast("This functionality is disabled for your account !!");
   }
 }
 
 playPauseButton.addEventListener("click", function () {
   try {
-    if (!isPlaying) {
-      isPlaying = true;
-      playPauseButton.querySelector(".icon-play").classList.add("d-none");
-      playPauseButton.querySelector(".icon-stop").classList.remove("d-none");
-      playPauseButton.querySelector(".text").textContent = "";
-      audioPlayer.play().catch((error) => {
-        console.log("Error in playPauseButton !", error);
+    if (EnableAudio == "Y") {
+      if (!isPlaying) {
+        isPlaying = true;
+        playPauseButton.querySelector(".icon-play").classList.add("d-none");
+        playPauseButton.querySelector(".icon-stop").classList.remove("d-none");
+        playPauseButton.querySelector(".text").textContent = "";
+        audioPlayer.play().catch((error) => {
+          console.log("Error in playPauseButton !", error);
 
-        showToast("Failed to play audio !!");
+          showToast("Failed to play audio !!");
+          isPlaying = false;
+          audioPlayer.pause();
+          audioPlayer.currentTime = 0; // Optional: Reset audio to the beginning
+          playPauseButton
+            .querySelector(".icon-play")
+            .classList.remove("d-none");
+          playPauseButton.querySelector(".icon-stop").classList.add("d-none");
+          playPauseButton.querySelector(".text").textContent = "Play";
+        });
+      } else {
         isPlaying = false;
         audioPlayer.pause();
         audioPlayer.currentTime = 0; // Optional: Reset audio to the beginning
         playPauseButton.querySelector(".icon-play").classList.remove("d-none");
         playPauseButton.querySelector(".icon-stop").classList.add("d-none");
         playPauseButton.querySelector(".text").textContent = "Play";
-      });
-    } else {
-      isPlaying = false;
-      audioPlayer.pause();
-      audioPlayer.currentTime = 0; // Optional: Reset audio to the beginning
-      playPauseButton.querySelector(".icon-play").classList.remove("d-none");
-      playPauseButton.querySelector(".icon-stop").classList.add("d-none");
-      playPauseButton.querySelector(".text").textContent = "Play";
+      }
+    }else{
+      showToast("This functionality is disabled for your account !!");
     }
   } catch (error) {
     console.log("Error in playPauseButton !", error);
@@ -1253,6 +1292,7 @@ playPauseButton.addEventListener("click", function () {
 
 startStopButton.addEventListener("click", function () {
   try {
+    if (EnableAudio == "Y") {
     if (!isPlaying) {
       startStopButton.querySelector(".text").textContent = "Stop";
 
@@ -1285,6 +1325,9 @@ startStopButton.addEventListener("click", function () {
       startStopButton.querySelector(".text").textContent = "Start";
       document.getElementById("continuous_playback").disabled = false;
     }
+  }else{
+    showToast("This functionality is disabled for your account !!");
+  }
   } catch (error) {
     console.log("Error in startStopButton !", error);
   }
@@ -1348,58 +1391,63 @@ const playNextAudio = () => {
 };
 
 continuous_playback.addEventListener("change", function () {
-  clearInterval(playNextAudioIntervalId);
+  if (EnableAudio == "Y") {
+    clearInterval(playNextAudioIntervalId);
 
-  if (isPlaying) {
-    audioPlayer?.pause();
-  }
-
-  isPlaying = false;
-  index = 0;
-
-  if (continuous_playback.checked) {
-    const isFavOnly = document.getElementById("show_fav_only").checked;
-
-    attachedAudioDataOnly = isFavOnly
-      ? favData.filter((item) => {
-          return item.fileName;
-        })
-      : totalData.filter((item) => {
-          return item.fileName;
-        });
-
-    if (attachedAudioDataOnly.length === 0) {
-      showToast("No audio attached data found !!");
-      continuous_playback.checked = false;
-    } else {
-      delay = delayInput.value || 0;
-      localStorage.setItem("delay", delay);
-
-      const randomIndex = Math.floor(
-        Math.random() * attachedAudioDataOnly.length
-      );
-      index = randomIndex;
-      const audioData = attachedAudioDataOnly[index];
-      data = audioData;
-      showData();
-      // playNextAudio();
+    if (isPlaying) {
+      audioPlayer?.pause();
     }
 
-    playPauseButton.style.display = "none";
-    startStopButton.style.removeProperty("display");
-    startStopButton.querySelector(".text").textContent = "Start";
+    isPlaying = false;
+    index = 0;
 
-    document.getElementById("total_question").innerHTML = attachedAudioDataOnly.length;
-  } else {
-    playPauseButton.style.removeProperty("display");
-    startStopButton.style.display = "none";
-    startStopButton.querySelector(".text").textContent = "Start";
-    document.getElementById("total_question").innerHTML =
-    isFavOnly == "true" ? favData.length : totalData.length;
+    if (continuous_playback.checked) {
+      const isFavOnly = document.getElementById("show_fav_only").checked;
+
+      attachedAudioDataOnly = isFavOnly
+        ? favData.filter((item) => {
+            return item.fileName;
+          })
+        : totalData.filter((item) => {
+            return item.fileName;
+          });
+
+      if (attachedAudioDataOnly.length === 0) {
+        showToast("No audio attached data found !!");
+        continuous_playback.checked = false;
+      } else {
+        delay = delayInput.value || 0;
+        localStorage.setItem("delay", delay);
+
+        const randomIndex = Math.floor(
+          Math.random() * attachedAudioDataOnly.length
+        );
+        index = randomIndex;
+        const audioData = attachedAudioDataOnly[index];
+        data = audioData;
+        showData();
+        // playNextAudio();
+      }
+
+      playPauseButton.style.display = "none";
+      startStopButton.style.removeProperty("display");
+      startStopButton.querySelector(".text").textContent = "Start";
+
+      document.getElementById("total_question").innerHTML =
+        attachedAudioDataOnly.length;
+    } else {
+      playPauseButton.style.removeProperty("display");
+      startStopButton.style.display = "none";
+      startStopButton.querySelector(".text").textContent = "Start";
+      document.getElementById("total_question").innerHTML =
+        isFavOnly == "true" ? favData.length : totalData.length;
+    }
+
+    disabledControl();
+    document.getElementById("continuous_playback").disabled = false;
+  }else{
+    showToast("This functionality is disabled for your account !!");
   }
-
-  disabledControl();
-  document.getElementById("continuous_playback").disabled = false;
 });
 
 function disabledControl() {
