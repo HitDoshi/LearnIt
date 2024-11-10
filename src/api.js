@@ -441,7 +441,7 @@ async function uploadDailyUserDataFunction() {
             method: "POST",
             body: JSON.stringify({
               data: data, // Use the retrieved data directly
-              timestamp: new Date().toLocaleString()
+              // timestamp: new Date().toISOString()
             }),
           }
         )

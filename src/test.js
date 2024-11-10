@@ -83,7 +83,7 @@ window.addEventListener("load", function () {
     continuous_playback.disabled = true;
     delayInput.disabled = true;
     deleteAudioButton.disabled = true;
-    document.getElementById("deleteIconContainer").disabled = true;
+    // document.getElementById("deleteIconContainer").disabled = true;
     document
       .getElementById("continuous_playback_container")
       .addEventListener("click", () => {
@@ -96,13 +96,12 @@ window.addEventListener("load", function () {
   }
 });
 
-function openDeleteAudioDialog(){
-
-  if(EnableAudio == "Y"){
-    $('#deleteAudioModal').modal('show');
-  }else{
+function openDeleteAudioDialog() {
+  if (EnableAudio == "Y") {
+    $("#deleteAudioModal").modal("show");
+  } else {
     showToast("This functionality is disabled for your account !!");
-  }  
+  }
 }
 
 function replaceStateWithHistory(page) {
@@ -738,73 +737,13 @@ function shwoBlankData() {
   // setTimer();
 }
 
+function getCurrentFormattedDate(){
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
+  return formattedDate;
+}
+
 async function checkAnswer() {
-  const remainingTime = getRemainingTime();
-  if (remainingTime == 0) {
-    localStorage.setItem("timestamp", Date.now());
-    setTimer();
-    timerFunction();
-  }
-
-  const date = localStorage.getItem("date");
-
-  if (date) {
-    const today = new Date().toLocaleString().split(",")[0].toString();
-    const currentDate = new Date(today).getTime();
-    const storeDate = new Date(date).getTime();
-
-    // const transaction = db.transaction(storeName, "readwrite");
-    //   const objectStore = transaction.objectStore(storeName);
-
-    //   // Open a cursor to iterate over all items in the store
-    //   try {
-    //     const request = objectStore.openCursor();
-    //     request.onsuccess = (event) => {
-    //       const cursor = event.target.result;
-    //       if (cursor) {
-    //         const data = cursor.value;
-    //         if (data.showInDays > 0) {
-    //           // Only update if isFav is not already false
-    //           data.showInDays = data.showInDays - 1;
-    //           const updateRequest = objectStore.put(data);
-    //           updateRequest.onsuccess = () => {
-    //             console.log("ShowInDays updated successfully");
-    //           };
-    //           updateRequest.onerror = () => {
-    //             showToast("Error while updating data !!");
-    //           };
-    //         }
-    //         cursor.continue(); // Move to the next item
-    //       }
-    //     };
-    //     request.onerror = () => {
-    //       showToast("Error while retrieving data !!");
-    //     };
-    //   } catch (error) {
-    //     console.log("Error in showInDays update !", error);
-    //   }
-
-    if (currentDate > storeDate) {
-      await updateRegularShowInDaysValue();
-      await updateUserShowInDaysValue();
-
-      uploadDailyUserDataFunction(false);
-      uploadUserActivity();
-      localStorage.setItem(
-        "date",
-        new Date().toISOString().split("T")[0].toString()
-      );
-      localStorage.setItem("totalRightAns", 0);
-      totalRightAnswer = 0;
-      document.getElementById("total_right_attempt").innerHTML =
-        totalRightAnswer;
-    }
-  } else {
-    localStorage.setItem(
-      "date",
-      new Date().toLocaleString().split(",")[0].toString()
-    );
-  }
 
   const enter_ans = document.getElementById("enter_ans");
   const ans = enter_ans.value.toLowerCase().trim().toString();
@@ -814,7 +753,73 @@ async function checkAnswer() {
 
   if (ans == "") {
     return;
+  }  
+  const remainingTime = getRemainingTime();
+  if (remainingTime == 0) {
+    localStorage.setItem("timestamp", Date.now());
+    setTimer();
+    timerFunction();
   }
+
+  const date = localStorage.getItem("date");
+
+  document.getElementById("date").innerText = `${date}`;
+
+  if (date) {
+    if (ans == answer.toLowerCase().trim().toString()) {      
+      const todayFormattedDate = getCurrentFormattedDate();              
+
+      // const transaction = db.transaction(storeName, "readwrite");
+      //   const objectStore = transaction.objectStore(storeName);
+
+      //   // Open a cursor to iterate over all items in the store
+      //   try {
+      //     const request = objectStore.openCursor();
+      //     request.onsuccess = (event) => {
+      //       const cursor = event.target.result;
+      //       if (cursor) {
+      //         const data = cursor.value;
+      //         if (data.showInDays > 0) {
+      //           // Only update if isFav is not already false
+      //           data.showInDays = data.showInDays - 1;
+      //           const updateRequest = objectStore.put(data);
+      //           updateRequest.onsuccess = () => {
+      //             console.log("ShowInDays updated successfully");
+      //           };
+      //           updateRequest.onerror = () => {
+      //             showToast("Error while updating data !!");
+      //           };
+      //         }
+      //         cursor.continue(); // Move to the next item
+      //       }
+      //     };
+      //     request.onerror = () => {
+      //       showToast("Error while retrieving data !!");
+      //     };
+      //   } catch (error) {
+      //     console.log("Error in showInDays update !", error);
+      //   }
+
+      if (date != todayFormattedDate) {
+        await updateRegularShowInDaysValue();
+        await updateUserShowInDaysValue();
+
+        uploadDailyUserDataFunction(false);
+        uploadUserActivity();
+        const formattedDate = getCurrentFormattedDate();
+        localStorage.setItem("date", formattedDate);
+        document.getElementById("date").innerText = `${formattedDate}`;
+        localStorage.setItem("totalRightAns", 0);
+        totalRightAnswer = 0;
+        document.getElementById("total_right_attempt").innerHTML =
+          totalRightAnswer;
+      }
+    }
+  } else {    
+    const formattedDate = getCurrentFormattedDate();
+    localStorage.setItem("date", formattedDate);
+  }
+  
   if (ans == answer.toLowerCase().trim().toString()) {
     console.log("Right");
 
@@ -1282,7 +1287,7 @@ playPauseButton.addEventListener("click", function () {
         playPauseButton.querySelector(".icon-stop").classList.add("d-none");
         playPauseButton.querySelector(".text").textContent = "Play";
       }
-    }else{
+    } else {
       showToast("This functionality is disabled for your account !!");
     }
   } catch (error) {
@@ -1293,41 +1298,41 @@ playPauseButton.addEventListener("click", function () {
 startStopButton.addEventListener("click", function () {
   try {
     if (EnableAudio == "Y") {
-    if (!isPlaying) {
-      startStopButton.querySelector(".text").textContent = "Stop";
+      if (!isPlaying) {
+        startStopButton.querySelector(".text").textContent = "Stop";
 
-      disabledControl();
+        disabledControl();
 
-      const isFavOnly = document.getElementById("show_fav_only").checked;
+        const isFavOnly = document.getElementById("show_fav_only").checked;
 
-      // attachedAudioDataOnly = isFavOnly
-      //   ? favData.filter((item) => {
-      //       return item.fileName;
-      //     })
-      //   : totalData.filter((item) => {
-      //       return item.fileName;
-      //     });
+        // attachedAudioDataOnly = isFavOnly
+        //   ? favData.filter((item) => {
+        //       return item.fileName;
+        //     })
+        //   : totalData.filter((item) => {
+        //       return item.fileName;
+        //     });
 
-      if (attachedAudioDataOnly.length === 0) {
-        showToast("No audio attached data found !!");
-        continuous_playback.checked = false;
+        if (attachedAudioDataOnly.length === 0) {
+          showToast("No audio attached data found !!");
+          continuous_playback.checked = false;
+        } else {
+          delay = delayInput.value || 0;
+          localStorage.setItem("delay", delay);
+          playNextAudio();
+        }
       } else {
-        delay = delayInput.value || 0;
-        localStorage.setItem("delay", delay);
-        playNextAudio();
+        clearInterval(playNextAudioIntervalId);
+
+        audioPlayer?.pause();
+
+        isPlaying = false;
+        startStopButton.querySelector(".text").textContent = "Start";
+        document.getElementById("continuous_playback").disabled = false;
       }
     } else {
-      clearInterval(playNextAudioIntervalId);
-
-      audioPlayer?.pause();
-
-      isPlaying = false;
-      startStopButton.querySelector(".text").textContent = "Start";
-      document.getElementById("continuous_playback").disabled = false;
+      showToast("This functionality is disabled for your account !!");
     }
-  }else{
-    showToast("This functionality is disabled for your account !!");
-  }
   } catch (error) {
     console.log("Error in startStopButton !", error);
   }
@@ -1445,7 +1450,7 @@ continuous_playback.addEventListener("change", function () {
 
     disabledControl();
     document.getElementById("continuous_playback").disabled = false;
-  }else{
+  } else {
     showToast("This functionality is disabled for your account !!");
   }
 });

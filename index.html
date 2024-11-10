@@ -57,7 +57,6 @@
       //   localStorage.setItem("reset-timestamp", false);
       // }
 
-      var date = localStorage.getItem("date");
       // localStorage.setItem("subject", 1);
       // localStorage.setItem("topic", 1);
       if (localStorage.getItem("subject") == null) {
@@ -70,11 +69,12 @@
         localStorage.setItem("delay", 1);
       }
 
+      var date = localStorage.getItem("date");
+
       if (!date) {
-        localStorage.setItem(
-          "date",
-          new Date().toISOString().split('T')[0].toString()
-        );
+        const today = new Date();
+        const formattedDate = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
+        localStorage.setItem("date", formattedDate);
       }      
       window.location.href = "main.html";
 
