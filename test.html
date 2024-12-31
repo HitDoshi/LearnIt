@@ -552,7 +552,7 @@
             style="display: flex; justify-content: space-between"
             class="audio-pick"
           >
-            <input type="file" id="fileInput" accept=".wav,.mp3,.m4a" required />
+            <input type="file" id="fileInput" accept=".wav,.mp3,.m4a" onclick="triggerFileInput(event)" required />
             <button
               onclick="uploadFile()"
               id="uploadButton"
@@ -570,7 +570,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             margin-right: 10px;
-            "></a>
+            "
+            ></a>
 
             <div style="display: flex; align-items: center;gap: 20px;">  
               
@@ -713,6 +714,7 @@
           if (this.value.length > 1) {
             const cursorPosition = this.selectionStart;
             this.value = this.value.toLowerCase();
+            this.setSelectionRange(cursorPosition, cursorPosition);
           }
         });
 

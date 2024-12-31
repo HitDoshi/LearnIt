@@ -16,6 +16,7 @@ function signOutUser() {
   localStorage.removeItem("token");
   localStorage.removeItem("username");
   localStorage.removeItem("useremail");
+  localStorage.removeItem('user');
   toggleNavIcon();
   isTokenChange();
 }
@@ -79,6 +80,7 @@ function logInFunction() {
             localStorage.setItem("username", data?.data.userName);
             localStorage.setItem("useremail", email);
             localStorage.setItem("EnableAudio", data?.data.EnableAudio);
+            localStorage.setItem('user',JSON.stringify(data?.data || "{}"));
             toggleNavIcon();
             isTokenChange();
           } else {

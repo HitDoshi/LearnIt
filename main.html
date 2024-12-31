@@ -745,6 +745,7 @@
       localStorage.removeItem("token");
       localStorage.removeItem("username");
       localStorage.removeItem("useremail");
+      localStorage.removeItem("user");
       toggleNavIcon();
       $("#signOutModal").modal("hide");
       isTokenChange();
@@ -1012,11 +1013,13 @@
             localStorage.removeItem("token");
             localStorage.removeItem("username");
             localStorage.removeItem("useremail");
+            localStorage.removeItem("user");
             toggleNavIcon();
             isTokenChange();
             showToast(data.message);
           }else{
-            localStorage.setItem('EnableAudio',data?.data.EnableAudio)
+            localStorage.setItem('EnableAudio',data?.data.EnableAudio);
+            localStorage.setItem('user',JSON.stringify(data?.data || "{}"));
           }
         })
         .catch((error) => {

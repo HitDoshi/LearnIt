@@ -24,6 +24,7 @@ var subject = parseInt(localStorage.getItem("subject")) || 1;
 
 const urlParams = new URLSearchParams(window.location.search);
 const myParam = urlParams.get("id") || "1";
+var totalUserData = 0;
 
 const value = localStorage.getItem("toggle_question"); //false means value1 show otherwise value2
 
@@ -214,7 +215,35 @@ openRequest.onsuccess = (event) => {
 };
 userOpenRequest.onsuccess = (event) => {
   userDB = event.target.result;
+  countTotalUserData();
 };
+
+function countTotalUserData() {
+  if (!userDB) {
+    console.error("Database is not open yet.");
+    return;
+  }
+  try {
+    const transaction = userDB.transaction('userData', "readonly");
+    const objectStore = transaction.objectStore('userData');
+
+    // Use count without a range to get the total count of all records
+    var request = objectStore.count();
+
+    request.onsuccess = () => {
+      const totalCount = request.result;
+      totalUserData = totalCount;
+      console.log("Total user data count:", totalCount);
+    };
+
+    request.onerror = (error) => {
+      console.error("Error counting total user data records:", error);
+    };
+  } catch (error) {
+    console.error("Error in countTotalUsers function:", error);
+  }
+}
+
 
 function displayData() {
   if (!db) {
@@ -594,6 +623,7 @@ function updateData() {
     hideUpdateOption();
     loadUpdatedTable();
     showToast("Data updated !!");
+    countTotalUserData();
 
     // var navbarToggle = document.querySelector(".navbar-toggler");
     // var navbarCollapse = document.querySelector(".navbar-collapse");
@@ -1008,6 +1038,7 @@ async function addUserData(newData) {
       if (topic == 0) {
         loadUpdatedTable();
       }
+      countTotalUserData();
     };
 
     request.onerror = (event) => {

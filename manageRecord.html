@@ -303,7 +303,18 @@
     function addUserDataModalShow(){
       const token = localStorage.getItem('token');
       if (token) {
-        $('#exampleModalCenter').modal('show');
+
+        const user = JSON.parse(localStorage.getItem('user') || "{}");
+        if(user?.email){
+          const maxUD = parseInt(user?.maxUD || 0);
+          if(maxUD > 0 && totalUserData >= maxUD){
+            showToast('Maximum number of values is reached for this account.')
+          }else{
+            $('#exampleModalCenter').modal('show');
+          }
+        }else{
+          showToast('User not found.\nPlease login again !!');  
+        }        
       } else {
         showToast('Access to this section requires a login.\nPlease login first !!');
       }

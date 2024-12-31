@@ -1179,8 +1179,15 @@ document
   });
 
 function triggerFileInput(event) {
-  event.preventDefault();
-  document.getElementById("fileInput").click();
+  if (EnableAudio !== "Y") {
+      showToast("This functionality is disabled for your account !!");
+      event.preventDefault();
+  } else {
+      if (event.target.id === "fileNameLink") {
+          event.preventDefault();
+          document.getElementById("fileInput").click();
+      }
+  }
 }
 
 function togglePlayPause() {
