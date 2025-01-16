@@ -70,6 +70,11 @@ const showAns = document.getElementById("show_ans");
 const QuestionText = document.getElementById("value_1");
 
 window.addEventListener("load", function () {
+
+  const user = JSON.parse(localStorage.getItem('user') || "{}");
+  const maxUD = parseInt(user?.maxUD || 0);
+  document.getElementById("maxUD").innerText = `${maxUD}`;
+
   if (topic != 0) {
     document.getElementById("file-info").style.display = "none";
     document.getElementById("continuous_playback_container").style.display =
@@ -762,7 +767,6 @@ async function checkAnswer() {
   }
 
   const date = localStorage.getItem("date");
-
   document.getElementById("date").innerText = `${date}`;
 
   if (date) {
@@ -809,6 +813,9 @@ async function checkAnswer() {
         const formattedDate = getCurrentFormattedDate();
         localStorage.setItem("date", formattedDate);
         document.getElementById("date").innerText = `${formattedDate}`;
+
+        const user = JSON.parse(localStorage.getItem('user') || "{}");        
+        
         localStorage.setItem("totalRightAns", 0);
         totalRightAnswer = 0;
         document.getElementById("total_right_attempt").innerHTML =
