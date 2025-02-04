@@ -1411,6 +1411,9 @@ const playNextAudio = () => {
 
 continuous_playback.addEventListener("change", function () {
   if (EnableAudio == "Y") {
+    resetEditUserDefineValueMode();
+    showAns.value = "";
+
     clearInterval(playNextAudioIntervalId);
 
     if (isPlaying) {
