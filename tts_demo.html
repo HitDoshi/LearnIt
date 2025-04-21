@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TTS App</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      background-color: #f4f4f4;
+    }
+
+    textarea {
+      width: 300px;
+      height: 100px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+      width: 320px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Text to Speech</h2>
+
+  <textarea id="text" placeholder="Enter text...">Hello, how are you?</textarea><br>
+
+  <select id="language">
+    <option value="en">English</option>
+    <option value="fr">French</option>
+    <option value="hi">Hindi</option>
+    <option value="es">Spanish</option>
+    <option value="de">German</option>
+    <option value="ja">Japanese</option>
+  </select><br>
+
+  <button onclick="speakText()">Speak</button>
+
+  <script>
+    let voices = [];
+
+    function loadVoices() {
+      voices = speechSynthesis.getVoices();
+
+      if (voices.length === 0) {
+        console.warn("No voices loaded. Trying again...");
+        setTimeout(loadVoices, 100);
+      } else {
+        console.log("Loaded voices:", voices.map(v => `${v.name} (${v.lang})`));
+      }
+    }
+
+    if (typeof speechSynthesis !== "undefined") {
+      speechSynthesis.onvoiceschanged = loadVoices;
+      loadVoices();
+    }
+
+    function speakText() {
+      const text = document.getElementById("text").value;
+      const lang = document.getElementById("language").value;
+
+      if (!text.trim()) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      const matchedVoice = voices.find(voice => voice.lang.startsWith(lang));
+
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+        console.log(`Using voice: ${matchedVoice.name} (${matchedVoice.lang})`);
+      } else {
+        console.warn("No matching voice found for language:", lang);
+      }
+
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>
