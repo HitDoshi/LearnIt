@@ -883,10 +883,10 @@
 
     function showDownloadDataModal(){
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user?.userType == '3') {
-        $('#exampleModalCenter').modal('show');
-      } else {
+      if (user?.userType == '1' || user?.userType == '2') {
         $('#downloadModal').modal('show');        
+      } else {
+        $('#exampleModalCenter').modal('show');
       }
     }
 
@@ -918,7 +918,7 @@
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       let loadFrom = 'initialData'; // this is key
 
-      if(user?.userType != 3){
+      if(user?.userType == '1' || user?.userType == '2'){
         const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
         if (selectedValue === 'userData') {
           loadFrom = 'userData'; // this is key
@@ -999,7 +999,7 @@
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       let loadFrom = 'initialData'; // this is key
 
-      if(user?.userType != 3){
+      if(user?.userType == '1' && user?.userType == '2'){
         const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
         if (selectedValue === 'userData') {
           loadFrom = 'userData'; // this is key
