@@ -11,31 +11,32 @@ var apiIndexedDB =
   window.shimIndexedDB;
 
 let apiDB; // Reference to the IndexedDB database
+let subjectTestDB;
 
 function signOutUser() {
   localStorage.removeItem("token");
   localStorage.removeItem("username");
   localStorage.removeItem("useremail");
-  localStorage.removeItem('user');
+  localStorage.removeItem("user");
   toggleNavIcon();
   isTokenChange();
 }
 
-function getLocation() {  
+function getLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      console.log('Geolocation is not supported by your browser');
-      reject(new Error('Geolocation is not supported by your browser'));
+      console.log("Geolocation is not supported by your browser");
+      reject(new Error("Geolocation is not supported by your browser"));
     } else {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          resolve({lat, lon});
+          resolve({ lat, lon });
         },
         (error) => {
-          console.log('Unable to retrieve your location');
-          reject(new Error('Unable to retrieve your location'));
+          console.log("Unable to retrieve your location");
+          reject(new Error("Unable to retrieve your location"));
         }
       );
     }
@@ -43,8 +44,8 @@ function getLocation() {
 }
 
 function userAuthMiddleware(data) {
-  if(data.status === 401 || data.status === 403 || data.status === 404) {
-    signOutUser();    
+  if (data.status === 401 || data.status === 403 || data.status === 404) {
+    signOutUser();
   }
 }
 
@@ -80,7 +81,7 @@ function logInFunction() {
             localStorage.setItem("username", data?.data.userName);
             localStorage.setItem("useremail", email);
             localStorage.setItem("EnableAudio", data?.data.EnableAudio);
-            localStorage.setItem('user',JSON.stringify(data?.data || "{}"));
+            localStorage.setItem("user", JSON.stringify(data?.data || "{}"));
             toggleNavIcon();
             isTokenChange();
           } else {
@@ -170,15 +171,12 @@ function forgotPassFunction() {
       buttonText.textContent = "Sending...";
 
       console.log(form);
-      fetch(
-        `${API_URL}/api/requestForgotPassword.php`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email,
-          }),
-        }
-      )
+      fetch(`${API_URL}/api/requestForgotPassword.php`, {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           if (data?.success) {
@@ -219,12 +217,9 @@ function deleteUserFunction() {
 
     const token = localStorage.getItem("token");
 
-    fetch(
-      `${API_URL}/api/deleteAccount.php?token=${token}`,
-      {
-        method: "GET",
-      }
-    )
+    fetch(`${API_URL}/api/deleteAccount.php?token=${token}`, {
+      method: "GET",
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data?.success) {
@@ -269,20 +264,16 @@ function feedbackFunction() {
 
       const token = localStorage.getItem("token");
 
-      fetch(
-        `${API_URL}/api/feedback.php?token=${token}`,
-        {
-          method: "post",
-          body: JSON.stringify({
-            username: username,
-            subject: subject,
-            message: message,
-          }),
-        }
-      )
+      fetch(`${API_URL}/api/feedback.php?token=${token}`, {
+        method: "post",
+        body: JSON.stringify({
+          username: username,
+          subject: subject,
+          message: message,
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
-
           userAuthMiddleware(data);
 
           if (data?.success) {
@@ -342,12 +333,61 @@ const openDB = () => {
   });
 };
 
+const openSubjectTestDB = () => {
+  return new Promise((resolve, reject) => {
+    const apiRequest = apiIndexedDB.open("test", 1);
+
+    apiRequest.onerror = (event) => {
+      reject("Error opening database");
+    };
+
+    apiRequest.onupgradeneeded = (event) => {
+      const subjectTestDB = event.target.result;
+      if (!subjectTestDB.objectStoreNames.contains("data")) {
+        const apiObjectStore = subjectTestDB.createObjectStore("data", {
+          keyPath: "id",
+        });
+        apiObjectStore.createIndex("subjectTopicIndex", [
+          "subjectId",
+          "topicId",
+        ]);
+      }
+    };
+
+    apiRequest.onsuccess = (event) => {
+      subjectTestDB = event.target.result;
+      console.log(subjectTestDB);
+      resolve(subjectTestDB);
+    };
+  });
+};
+
 // Retrieve data from the database
 const getDataFromDB = async () => {
   return openDB().then((db) => {
     return new Promise((resolve, reject) => {
       const apiTransaction = db.transaction("userData", "readonly");
       const apiObjectStore = apiTransaction.objectStore("userData");
+
+      const apiRequest = apiObjectStore.getAll();
+
+      apiRequest.onerror = (event) => {
+        reject("Error fetching data from object store");
+      };
+
+      apiRequest.onsuccess = (event) => {
+        const apiData = event.target.result;
+        resolve(apiData);
+      };
+    });
+  });
+};
+
+const getSubjectTestDataFromDB = async () => {
+  return openSubjectTestDB().then((db) => {
+    return new Promise((resolve, reject) => {
+      const apiTransaction = db.transaction("data", "readonly");
+      const apiObjectStore = apiTransaction.objectStore("data");
 
       const apiRequest = apiObjectStore.getAll();
 
@@ -378,49 +418,58 @@ async function uploadUserDataFunction(showLogs = true) {
       .then((data) => {
         console.log("Data retrieved from IndexedDB:", data);
 
-        // Continue with the fetch request inside the .then block
-        fetch(
-          `${API_URL}/api/uploadUserData.php?token=${token}`,
-          {
+        getSubjectTestDataFromDB().then((subjectTestData) => {
+          console.log(
+            "subjectTestData retrieved from IndexedDB:",
+            subjectTestData
+          );
+
+          const currentLoadedSubjectId = localStorage.getItem(
+            "currentLoadedSubjectId"
+          );
+
+          // Continue with the fetch request inside the .then block
+          fetch(`${API_URL}/api/uploadUserData.php?token=${token}`, {
             method: "POST",
             body: JSON.stringify({
               data: data, // Use the retrieved data directly
+              subjectData: subjectTestData,
+              currentLoadedSubjectId: currentLoadedSubjectId,
               // timestamp: new Date().toLocaleString()
             }),
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-
-            userAuthMiddleware(data);
-
-            if (data?.success) {
-              if (showLogs) {
-                showToast(data?.message);
-              }
-              $("#uploadUserDataModal").modal("hide");
-              // const transaction = db.transaction('userData', "readwrite");
-              // const objectStore = transaction.objectStore('userData');
-              // const clearRequest = objectStore.clear();
-            } else {
-              if (showLogs) {
-                showToast(data?.message);
-              }
-            }
-            console.log(data);
-            button.disabled = false;
-            spinner.classList.add("d-none");
-            buttonText.textContent = "Upload";
           })
-          .catch((error) => {
-            console.error("Error:", error);
-            if (showLogs) {
-              showToast(error?.message);
-            }
-            button.disabled = false;
-            spinner.classList.add("d-none");
-            buttonText.textContent = "Upload";
-          });
+            .then((response) => response.json())
+            .then((data) => {
+              userAuthMiddleware(data);
+
+              if (data?.success) {
+                if (showLogs) {
+                  showToast(data?.message);
+                }
+                $("#uploadUserDataModal").modal("hide");
+                // const transaction = db.transaction('userData', "readwrite");
+                // const objectStore = transaction.objectStore('userData');
+                // const clearRequest = objectStore.clear();
+              } else {
+                if (showLogs) {
+                  showToast(data?.message);
+                }
+              }
+              console.log(data);
+              button.disabled = false;
+              spinner.classList.add("d-none");
+              buttonText.textContent = "Upload";
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              if (showLogs) {
+                showToast(error?.message);
+              }
+              button.disabled = false;
+              spinner.classList.add("d-none");
+              buttonText.textContent = "Upload";
+            });
+        });
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -432,28 +481,39 @@ async function uploadUserDataFunction(showLogs = true) {
 
 async function uploadDailyUserDataFunction() {
   try {
-    const token = localStorage.getItem("token");    
+    const token = localStorage.getItem("token");
 
     getDataFromDB()
       .then((data) => {
         console.log("Data retrieved from IndexedDB:", data);
-        fetch(
-          `${API_URL}/api/uploadUserData.php?token=${token}`,
-          {
+
+        getSubjectTestDataFromDB().then((subjectTestData) => {
+          console.log(
+            "subjectTestData retrieved from IndexedDB:",
+            subjectTestData
+          );
+
+          const currentLoadedSubjectId = localStorage.getItem(
+            "currentLoadedSubjectId"
+          );
+
+          fetch(`${API_URL}/api/uploadUserData.php?token=${token}`, {
             method: "POST",
             body: JSON.stringify({
               data: data, // Use the retrieved data directly
-              // timestamp: new Date().toISOString()
+              subjectData: subjectTestData,
+              currentLoadedSubjectId: currentLoadedSubjectId,
+              // timestamp: new Date().toLocaleString()
             }),
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {            
-            console.log(data);            
           })
-          .catch((error) => {
-            console.error("Error:", error);                       
-          });
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -485,26 +545,31 @@ async function uploadUserActivity() {
     const totalRightAns = parseInt(localStorage.getItem("totalRightAns")) || 0;
     var date = localStorage.getItem("date");
 
-    const location = await getLocation().catch((error) => {
-      console.error("Error:", error);
-      return {lat: null, lon: null};
-    });
-    const {lat = null, lon = null} = location;
-    console.log("lat", lat, "lon", lon);
+    // const location = await getLocation().catch((error) => {
+    //   console.error("Error:", error);
+    //   return { lat: null, lon: null };
+    // });
 
-    fetch(
-      `${API_URL}/api/uploadUserActivity.php?token=${token}`,
-      {
-        method: "post",
-        body: JSON.stringify({
-          totalRightAns: totalRightAns,
-          // date: date,
-          latitude: lat,
-          longitude: lon,
-          plateform: 'Web'
-        }),
-      }
-    )
+    let geoGraphicalData = {};
+
+    await fetch(`https://ipapi.co/json/`).then((response) => response.json()).then((data) => {
+      console.log(data);
+      geoGraphicalData = data;      
+    });
+    
+    const { latitude = null, longitude = null, city = null, country_name = null, region = null } = geoGraphicalData || {};
+
+    await fetch(`${API_URL}/api/uploadUserActivity.php?token=${token}`, {
+      method: "post",
+      body: JSON.stringify({
+        totalRightAns: totalRightAns,
+        // date: date,
+        latitude: latitude,
+        longitude: longitude,
+        data: geoGraphicalData,
+        plateform: "Web",
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         console.log("uploadUserActivity", data);

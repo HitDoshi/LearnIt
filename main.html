@@ -53,7 +53,7 @@
           margin-right: 20px;
           color: white;
           cursor: pointer;
-        " data-toggle="modal" data-target="#exampleModalCenter">
+        " onclick="showDownloadDataModal()">
       <path
         d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
     </svg>
@@ -333,7 +333,47 @@
           </button>
           <button type="button" class="btn btn-primary" onclick="loadData()" data-dismiss="modal"
             style="background-color: #00569d">
-            OK
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Download</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Subject data will be reloaded. Do you want to proceed?</p>
+          <p>Which data do you want to download?</p>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="downloadData" id="initialData" value="initialData">
+            <label class="form-check-label" for="initialData">
+              Initial Data
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="downloadData" id="userData" value="userData" checked >
+            <label class="form-check-label" for="updatedData">
+              User Data
+            </label>
+          </div>
+        </div>                
+        <br />        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" onclick="loadData()" data-dismiss="modal"
+            style="background-color: #00569d">
+            Download
           </button>
         </div>
       </div>
@@ -841,6 +881,15 @@
       $('#deleteAccountModal').modal('show');
     }
 
+    function showDownloadDataModal(){
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user?.userType == '3') {
+        $('#exampleModalCenter').modal('show');
+      } else {
+        $('#downloadModal').modal('show');        
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       var isLoggedIn = localStorage.getItem('token'); // or false depending on your authentication logic
 
@@ -865,6 +914,17 @@
     }
 
     async function getQuizData() {
+
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      let loadFrom = 'initialData'; // this is key
+
+      if(user?.userType != 3){
+        const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
+        if (selectedValue === 'userData') {
+          loadFrom = 'userData'; // this is key
+        }
+      }
+      
       const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
 
       const SubjectID = localStorage.getItem("subject") || 1;
@@ -873,8 +933,10 @@
       await new Promise((resolve) => setTimeout(resolve, 1000));
       console.log('SubjectID', SubjectID);
 
+      const token = localStorage.getItem("token");
+      
       return fetch(
-        `${API_URL}/api/get_quiz_data.php?SubjectID=${SubjectID}`
+        `${API_URL}/api/get_quiz_data.php?SubjectID=${SubjectID}&loadFrom=${loadFrom}${token ? `&token=${token}` : ''}`
       )
         .then((response) => response.json())
         .then(async (jsonData) => {
@@ -886,6 +948,7 @@
             const count = event.target.result;
 
             console.log("---->SubjectData", jsonData);
+            localStorage.setItem("currentLoadedSubjectId", SubjectID);
 
             if (count == 0) {
               // Store data from data.json into IndexedDB
@@ -931,12 +994,24 @@
     }
 
     async function getUserData() {
+
+
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      let loadFrom = 'initialData'; // this is key
+
+      if(user?.userType != 3){
+        const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
+        if (selectedValue === 'userData') {
+          loadFrom = 'userData'; // this is key
+        }
+      }
+
       userDB = await openDatabase(dbName, dbVersion, storeName);
 
       const token = localStorage.getItem("token");
 
       return fetch(
-        `${API_URL}/api/get_user_data.php?token=${token}`
+        `${API_URL}/api/get_user_data.php?token=${token}&loadFrom=${loadFrom}`
       )
         .then((response) => response.json())
         .then(async (jsonData) => {
