@@ -305,6 +305,18 @@
     </div>
     <br />
 
+    <div class="custom-dropdown" >
+      <select class="language-list-custom-dropdown-select main-custom-button">
+        <!-- Options will be populated dynamically -->
+      </select>
+      <span class="custom-dropdown-arrow">
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+        </svg> -->
+      </span>
+    </div>
+    <br />
+
     <button type="button" class="btn btn-secondary" id="next-button" onclick="replaceStateWithHistory('test.html')">
       NEXT
     </button>
@@ -891,19 +903,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      var isLoggedIn = localStorage.getItem('token'); // or false depending on your authentication logic
-
-      if (isLoggedIn) {
-        document.getElementById("notLogInContainer").style.display = "none";
-        document.getElementById("logInContainer").style.display = "block";
-        const userNameText = localStorage.getItem('username') || '-';
-        const userEmailText = localStorage.getItem('useremail') || '';
-        document.getElementById("userNameText").innerText = userNameText;
-        document.getElementById("userEmailText").innerText = userEmailText;
-      } else {
-        document.getElementById("notLogInContainer").style.display = "block";
-        document.getElementById("logInContainer").style.display = "none";
-      }
+      isTokenChange();
     });
 
 
@@ -950,7 +950,8 @@
             console.log("---->SubjectData", jsonData);
             localStorage.setItem("currentLoadedSubjectId", SubjectID);
 
-            if (count == 0) {
+            if(jsonData?.success){
+              if (count == 0) {
               // Store data from data.json into IndexedDB
               jsonData.data.forEach((item) => {
                 item.isFav = false;
@@ -983,6 +984,12 @@
                 console.error("Error clearing IndexedDB:", event.target.error);
               };
             }
+            }else{
+              $("#modal-loading").modal("hide");
+              showToast(jsonData?.message);
+            }
+
+            
             $("#modal-loading").modal("hide");
           };
         })
@@ -999,7 +1006,7 @@
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       let loadFrom = 'initialData'; // this is key
 
-      if(user?.userType == '1' && user?.userType == '2'){
+      if(user?.userType == '1' || user?.userType == '2'){
         const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
         if (selectedValue === 'userData') {
           loadFrom = 'userData'; // this is key
@@ -1136,35 +1143,6 @@
   });
   </script>
 
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-      // const date = localStorage.getItem("date");
-
-      // if (date) {
-      //   const today = new Date().toLocaleString().split(",")[0].toString();
-      //   const currentDate = new Date(today).getTime();
-      //   const storeDate = new Date(date).getTime();
-
-      //   if (currentDate > storeDate) {
-      //     uploadUserDataFunction(false); //showLog - false
-      //     uploadUserActivity();
-      //     localStorage.setItem(
-      //       "date",
-      //       new Date().toLocaleString().split(",")[0].toString()
-      //     );
-      //     localStorage.setItem("totalRightAns", 0);
-      //   }
-      // } else {
-      //   localStorage.setItem(
-      //     "date",
-      //     new Date().toLocaleString().split(",")[0].toString()
-      //   );
-      // }
-
-    });
-  </script>
 </body>
 
 </html>

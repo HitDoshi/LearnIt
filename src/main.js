@@ -45,6 +45,10 @@ userOpenRequest.onupgradeneeded = (event) => {
   }
 };
 
+document.addEventListener("DOMContentLoaded", function () {
+  customLanguageRenderSelectOptions();
+});
+
 userOpenRequest.onerror = (event) => {
   console.error("Database error: " + event.target.error);
 };
@@ -244,8 +248,7 @@ async function getData() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     try {
-      const url =
-        `${API_URL}/api/get_subject_data.php`;
+      const url = `${API_URL}/api/get_subject_data.php`;
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -256,12 +259,9 @@ async function getData() {
       console.log(responseData);
 
       if (responseData.success) {
-        // subjectData = responseData.data;
-
         if (!subjectDB) {
           subjectData = responseData.data;
           customSubjectRenderSelectOptions();
-          // customNewSubjectRenderSelectOptions();
           getTopicData();
           console.error("Database is not open yet.");
           $("#modal-loading").modal("hide");
@@ -290,7 +290,6 @@ async function getData() {
             subjectData = responseData.data;
 
             customSubjectRenderSelectOptions();
-            // customNewSubjectRenderSelectOptions()
 
             getTopicData();
           };
@@ -336,44 +335,19 @@ function setOption() {
 
 const root = document.documentElement;
 
-// const dropdownTitle = document.querySelector(".dropdown-title");
-// const dropdownList = document.querySelector(".dropdown-list");
-// const mainButton = document.querySelector(".main-button");
-// const floatingIcon = document.querySelector(".floating-icon");
+const customSubjectDropdownSelect = document.querySelector(
+  ".subject-list-custom-dropdown-select"
+);
 
-// const listItemTemplate = (text, translateValue, index) => {
-//   return `
-//     <li class="dropdown-list-item">
-//       <button class="dropdown-button list-button" data-translate-value="${translateValue}%" data-value="${index}">
-//         <span class="text-truncate">${text}</span>
-//       </button>
-//     </li>
-//   `;
-// };
-
-// const renderListItems = () => {
-//   console.log("--", subjectData);
-//   dropdownList.innerHTML = subjectData
-//     .map((item, index) => {
-//       const subject = parseInt(localStorage.getItem("subject")) || 1;
-
-//       if (subject == item.id) dropdownTitle.innerHTML = item.name;
-//       setDropdownProps(0, 0, 0);
-//       return listItemTemplate(item.name, 100 * index, item.id);
-//     })
-//     .join("");
-// };
-
-
-const customSubjectDropdownSelect = document.querySelector('.subject-list-custom-dropdown-select');
-
-// const customDropdownList = document.querySelector(".custom-dropdown-list");
-// const customMainButton = document.querySelector(".custom-dropdown-button");
-// const customFloatingIcon = document.querySelector(".custom-floating-icon");
-
-const customSubjectOptionTemplate = (text, translateValue, index, selected = false) => {  
-
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? 'selected' : ''}>${text}</option>`;
+const customSubjectOptionTemplate = (
+  text,
+  translateValue,
+  index,
+  selected = false
+) => {
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${
+    selected ? "selected" : ""
+  }>${text}</option>`;
 };
 
 const customSubjectRenderSelectOptions = () => {
@@ -384,82 +358,34 @@ const customSubjectRenderSelectOptions = () => {
   const options = subjectData
     .map((item, index) => {
       const isSelected = selectedSubject === parseInt(item.id);
-      return customSubjectOptionTemplate(item.name, 100 * index, item.id, isSelected);
+      return customSubjectOptionTemplate(
+        item.name,
+        100 * index,
+        item.id,
+        isSelected
+      );
     })
     .join("");
 
-    customSubjectDropdownSelect.innerHTML = options;
-  // customDropdownSelect.innerHTML += customSubjectOptionTemplate("User Data", 100 * 0, -1, selectedTopic === -1);
+  customSubjectDropdownSelect.innerHTML = options;
 };
-
 
 const handleSelectSubjectChange = (event) => {
   const selectedValue = event.target.value;
   const selectedOption = event.target.options[event.target.selectedIndex].text;
-  
+
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
 
   localStorage.setItem("subject", selectedValue);
-  localStorage.setItem("topic",1);
+  localStorage.setItem("topic", 1);
   setTopicData();
-  
-  // Perform actions based on the selected value
-  // Example: Navigate, load data, etc.
 };
 
-customSubjectDropdownSelect.addEventListener('change', handleSelectSubjectChange);
-
-
-
-// new subject drop down
-// ------------------------------------------------------------------------------
-
-
-// const customNewSubjectDropdownSelect = document.querySelector('.new-subject-list-custom-dropdown-select');
-
-// // const customDropdownList = document.querySelector(".custom-dropdown-list");
-// // const customMainButton = document.querySelector(".custom-dropdown-button");
-// // const customFloatingIcon = document.querySelector(".custom-floating-icon");
-
-// const customNewSubjectOptionTemplate = (text, translateValue, index, selected = false) => {  
-
-//   return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? 'selected' : ''}>${text}</option>`;
-// };
-
-// const customNewSubjectRenderSelectOptions = () => {
-//   const selectedSubject = parseInt(localStorage.getItem("subject")) || 1;
-
-//   const options = subjectData
-//     .map((item, index) => {
-//       const isSelected = selectedSubject === parseInt(item.id);
-//       return customNewSubjectOptionTemplate(item.name, 100 * index, item.id, isSelected);
-//     })
-//     .join("");
-
-//     customNewSubjectDropdownSelect.innerHTML = options;
-//   // customDropdownSelect.innerHTML += customSubjectOptionTemplate("User Data", 100 * 0, -1, selectedTopic === -1);
-// };
-
-
-// const handleNewSelectNewSubjectChange = (event) => {
-//   const selectedValue = event.target.value;
-//   const selectedOption = event.target.options[event.target.selectedIndex].text;
-  
-//   console.log(`Selected Value: ${selectedValue}`);
-//   console.log(`Selected Option: ${selectedOption}`);
-
-//   // localStorage.setItem("subject", selectedValue);
-//   // setTopicData();
-  
-//   // Perform actions based on the selected value
-//   // Example: Navigate, load data, etc.
-// };
-
-// customNewSubjectDropdownSelect.addEventListener('change', handleNewSelectNewSubjectChange);
-
-// --------------------------------------------------------------------
-
+customSubjectDropdownSelect.addEventListener(
+  "change",
+  handleSelectSubjectChange
+);
 
 const setDropdownProps = (deg, ht, opacity) => {
   root.style.setProperty("--rotate-arrow", deg !== 0 ? deg + "deg" : 0);
@@ -467,47 +393,6 @@ const setDropdownProps = (deg, ht, opacity) => {
   root.style.setProperty("--list-opacity", opacity);
 };
 
-// mainButton.addEventListener("click", () => {
-//   const listWrapperSizes = 3.5; // margins, paddings & borders
-//   const dropdownOpenHeight = 4.6 * subjectData.length + listWrapperSizes;
-//   const currDropdownHeight =
-//     root.style.getPropertyValue("--dropdown-height") || "0";
-
-//   if (currDropdownHeight === "0") {
-//     setDropdownProps(180, dropdownOpenHeight, 1);
-//   } else {
-//     setDropdownProps(0, 0, 0);
-//   }
-// });
-
-// dropdownList.addEventListener("mouseover", (e) => {
-//   const translateValue = e.target.dataset.translateValue;
-//   root.style.setProperty("--translate-value", translateValue);
-// });
-
-// dropdownList.addEventListener("click", (e) => {
-//   const clickedItemText = e.target.innerText.toLowerCase().trim();
-//   const translateValue = e.target.getAttribute("data-value");
-//   dropdownTitle.innerHTML = clickedItemText;
-//   console.log(translateValue);
-//   setDropdownProps(0, 0, 0);
-//   localStorage.setItem("subject", translateValue);
-//   localStorage.setItem("topic", 1);
-//   localStorage.setItem("total_right", 0);
-//   selected_subject = translateValue;
-//   getTopicData();
-//   setTopicData();
-//   // customRenderListItems();
-// });
-
-// dropdownList.addEventListener("mousemove", (e) => {
-//   const iconSize = root.style.getPropertyValue("--floating-icon-size") || 0;
-//   const x = e.clientX - dropdownList.getBoundingClientRect().x;
-//   const y = e.clientY - dropdownList.getBoundingClientRect().y;
-//   root.style.setProperty("--floating-icon-left", x - iconSize / 2 + "px");
-//   root.style.setProperty("--floating-icon-top", y - iconSize / 2 + "px");
-// });
-// Define an array for the data of the second dropdown
 const customDropdownData = [
   { name: "Option 1" },
   { name: "Option 2" },
@@ -516,59 +401,21 @@ const customDropdownData = [
   { name: "Option 5" },
 ];
 
-// Independent dropdown functionality
-// const customDropdownTitle = document.querySelector(".custom-dropdown-title");
+const customDropdownSelect = document.querySelector(".custom-dropdown-select");
 
-const customDropdownSelect = document.querySelector('.custom-dropdown-select');
-
-// const customDropdownList = document.querySelector(".custom-dropdown-list");
-// const customMainButton = document.querySelector(".custom-dropdown-button");
-// const customFloatingIcon = document.querySelector(".custom-floating-icon");
-
-// const customListItemTemplate = (text, translateValue, index) => {
-//   if (index === -1) {
-//     index = 0;
-//   }
-
-//   return `
-//     <li class="custom-dropdown-list-item">
-//       <button class="custom-dropdown-button list-button" data-translate-value="${translateValue}%" data-value="${index}">
-//         <span class="text-truncate">${text}</span>
-//       </button>
-//     </li>
-//   `;
-// };
-
-// const customRenderListItems = () => {
-//   const selected_subject = localStorage.getItem("subject");
-
-//   customDropdownList.innerHTML = topicData
-//     .map((item, index) => {
-//       const topic = parseInt(localStorage.getItem("topic")) || 1;
-
-//       if (topic == item.topicId || topic == 0) {
-//         customDropdownTitle.innerHTML = item.topic;
-//         localStorage.setItem("topic", topic);
-//       }
-//       setCustomDropdownProps(0, 0, 0);
-//       return customListItemTemplate(item.topic, 100 * index, item.topicId);
-//     })
-//     .join("");
-
-//   customDropdownList.innerHTML += customListItemTemplate(
-//     "User Data",
-//     100 * 0,
-//     -1
-//   );
-// };
-
-
-const customOptionTemplate = (text, translateValue, index, selected = false) => {
+const customOptionTemplate = (
+  text,
+  translateValue,
+  index,
+  selected = false
+) => {
   if (index === -1) {
     index = 0;
   }
 
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? 'selected' : ''}>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${
+    selected ? "selected" : ""
+  }>${text}</option>`;
 };
 
 const customRenderSelectOptions = () => {
@@ -577,12 +424,22 @@ const customRenderSelectOptions = () => {
   const options = topicData
     .map((item, index) => {
       const isSelected = selectedTopic === parseInt(item.topicId);
-      return customOptionTemplate(item.topic, 100 * index, item.topicId, isSelected);
+      return customOptionTemplate(
+        item.topic,
+        100 * index,
+        item.topicId,
+        isSelected
+      );
     })
     .join("");
 
   customDropdownSelect.innerHTML = options;
-  customDropdownSelect.innerHTML += customOptionTemplate("User Data", 100 * 0, -1, selectedTopic === 0);
+  customDropdownSelect.innerHTML += customOptionTemplate(
+    "User Data",
+    100 * 0,
+    -1,
+    selectedTopic === 0
+  );
 };
 
 const setTopicData = () => {
@@ -597,7 +454,6 @@ const setTopicData = () => {
 
     const selected_subject = localStorage.getItem("subject") || 1;
 
-    // Access the object store
     const transaction = topicDB.transaction(topicStoreName, "readonly");
     const objectStore = transaction.objectStore(topicStoreName);
 
@@ -624,62 +480,80 @@ const setCustomDropdownProps = (deg, ht, opacity) => {
   root.style.setProperty("--custom-list-opacity", opacity);
 };
 
-// Initialize the second dropdown
-
-// customMainButton.addEventListener("click", () => {
-//   const listWrapperSizes = 3.5; // margins, paddings & borders
-//   const dropdownOpenHeight = 4.6 * (topicData.length + 1) + listWrapperSizes;
-//   const currDropdownHeight =
-//     root.style.getPropertyValue("--custom-dropdown-height") || "0";
-
-//   if (currDropdownHeight === "0") {
-//     setCustomDropdownProps(180, dropdownOpenHeight, 1);
-//   } else {
-//     setCustomDropdownProps(0, 0, 0);
-//   }
-// });
-
 const handleSelectChange = (event) => {
   const selectedValue = event.target.value;
   const selectedOption = event.target.options[event.target.selectedIndex].text;
-  
+
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
 
   localStorage.setItem("topic", selectedValue);
-  
-  // Perform actions based on the selected value
-  // Example: Navigate, load data, etc.
 };
 
-customDropdownSelect.addEventListener('change', handleSelectChange);
+customDropdownSelect.addEventListener("change", handleSelectChange);
 
-// customDropdownList.addEventListener("mouseover", (e) => {
-//   const translateValue = e.target.dataset.translateValue;
-//   root.style.setProperty("--custom-translate-value", translateValue);
-// });
+const customLanguageDropdownSelect = document.querySelector(
+  ".language-list-custom-dropdown-select"
+);
 
-// customDropdownList.addEventListener("click", (e) => {
-//   const clickedItemText = e.target.innerText.toLowerCase().trim();
-//   const translateValue = e.target.getAttribute("data-value");
-//   customDropdownSelect.innerHTML = clickedItemText;
+const customLanguageOptionTemplate = (
+  text,
+  translateValue,
+  index,
+  selected = false
+) => {
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${
+    selected ? "selected" : ""
+  }>${text}</option>`;
+};
 
-//   console.log(translateValue);
-//   setCustomDropdownProps(0, 0, 0);
-//   localStorage.setItem("topic", translateValue);
-// });
+const customLanguageRenderSelectOptions = () => {
+  const selectedLanguage =
+     localStorage.getItem("language") || languageList[0].value;
 
-// customDropdownList.addEventListener("mousemove", (e) => {
-//   const iconSize =
-//     root.style.getPropertyValue("--custom-floating-icon-size") || 0;
-//   const x = e.clientX - customDropdownList.getBoundingClientRect().x;
-//   const y = e.clientY - customDropdownList.getBoundingClientRect().y;
-//   root.style.setProperty(
-//     "--custom-floating-icon-left",
-//     x - iconSize / 2 + "px"
-//   );
-//   root.style.setProperty("--custom-floating-icon-top", y - iconSize / 2 + "px");
-// });
+  languageList.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+  const options = languageList
+    .map((item, index) => {
+      const isSelected = selectedLanguage === item.value;
+
+      return customLanguageOptionTemplate(
+        item.name,
+        100 * item.id,
+        item.value,
+        isSelected
+      );
+    })
+    .join("");
+
+  customLanguageDropdownSelect.innerHTML = options;
+};
+
+const handleSelectLanguageChange = (event) => {
+  const selectedValue = event.target.value;
+  const selectedOption = event.target.options[event.target.selectedIndex].text;
+
+  console.log(`Selected Value: ${selectedValue}`);
+  console.log(`Selected Option: ${selectedOption}`);
+
+  localStorage.setItem("language", selectedValue);
+};
+
+
+customLanguageDropdownSelect.addEventListener('mousedown', function (event) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    showToast(
+      "Access to this section requires a login.\nPlease login first !!"
+    );
+    event.preventDefault();
+  }
+});
+
+customLanguageDropdownSelect.addEventListener(
+  "change",
+  handleSelectLanguageChange
+);
 
 $(document).ready(function () {
   $("#modal-loading").on("show.bs.modal", function () {

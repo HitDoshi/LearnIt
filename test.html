@@ -34,6 +34,7 @@
       crossorigin="anonymous"
     ></script>
     <script src="./constant.js"></script>
+    <script src="./src/tts.js"></script>
 
     <style></style>
   </head>
@@ -319,14 +320,19 @@
           margin-bottom: 5px;          
         "
       >
-        <div style="margin-right: 12px">
+        <div>
           <input type="checkbox" id="toggle_fav" />
           <label for="toggle_fav" class="prevent-select">My Fav</label>
         </div>
 
-        <div style="margin-right: 12px">
+        <div>
           <input type="checkbox" id="toggle_skip" />
           <label for="toggle_skip" class="prevent-select">Skip</label>
+        </div>
+
+        <div style="margin-right: 5px">
+          <input type="checkbox" id="toggle_tts" />
+          <label for="toggle_tts" class="prevent-select">TTS</label>
         </div>
 
         <div
@@ -698,6 +704,7 @@
 
     <div class="toast-container" id="toastContainer"></div>
     <div id="snackbar"></div>
+    <audio id="errorSound" src="error.mp3" preload="auto"></audio>
 
     <script src="./src/test.js"></script>
     <script src="./src/displayToast.js"></script>

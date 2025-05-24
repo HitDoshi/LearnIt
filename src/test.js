@@ -50,6 +50,18 @@ const uploadButton = document.getElementsByClassName("uploadButton");
 const delayInput = document.getElementById("delay_input");
 const startStopButton = document.getElementById("startStopButton");
 const deleteAudioButton = document.getElementById("deleteAudioButton");
+const ttsCheckbox = document.getElementById("toggle_tts");
+const audio = document.getElementById("errorSound");
+
+ttsCheckbox.addEventListener("click", function (event) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    showToast(
+      "Access to this section requires a login.\nPlease login first !!"
+    );
+    event.preventDefault();
+  }
+});
 
 let isEditModeOn = 0; // 0 means off, 1 means on edit , 2 means on save
 
@@ -70,8 +82,7 @@ const showAns = document.getElementById("show_ans");
 const QuestionText = document.getElementById("value_1");
 
 window.addEventListener("load", function () {
-
-  const user = JSON.parse(localStorage.getItem('user') || "{}");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const maxUD = parseInt(user?.maxUD || 0);
   document.getElementById("maxUD").innerText = `${maxUD}`;
 
@@ -467,6 +478,7 @@ function saveUpdatedValue() {
         value2 = showAns.value;
         value1 = QuestionText.value;
       }
+      answer = showAns.value;
       const updatedUserDefined1 = UserDefined1.value || "";
 
       existingData.value1 = value1;
@@ -714,6 +726,8 @@ async function nextValue() {
     playPauseButton.querySelector(".icon-stop").classList.add("d-none");
     playPauseButton.querySelector(".text").textContent = "Play";
   }
+  stopSpeech();
+  stopErrorSound();
   const showInDaysValue = document.getElementById("showInDays").value;
   if (data != null && data?.showInDays != parseInt(showInDaysValue)) {
     changeShowInDaysValue();
@@ -742,14 +756,15 @@ function shwoBlankData() {
   // setTimer();
 }
 
-function getCurrentFormattedDate(){
+function getCurrentFormattedDate() {
   const today = new Date();
-  const formattedDate = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
+  const formattedDate = `${today.getFullYear()}${(today.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}${today.getDate().toString().padStart(2, "0")}`;
   return formattedDate;
 }
 
 async function checkAnswer() {
-
   const enter_ans = document.getElementById("enter_ans");
   const ans = enter_ans.value.toLowerCase().trim().toString();
   if (!data) {
@@ -758,7 +773,7 @@ async function checkAnswer() {
 
   if (ans == "") {
     return;
-  }  
+  }
   const remainingTime = getRemainingTime();
   if (remainingTime == 0) {
     localStorage.setItem("timestamp", Date.now());
@@ -770,8 +785,8 @@ async function checkAnswer() {
   document.getElementById("date").innerText = `${date}`;
 
   if (date) {
-    if (ans == answer.toLowerCase().trim().toString()) {      
-      const todayFormattedDate = getCurrentFormattedDate();              
+    if (ans == answer.toLowerCase().trim().toString()) {
+      const todayFormattedDate = getCurrentFormattedDate();
 
       // const transaction = db.transaction(storeName, "readwrite");
       //   const objectStore = transaction.objectStore(storeName);
@@ -814,19 +829,19 @@ async function checkAnswer() {
         localStorage.setItem("date", formattedDate);
         document.getElementById("date").innerText = `${formattedDate}`;
 
-        const user = JSON.parse(localStorage.getItem('user') || "{}");        
-        
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+
         localStorage.setItem("totalRightAns", 0);
         totalRightAnswer = 0;
         document.getElementById("total_right_attempt").innerHTML =
           totalRightAnswer;
       }
     }
-  } else {    
+  } else {
     const formattedDate = getCurrentFormattedDate();
     localStorage.setItem("date", formattedDate);
   }
-  
+
   if (ans == answer.toLowerCase().trim().toString()) {
     console.log("Right");
 
@@ -849,10 +864,12 @@ async function checkAnswer() {
     enter_ans.style.color = "white";
     isRightDone = true;
     setTimer();
+    playTTS({isPlayTTS: true, text: answer});
   } else {
     enter_ans.style.backgroundColor = "red";
     enter_ans.style.color = "white";
     console.log("Wrong");
+    playTTS({isPlayErrorSound: true});
   }
   // setTimer();
 }
@@ -866,6 +883,7 @@ function showAnswer() {
     showAns.value = answer;
     showButtonId.innerHTML = "Edit";
     isEditModeOn = 1;
+    playTTS({isPlayTTS: true, text: answer});
     return;
   }
 
@@ -1187,13 +1205,13 @@ document
 
 function triggerFileInput(event) {
   if (EnableAudio !== "Y") {
-      showToast("This functionality is disabled for your account !!");
-      event.preventDefault();
+    showToast("This functionality is disabled for your account !!");
+    event.preventDefault();
   } else {
-      if (event.target.id === "fileNameLink") {
-          event.preventDefault();
-          document.getElementById("fileInput").click();
-      }
+    if (event.target.id === "fileNameLink") {
+      event.preventDefault();
+      document.getElementById("fileInput").click();
+    }
   }
 }
 
@@ -1541,3 +1559,34 @@ const deleteAudio = () => {
     }
   };
 };
+
+function playErrorSound() {
+  try {
+    audio.currentTime = 0;
+    audio.play();
+  } catch (error) {}
+}
+
+function stopErrorSound() {
+  try {
+    audio.pause();
+    audio.currentTime = 0;
+  } catch (error) {}
+}
+
+function playTTS({ text, isPlayTTS, isPlayErrorSound }) {
+  try {
+    const token = localStorage.getItem("token");
+    if (token && ttsCheckbox.checked) {
+      if (isPlayErrorSound) {
+        playErrorSound();
+      }
+
+      if (isPlayTTS) {
+        speakText(text);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
