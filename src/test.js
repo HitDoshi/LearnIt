@@ -644,7 +644,7 @@ async function changeShowInDaysValue() {
   // setTimer();
 }
 
-function showData() {
+function showData() {  
   if (!data) {
     return;
   }
@@ -672,6 +672,13 @@ function showData() {
     lastShown.innerHTML = data.lastShown;
 
     console.log(data);
+
+
+    if(topic == 0){
+      document.getElementById("valueID").innerText = data?.questionId || '-';
+    }else{
+      document.getElementById("valueID").innerText = data?.id || '-';
+    }
 
     if (data?.fileName) {
       if (audioPlayer) {
@@ -753,6 +760,7 @@ function shwoBlankData() {
   document.getElementById("enter_ans").value = "";
   document.getElementById("showInDays").value = 0;
   document.getElementById("last_shown").innerHTML = 0;
+  document.getElementById("valueID").innerText = '-';  
   // setTimer();
 }
 
