@@ -23,6 +23,7 @@ var isFavOnly = false;
 var favData = [];
 var totalData = [];
 var attachedAudioDataOnly = [];
+var ttsLoopData = [];
 var allData = 0;
 var totalSkipData = 0;
 var totalFavData = 0;
@@ -36,6 +37,7 @@ var startSessionTime;
 var sessionStartTimerBasicTime = 300000; // 5 min = 300000 sec
 var sessionInterval, dailyInterval;
 var playNextAudioIntervalId;
+var playNextTTSIntervalId;
 
 let currentFile = null;
 let audioPlayer = null;
@@ -88,8 +90,8 @@ window.addEventListener("load", function () {
 
   if (topic != 0) {
     document.getElementById("file-info").style.display = "none";
-    document.getElementById("continuous_playback_container").style.display =
-      "none";
+    // document.getElementById("continuous_playback_container").style.display =
+    //   "none";
   }
 
   delayInput.value = delay;
@@ -100,14 +102,28 @@ window.addEventListener("load", function () {
     delayInput.disabled = true;
     deleteAudioButton.disabled = true;
     // document.getElementById("deleteIconContainer").disabled = true;
+    const token = localStorage.getItem("token");
+
     document
       .getElementById("continuous_playback_container")
       .addEventListener("click", () => {
-        showToast("This functionality is disabled for your account !!");
+        if (!token) {
+          showToast(
+            "Access to this section requires a login.\nPlease login first !!"
+          );
+        } else {
+          showToast("This functionality is disabled for your account !!");
+        }
       });
 
     document.getElementById("delay_container").addEventListener("click", () => {
-      showToast("This functionality is disabled for your account !!");
+      if (!token) {
+        showToast(
+          "Access to this section requires a login.\nPlease login first !!"
+        );
+      } else {
+        showToast("This functionality is disabled for your account !!");
+      }
     });
   }
 });
@@ -616,9 +632,20 @@ async function changeShowInDaysValue() {
       // if (data.isFav && !data.isSkip && showInDaysValue != 0) {
       //   totalFavData--;
       // }
-      console.log(allData);
       data.showInDays = parseInt(showInDaysValue);
       data.lastShown = parseInt(showInDaysValue);
+
+      const showInDaysStatData = data?.showInDaysStat?.split("|") || [];
+
+      if (showInDaysStatData?.length == 0) {
+        data.showInDaysStat = showInDaysValue;
+      } else if (showInDaysStatData?.length < 15) {
+        data.showInDaysStat =
+          showInDaysStatData.join("|") + "|" + showInDaysValue;
+      } else {
+        data.showInDaysStat =
+          showInDaysStatData.slice(1).join("|") + "|" + showInDaysValue;
+      }
 
       const updateRequest = objectStore.put(data);
       updateRequest.onsuccess = () => {
@@ -644,7 +671,7 @@ async function changeShowInDaysValue() {
   // setTimer();
 }
 
-function showData() {  
+function showData() {
   if (!data) {
     return;
   }
@@ -673,12 +700,14 @@ function showData() {
 
     console.log(data);
 
-
-    if(topic == 0){
-      document.getElementById("valueID").innerText = data?.questionId || '-';
-    }else{
-      document.getElementById("valueID").innerText = data?.id || '-';
+    if (topic == 0) {
+      document.getElementById("valueID").innerText = data?.questionId || "-";
+    } else {
+      document.getElementById("valueID").innerText = data?.id || "-";
     }
+
+    document.getElementById("show_in_days_stats").innerText =
+      data?.showInDaysStat || "-";
 
     if (data?.fileName) {
       if (audioPlayer) {
@@ -760,7 +789,8 @@ function shwoBlankData() {
   document.getElementById("enter_ans").value = "";
   document.getElementById("showInDays").value = 0;
   document.getElementById("last_shown").innerHTML = 0;
-  document.getElementById("valueID").innerText = '-';  
+  document.getElementById("valueID").innerText = "-";
+  document.getElementById("show_in_days_stats").innerText = "-";
   // setTimer();
 }
 
@@ -872,12 +902,12 @@ async function checkAnswer() {
     enter_ans.style.color = "white";
     isRightDone = true;
     setTimer();
-    playTTS({isPlayTTS: true, text: answer});
+    playTTS({ isPlayTTS: true, text: answer });
   } else {
     enter_ans.style.backgroundColor = "red";
     enter_ans.style.color = "white";
     console.log("Wrong");
-    playTTS({isPlayErrorSound: true});
+    playTTS({ isPlayErrorSound: true });
   }
   // setTimer();
 }
@@ -891,7 +921,7 @@ function showAnswer() {
     showAns.value = answer;
     showButtonId.innerHTML = "Edit";
     isEditModeOn = 1;
-    playTTS({isPlayTTS: true, text: answer});
+    playTTS({ isPlayTTS: true, text: answer });
     return;
   }
 
@@ -1338,37 +1368,41 @@ playPauseButton.addEventListener("click", function () {
 startStopButton.addEventListener("click", function () {
   try {
     if (EnableAudio == "Y") {
-      if (!isPlaying) {
-        startStopButton.querySelector(".text").textContent = "Stop";
-
-        disabledControl();
-
-        const isFavOnly = document.getElementById("show_fav_only").checked;
-
-        // attachedAudioDataOnly = isFavOnly
-        //   ? favData.filter((item) => {
-        //       return item.fileName;
-        //     })
-        //   : totalData.filter((item) => {
-        //       return item.fileName;
-        //     });
-
-        if (attachedAudioDataOnly.length === 0) {
-          showToast("No audio attached data found !!");
-          continuous_playback.checked = false;
-        } else {
-          delay = delayInput.value || 0;
-          localStorage.setItem("delay", delay);
-          playNextAudio();
-        }
+      if (ttsCheckbox.checked) {
+        ttsUDLevelPlay();
       } else {
-        clearInterval(playNextAudioIntervalId);
+        if (!isPlaying) {
+          startStopButton.querySelector(".text").textContent = "Stop";
 
-        audioPlayer?.pause();
+          disabledControl();
 
-        isPlaying = false;
-        startStopButton.querySelector(".text").textContent = "Start";
-        document.getElementById("continuous_playback").disabled = false;
+          const isFavOnly = document.getElementById("show_fav_only").checked;
+
+          // attachedAudioDataOnly = isFavOnly
+          //   ? favData.filter((item) => {
+          //       return item.fileName;
+          //     })
+          //   : totalData.filter((item) => {
+          //       return item.fileName;
+          //     });
+
+          if (attachedAudioDataOnly.length === 0) {
+            showToast("No audio attached data found !!");
+            continuous_playback.checked = false;
+          } else {
+            delay = delayInput.value || 0;
+            localStorage.setItem("delay", delay);
+            playNextAudio();
+          }
+        } else {
+          clearInterval(playNextAudioIntervalId);
+
+          audioPlayer?.pause();
+
+          isPlaying = false;
+          startStopButton.querySelector(".text").textContent = "Start";
+          document.getElementById("continuous_playback").disabled = false;
+        }
       }
     } else {
       showToast("This functionality is disabled for your account !!");
@@ -1441,6 +1475,7 @@ continuous_playback.addEventListener("change", function () {
     showAns.value = "";
 
     clearInterval(playNextAudioIntervalId);
+    stopTTSIfRunning();
 
     if (isPlaying) {
       audioPlayer?.pause();
@@ -1450,39 +1485,43 @@ continuous_playback.addEventListener("change", function () {
     index = 0;
 
     if (continuous_playback.checked) {
-      const isFavOnly = document.getElementById("show_fav_only").checked;
-
-      attachedAudioDataOnly = isFavOnly
-        ? favData.filter((item) => {
-            return item.fileName;
-          })
-        : totalData.filter((item) => {
-            return item.fileName;
-          });
-
-      if (attachedAudioDataOnly.length === 0) {
-        showToast("No audio attached data found !!");
-        continuous_playback.checked = false;
+      if (topic != 0) {
+        playLoopTTS();
       } else {
-        delay = delayInput.value || 0;
-        localStorage.setItem("delay", delay);
+        const isFavOnly = document.getElementById("show_fav_only").checked;
 
-        const randomIndex = Math.floor(
-          Math.random() * attachedAudioDataOnly.length
-        );
-        index = randomIndex;
-        const audioData = attachedAudioDataOnly[index];
-        data = audioData;
-        showData();
-        // playNextAudio();
+        attachedAudioDataOnly = isFavOnly
+          ? favData.filter((item) => {
+              return item.fileName;
+            })
+          : totalData.filter((item) => {
+              return item.fileName;
+            });
+
+        if (attachedAudioDataOnly.length === 0) {
+          showToast("No audio attached data found !!");
+          continuous_playback.checked = false;
+        } else {
+          delay = delayInput.value || 0;
+          localStorage.setItem("delay", delay);
+
+          const randomIndex = Math.floor(
+            Math.random() * attachedAudioDataOnly.length
+          );
+          index = randomIndex;
+          const audioData = attachedAudioDataOnly[index];
+          data = audioData;
+          showData();
+          // playNextAudio();
+        }
+
+        playPauseButton.style.display = "none";
+        startStopButton.style.removeProperty("display");
+        startStopButton.querySelector(".text").textContent = "Start";
+
+        document.getElementById("total_question").innerHTML =
+          attachedAudioDataOnly.length;
       }
-
-      playPauseButton.style.display = "none";
-      startStopButton.style.removeProperty("display");
-      startStopButton.querySelector(".text").textContent = "Start";
-
-      document.getElementById("total_question").innerHTML =
-        attachedAudioDataOnly.length;
     } else {
       playPauseButton.style.removeProperty("display");
       startStopButton.style.display = "none";
@@ -1582,19 +1621,119 @@ function stopErrorSound() {
   } catch (error) {}
 }
 
-function playTTS({ text, isPlayTTS, isPlayErrorSound }) {
+function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS }) {
   try {
     const token = localStorage.getItem("token");
-    if (token && ttsCheckbox.checked) {
-      if (isPlayErrorSound) {
-        playErrorSound();
-      }
 
-      if (isPlayTTS) {
-        speakText(text);
+    if (isLoopTTS && token) {
+      speakText(text);
+    } else {
+      if (token && ttsCheckbox.checked) {
+        if (isPlayErrorSound) {
+          playErrorSound();
+        }
+        if (isPlayTTS) {
+          speakText(text);
+        }
       }
     }
   } catch (error) {
     console.log(error);
   }
+}
+
+function playLoopTTS() {
+  try {
+    const isFavOnly = document.getElementById("show_fav_only").checked;
+
+    ttsLoopData = isFavOnly ? favData : totalData;
+
+    if (ttsLoopData?.length > 0) {
+      delay = delayInput.value || 0;
+      localStorage.setItem("delay", delay);
+
+      const randomIndex = Math.floor(Math.random() * ttsLoopData.length);
+      index = randomIndex;
+      const audioData = ttsLoopData[index];
+      data = audioData;
+
+      if (toggleQuestion == "true") {
+        answer = data.value1;
+      } else {
+        answer = data.value2;
+      }
+
+      showAns.value = answer;
+
+      showData();
+      playNextTTS(answer);
+    } else {
+      showToast("No data found !!");
+      continuous_playback.checked = false;
+    }
+
+    document.getElementById("total_question").innerHTML =
+      ttsLoopData?.length || 0;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const playNextTTS = (answer) => {
+  try {
+    isPlaying = true;
+    clearInterval(playNextTTSIntervalId);
+
+    speechSynthesis.cancel();
+
+    playTTS({ text: answer, isLoopTTS: true });
+
+    utterance.onend = () => {
+      if (continuous_playback.checked && isPlaying) {
+        playNextTTSIntervalId = setTimeout(() => {
+          playLoopTTS();
+        }, parseInt(delay || 0) * 1000);
+      } else {
+        isPlaying = false;
+        clearInterval(playNextTTSIntervalId);
+      }
+    };
+
+    utterance.onerror = () => {
+      isPlaying = false;
+      clearInterval(playNextTTSIntervalId);
+      if (continuous_playback.checked && isPlaying) {
+        showToast("Failed to play TTS !!");
+        playLoopTTS();
+      }
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+function stopTTSIfRunning() {
+  try {
+    isPlaying = false;
+
+    clearInterval(playNextTTSIntervalId);
+
+    speechSynthesis.cancel();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function ttsUDLevelPlay() {
+  if (!isPlaying) {
+    startStopButton.querySelector(".text").textContent = "Stop";
+    disabledControl();
+    playLoopTTS();
+  } else {
+    clearInterval(playNextTTSIntervalId);
+    stopTTSIfRunning();
+    startStopButton.querySelector(".text").textContent = "Start";
+    document.getElementById("continuous_playback").disabled = false;
+  }
+  console.log("ttsUDLevelPlay", isPlaying);
 }

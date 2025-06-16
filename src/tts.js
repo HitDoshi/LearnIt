@@ -1,5 +1,5 @@
-let voices = [];
-
+var voices = [];
+var utterance = new SpeechSynthesisUtterance();
 function loadVoices() {
   voices = speechSynthesis.getVoices();
 
@@ -23,9 +23,9 @@ function speakText(text) {
   try {
     const lang = localStorage.getItem("language") || languageList[0].value;
 
-    if (!text.trim()) return;
+    if (!text?.toString()?.trim()) return;
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    utterance = new SpeechSynthesisUtterance(text);
     const matchedVoice = voices.find((voice) => voice.lang.startsWith(lang));
 
     if (matchedVoice) {

@@ -953,11 +953,11 @@
             if(jsonData?.success){
               if (count == 0) {
               // Store data from data.json into IndexedDB
-              jsonData.data.forEach((item) => {
-                item.isFav = false;
-                item.isSkip = false;
-                item.showInDays = 0;
-                item.lastShown = 0;
+              jsonData.data.forEach((item) => {                
+                item.isFav = item?.isFav == "Y" ? true : false;
+                item.isSkip = item?.isSkip == "Y" ? true : false;
+                item.showInDays = parseInt(item.showInDays || 0);
+                item.lastShown = parseInt(item.lastShown || 0);                
                 objectStore.add(item);
               });
               $("#modal-loading").modal("hide");
@@ -970,10 +970,11 @@
               clearRequest.onsuccess = () => {
                 // Store data from data.json into IndexedDB
                 jsonData.data.forEach((item) => {
-                  item.isFav = false;
-                  item.isSkip = false;
-                  item.showInDays = 0;
-                  item.lastShown = 0;
+                item.isFav = item?.isFav == "Y" ? true : false;
+                item.isSkip = item?.isSkip == "Y" ? true : false;
+                item.showInDays = parseInt(item.showInDays || 0);
+                item.lastShown = parseInt(item.lastShown || 0);
+                
                   objectStore.add(item);
                 });
                 $("#modal-loading").modal("hide");
