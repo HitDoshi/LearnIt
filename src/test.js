@@ -64,6 +64,14 @@ ttsCheckbox.addEventListener("click", function (event) {
     );
     event.preventDefault();
   }
+
+  if (topic != 0) {
+    if (ttsCheckbox.checked) {
+      document.getElementById("continuous_playback").disabled = false;
+    } else {
+      document.getElementById("continuous_playback").disabled = true;
+    }
+  }
 });
 
 delayInput.addEventListener("input", function (e) {
@@ -117,8 +125,7 @@ window.addEventListener("load", function () {
 
   if (topic != 0) {
     document.getElementById("file-info").style.display = "none";
-    // document.getElementById("continuous_playback_container").style.display =
-    //   "none";
+    document.getElementById("continuous_playback").disabled = true;
   }
 
   delayInput.value = delay;
@@ -735,9 +742,9 @@ function showData() {
 
     document.getElementById("show_in_days_stats").innerText =
       data?.showInDaysStat || "-";
-      const continuous_playback = document.getElementById("continuous_playback");
+    const continuous_playback = document.getElementById("continuous_playback");
 
-    if (data?.fileName || (ttsCheckbox.checked && continuous_playback.checked)) {
+    if (data?.fileName) {
       if (audioPlayer) {
         isPlaying = false;
         audioPlayer.pause();
@@ -1308,7 +1315,7 @@ function updatePlayPauseIcon() {
 
 async function uploadFile() {
   if (EnableAudio == "Y") {
-    if(!data){
+    if (!data) {
       showToast("Quiz data not found !!");
       return;
     }
@@ -1445,6 +1452,54 @@ startStopButton.addEventListener("click", function () {
   }
 });
 
+const UDLevelStartStopButtonFunctionality = () => {
+   try {
+    if (EnableAudio == "Y") {
+      if (ttsCheckbox.checked) {
+        ttsUDLevelPlay();
+      } else {
+        if (!isPlaying) {
+          startStopButton.querySelector(".text").textContent = "Stop";
+
+          disabledControl();
+
+          const isFavOnly = document.getElementById("show_fav_only").checked;
+
+          // attachedAudioDataOnly = isFavOnly
+          //   ? favData.filter((item) => {
+          //       return item.fileName;
+          //     })
+          //   : totalData.filter((item) => {
+          //       return item.fileName;
+          //     });
+
+          if (attachedAudioDataOnly.length === 0) {
+            showToast("No audio attached data found !!");
+            continuous_playback.checked = false;
+          } else {
+            delay = parseInt(delayInput.value || 0);
+            delayInput.value = delay;
+            localStorage.setItem("delay", delay);
+            playNextAudio();
+          }
+        } else {
+          clearInterval(playNextAudioIntervalId);
+
+          audioPlayer?.pause();
+
+          isPlaying = false;
+          startStopButton.querySelector(".text").textContent = "Start";
+          document.getElementById("continuous_playback").disabled = false;
+        }
+      }
+    } else {
+      showToast("This functionality is disabled for your account !!");
+    }
+  } catch (error) {
+    console.log("Error in startStopButton !", error);
+  }
+}
+
 const playNextAudio = () => {
   clearInterval(playNextAudioIntervalId);
 
@@ -1564,13 +1619,14 @@ continuous_playback.addEventListener("change", function () {
             // playNextAudio();
           }
 
-          playPauseButton.style.display = "none";
-          startStopButton.style.removeProperty("display");
+          // playPauseButton.style.display = "none";
+          // startStopButton.style.removeProperty("display");
           startStopButton.querySelector(".text").textContent = "Start";
 
           document.getElementById("total_question").innerHTML =
             attachedAudioDataOnly.length;
         }
+        UDLevelStartStopButtonFunctionality();
       }
     } else {
       playPauseButton.style.removeProperty("display");
@@ -1578,7 +1634,7 @@ continuous_playback.addEventListener("change", function () {
       startStopButton.querySelector(".text").textContent = "Start";
       document.getElementById("total_question").innerHTML =
         isFavOnly == "true" ? favData.length : totalData.length;
-        showData();
+      showData();
     }
 
     disabledControl();
@@ -1603,8 +1659,8 @@ function disabledControl() {
     document.getElementById("fileNameLink").style.cursor = "not-allowed";
     deleteAudioButton.onclick = null;
 
-    playPauseButton.style.display = "none";
-    startStopButton.style.removeProperty("display");
+    // playPauseButton.style.display = "none";
+    // startStopButton.style.removeProperty("display");
   } else {
     document
       .querySelectorAll("button")
