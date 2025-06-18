@@ -54,6 +54,7 @@ const startStopButton = document.getElementById("startStopButton");
 const deleteAudioButton = document.getElementById("deleteAudioButton");
 const ttsCheckbox = document.getElementById("toggle_tts");
 const audio = document.getElementById("errorSound");
+const showInDaysInput = document.getElementById("showInDays");
 
 ttsCheckbox.addEventListener("click", function (event) {
   const token = localStorage.getItem("token");
@@ -62,6 +63,32 @@ ttsCheckbox.addEventListener("click", function (event) {
       "Access to this section requires a login.\nPlease login first !!"
     );
     event.preventDefault();
+  }
+});
+
+delayInput.addEventListener("input", function (e) {
+  const value = parseInt(delayInput.value || 0);
+
+  if (value <= 0) {
+    delayInput.value = 0;
+  } else if (value > 99) {
+    delayInput.value = 99;
+  } else {
+    delayInput.value = value;
+  }
+
+  localStorage.setItem("delay", delayInput.value);
+});
+
+showInDaysInput.addEventListener("input", function (e) {
+  const value = parseInt(showInDaysInput.value || 0);
+
+  if (value <= 0) {
+    showInDaysInput.value = 0;
+  } else if (value > 99) {
+    showInDaysInput.value = 99;
+  } else {
+    showInDaysInput.value = value;
   }
 });
 
@@ -356,9 +383,9 @@ function getData() {
   }
 
   if (toggleQuestion == "true") {
-    answer = data.value1;
+    answer = data?.value1?.toString() || "";
   } else {
-    answer = data.value2;
+    answer = data?.value2?.toString() || "";
   }
 }
 
@@ -494,7 +521,7 @@ function saveUpdatedValue() {
         value2 = showAns.value;
         value1 = QuestionText.value;
       }
-      answer = showAns.value;
+      answer = showAns.value?.toString() || "";
       const updatedUserDefined1 = UserDefined1.value || "";
 
       existingData.value1 = value1;
@@ -708,8 +735,9 @@ function showData() {
 
     document.getElementById("show_in_days_stats").innerText =
       data?.showInDaysStat || "-";
+      const continuous_playback = document.getElementById("continuous_playback");
 
-    if (data?.fileName) {
+    if (data?.fileName || (ttsCheckbox.checked && continuous_playback.checked)) {
       if (audioPlayer) {
         isPlaying = false;
         audioPlayer.pause();
@@ -1280,6 +1308,10 @@ function updatePlayPauseIcon() {
 
 async function uploadFile() {
   if (EnableAudio == "Y") {
+    if(!data){
+      showToast("Quiz data not found !!");
+      return;
+    }
     if (currentFile) {
       const formData = new FormData();
       formData.append("file", currentFile);
@@ -1390,7 +1422,8 @@ startStopButton.addEventListener("click", function () {
             showToast("No audio attached data found !!");
             continuous_playback.checked = false;
           } else {
-            delay = delayInput.value || 0;
+            delay = parseInt(delayInput.value || 0);
+            delayInput.value = delay;
             localStorage.setItem("delay", delay);
             playNextAudio();
           }
@@ -1488,39 +1521,56 @@ continuous_playback.addEventListener("change", function () {
       if (topic != 0) {
         playLoopTTS();
       } else {
-        const isFavOnly = document.getElementById("show_fav_only").checked;
+        if (ttsCheckbox.checked) {
+          playPauseButton.style.display = "none";
+          startStopButton.style.removeProperty("display");
+          startStopButton.querySelector(".text").textContent = "Start";
 
-        attachedAudioDataOnly = isFavOnly
-          ? favData.filter((item) => {
-              return item.fileName;
-            })
-          : totalData.filter((item) => {
-              return item.fileName;
-            });
+          const isFavOnly = document.getElementById("show_fav_only").checked;
 
-        if (attachedAudioDataOnly.length === 0) {
-          showToast("No audio attached data found !!");
-          continuous_playback.checked = false;
+          ttsLoopData = isFavOnly ? favData : totalData;
+
+          if (ttsLoopData?.length > 0) {
+            showData();
+          }else{
+            showToast("No data found !!");
+            continuous_playback.checked = false;
+          }          
         } else {
-          delay = delayInput.value || 0;
-          localStorage.setItem("delay", delay);
+          const isFavOnly = document.getElementById("show_fav_only").checked;
 
-          const randomIndex = Math.floor(
-            Math.random() * attachedAudioDataOnly.length
-          );
-          index = randomIndex;
-          const audioData = attachedAudioDataOnly[index];
-          data = audioData;
-          showData();
-          // playNextAudio();
+          attachedAudioDataOnly = isFavOnly
+            ? favData.filter((item) => {
+                return item.fileName;
+              })
+            : totalData.filter((item) => {
+                return item.fileName;
+              });
+
+          if (attachedAudioDataOnly.length === 0) {
+            showToast("No audio attached data found !!");
+            continuous_playback.checked = false;
+          } else {
+            delay = parseInt(delayInput.value || 0);
+            localStorage.setItem("delay", delay);
+
+            const randomIndex = Math.floor(
+              Math.random() * attachedAudioDataOnly.length
+            );
+            index = randomIndex;
+            const audioData = attachedAudioDataOnly[index];
+            data = audioData;
+            showData();
+            // playNextAudio();
+          }
+
+          playPauseButton.style.display = "none";
+          startStopButton.style.removeProperty("display");
+          startStopButton.querySelector(".text").textContent = "Start";
+
+          document.getElementById("total_question").innerHTML =
+            attachedAudioDataOnly.length;
         }
-
-        playPauseButton.style.display = "none";
-        startStopButton.style.removeProperty("display");
-        startStopButton.querySelector(".text").textContent = "Start";
-
-        document.getElementById("total_question").innerHTML =
-          attachedAudioDataOnly.length;
       }
     } else {
       playPauseButton.style.removeProperty("display");
@@ -1528,6 +1578,7 @@ continuous_playback.addEventListener("change", function () {
       startStopButton.querySelector(".text").textContent = "Start";
       document.getElementById("total_question").innerHTML =
         isFavOnly == "true" ? favData.length : totalData.length;
+        showData();
     }
 
     disabledControl();
@@ -1658,9 +1709,9 @@ function playLoopTTS() {
       data = audioData;
 
       if (toggleQuestion == "true") {
-        answer = data.value1;
+        answer = data?.value1?.toString() || "";
       } else {
-        answer = data.value2;
+        answer = data?.value2?.toString() || "";
       }
 
       showAns.value = answer;

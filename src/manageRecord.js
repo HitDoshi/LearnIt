@@ -523,7 +523,7 @@ function showInDaysData(item) {
   request.onsuccess = (event) => {
     const data = event.target.result;
     if (data) {
-      data.showInDays = item.value || 0;
+      data.showInDays = parseInt(item.value || 0);
       // data.lastShown = item.value || 0;
       objectStore.put(data);
     }
@@ -832,11 +832,11 @@ function appendData(data, idNumber) {
       e.target.value = 0;
     } else if (value > 99) {
       e.target.value = 99;      
+    }else{
+      e.target.value = value;
     }
 
     value = parseInt(e.target.value);
-
-    console.log(value);
 
     showInDaysDataState.forEach((item, index) => {
       if (item.id == id) {
@@ -844,8 +844,7 @@ function appendData(data, idNumber) {
       }
     });
 
-    if (!isExist) {
-
+    if (!isExist && data.showInDays != value) {
       const show = { id: id, value: value || 0 };
       showInDaysDataState.push(show);
     } else {
