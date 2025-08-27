@@ -5,7 +5,8 @@ var keyIndex = "subjectTopicIndex";
 
 var topic = parseInt(localStorage.getItem("topic"));
 var subject = parseInt(localStorage.getItem("subject")) || 1;
-var delay = localStorage.getItem("delay");
+var delay1 = localStorage.getItem("delay1");
+var delay2 = localStorage.getItem("delay2");
 
 if (topic == 0) {
   dbName = "user";
@@ -43,13 +44,15 @@ let currentFile = null;
 let audioPlayer = null;
 let isPlaying = false;
 var index = 0;
+let currentTTSIndex = 1;
 const EnableAudio = localStorage.getItem("EnableAudio") || "N";
 
 const audioElement = document.getElementById("audio");
 const playPauseButton = document.getElementById("playPauseButton");
 const fileNameLink = document.getElementById("fileNameLink");
 const uploadButton = document.getElementsByClassName("uploadButton");
-const delayInput = document.getElementById("delay_input");
+const delayInput1 = document.getElementById("delay_input1");
+const delayInput2 = document.getElementById("delay_input2");
 // const startStopButton = document.getElementById("startStopButton");
 const deleteAudioButton = document.getElementById("deleteAudioButton");
 const ttsCheckbox = document.getElementById("toggle_tts");
@@ -74,18 +77,34 @@ ttsCheckbox.addEventListener("click", function (event) {
   }
 });
 
-delayInput.addEventListener("input", function (e) {
-  const value = parseInt(delayInput.value || 0);
+delayInput1.addEventListener("input", function (e) {
+  const value = parseInt(delayInput1.value || 0);
 
   if (value <= 0) {
-    delayInput.value = 0;
+    delayInput1.value = 0;
   } else if (value > 99) {
-    delayInput.value = 99;
+    delayInput1.value = 99;
   } else {
-    delayInput.value = value;
+    delayInput1.value = value;
   }
 
-  localStorage.setItem("delay", delayInput.value);
+  localStorage.setItem("delay1", delayInput1.value);
+  delay1 = delayInput1.value;
+});
+
+delayInput2.addEventListener("input", function (e) {
+  const value = parseInt(delayInput2.value || 0);
+
+  if (value <= 0) {
+    delayInput2.value = 0;
+  } else if (value > 99) {
+    delayInput2.value = 99;
+  } else {
+    delayInput2.value = value;
+  }
+
+  localStorage.setItem("delay2", delayInput2.value);
+  delay2 = delayInput2.value;
 });
 
 showInDaysInput.addEventListener("input", function (e) {
@@ -128,12 +147,14 @@ window.addEventListener("load", function () {
     document.getElementById("continuous_playback").disabled = true;
   }
 
-  delayInput.value = delay;
+  delayInput1.value = delay1;
+  delayInput2.value = delay2;
   clearTimeout(timer); // Clear the previous timer if it exists
 
   if (EnableAudio != "Y") {
     continuous_playback.disabled = true;
-    delayInput.disabled = true;
+    delayInput1.disabled = true;
+    delayInput2.disabled = true;
     deleteAudioButton.disabled = true;
     // document.getElementById("deleteIconContainer").disabled = true;
     const token = localStorage.getItem("token");
@@ -1011,7 +1032,7 @@ function formatTime(milliseconds) {
     .padStart(2, "0")}`;
 }
 
-// Set a timer with a 5-minute delay
+// Set a timer with a 5-minute delay2
 function setTimer() {
   // clearTimeout(timer); // Clear the previous timer if it exists
   // startSessionTime = Date.now(); // Store the start time
@@ -1429,9 +1450,9 @@ playPauseButton.addEventListener("click", function () {
 //             showToast("No audio attached data found !!");
 //             continuous_playback.checked = false;
 //           } else {
-//             delay = parseInt(delayInput.value || 0);
-//             delayInput.value = delay;
-//             localStorage.setItem("delay", delay);
+//             delay2 = parseInt(delayInput2.value || 0);
+//             delayInput2.value = delay2;
+//             localStorage.setItem("delay2", delay2);
 //             playNextAudio();
 //           }
 //         } else {
@@ -1453,7 +1474,7 @@ playPauseButton.addEventListener("click", function () {
 // });
 
 const UDLevelStartStopButtonFunctionality = () => {
-   try {
+  try {
     if (EnableAudio == "Y") {
       if (ttsCheckbox.checked) {
         ttsUDLevelPlay();
@@ -1477,9 +1498,9 @@ const UDLevelStartStopButtonFunctionality = () => {
             showToast("No audio attached data found !!");
             continuous_playback.checked = false;
           } else {
-            delay = parseInt(delayInput.value || 0);
-            delayInput.value = delay;
-            localStorage.setItem("delay", delay);
+            delay2 = parseInt(delayInput2.value || 0);
+            delayInput2.value = delay2;
+            localStorage.setItem("delay2", delay2);
             playNextAudio();
           }
         } else {
@@ -1498,7 +1519,7 @@ const UDLevelStartStopButtonFunctionality = () => {
   } catch (error) {
     console.log("Error !", error);
   }
-}
+};
 
 const playNextAudio = () => {
   clearInterval(playNextAudioIntervalId);
@@ -1531,7 +1552,7 @@ const playNextAudio = () => {
       playNextAudioIntervalId = setTimeout(() => {
         playNextAudio();
         console.log("---");
-      }, parseInt(delay || 0) * 1000);
+      }, parseInt(delay2 || 0) * 1000);
     } else {
       isPlaying = false;
       audioPlayer.currentTime = 0;
@@ -1546,7 +1567,7 @@ const playNextAudio = () => {
     if (continuous_playback.checked) {
       playNextAudioIntervalId = setTimeout(() => {
         playNextAudio();
-      }, parseInt(delay || 0) * 1000);
+      }, parseInt(delay2 || 0) * 1000);
     } else {
       isPlaying = false;
       audioPlayer.currentTime = 0;
@@ -1558,6 +1579,7 @@ const playNextAudio = () => {
 };
 
 continuous_playback.addEventListener("change", function () {
+  currentTTSIndex = 1;
   if (EnableAudio == "Y") {
     resetEditUserDefineValueMode();
     showAns.value = "";
@@ -1587,10 +1609,10 @@ continuous_playback.addEventListener("change", function () {
 
           if (ttsLoopData?.length > 0) {
             showData();
-          }else{
+          } else {
             showToast("No data found !!");
             continuous_playback.checked = false;
-          }          
+          }
         } else {
           const isFavOnly = document.getElementById("show_fav_only").checked;
 
@@ -1606,8 +1628,8 @@ continuous_playback.addEventListener("change", function () {
             showToast("No audio attached data found !!");
             continuous_playback.checked = false;
           } else {
-            delay = parseInt(delayInput.value || 0);
-            localStorage.setItem("delay", delay);
+            delay2 = parseInt(delayInput2.value || 0);
+            localStorage.setItem("delay2", delay2);
 
             const randomIndex = Math.floor(
               Math.random() * attachedAudioDataOnly.length
@@ -1728,19 +1750,19 @@ function stopErrorSound() {
   } catch (error) {}
 }
 
-function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS }) {
+function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS, language }) {
   try {
     const token = localStorage.getItem("token");
 
     if (isLoopTTS && token) {
-      speakText(text);
+      speakText(text,language);
     } else {
       if (token && ttsCheckbox.checked) {
         if (isPlayErrorSound) {
           playErrorSound();
         }
         if (isPlayTTS) {
-          speakText(text);
+          speakText(text,language);
         }
       }
     }
@@ -1751,18 +1773,18 @@ function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS }) {
 
 function playLoopTTS() {
   try {
+    let delayBTWTTS, speakText, language;
     const isFavOnly = document.getElementById("show_fav_only").checked;
 
     ttsLoopData = isFavOnly ? favData : totalData;
 
     if (ttsLoopData?.length > 0) {
-      delay = delayInput.value || 0;
-      localStorage.setItem("delay", delay);
-
-      const randomIndex = Math.floor(Math.random() * ttsLoopData.length);
-      index = randomIndex;
-      const audioData = ttsLoopData[index];
-      data = audioData;
+      if (currentTTSIndex == 1) {
+        const randomIndex = Math.floor(Math.random() * ttsLoopData.length);
+        index = randomIndex;
+        const audioData = ttsLoopData[index];
+        data = audioData;
+      }
 
       if (toggleQuestion == "true") {
         answer = data?.value1?.toString() || "";
@@ -1773,7 +1795,21 @@ function playLoopTTS() {
       showAns.value = answer;
 
       showData();
-      playNextTTS(answer);
+
+      if (currentTTSIndex == 1) {
+        speakText = QuestionText.value || "";
+        currentTTSIndex = 2;
+        delayBTWTTS = localStorage.getItem("delay1") || 0;
+        language = "en-US";
+      } else {
+        speakText = showAns.value || "";
+        currentTTSIndex = 1;
+        delayBTWTTS = localStorage.getItem("delay2") || 0;
+        language = null;
+      }
+
+
+      playNextTTS(speakText, delayBTWTTS, language);
     } else {
       showToast("No data found !!");
       continuous_playback.checked = false;
@@ -1786,20 +1822,20 @@ function playLoopTTS() {
   }
 }
 
-const playNextTTS = (answer) => {
+const playNextTTS = (speakText, delayBTWTTS, language) => {
   try {
     isPlaying = true;
     clearInterval(playNextTTSIntervalId);
 
     speechSynthesis.cancel();
 
-    playTTS({ text: answer, isLoopTTS: true });
+    playTTS({ text: speakText, isLoopTTS: true,language });
 
     utterance.onend = () => {
       if (continuous_playback.checked && isPlaying) {
         playNextTTSIntervalId = setTimeout(() => {
           playLoopTTS();
-        }, parseInt(delay || 0) * 1000);
+        }, parseInt(delayBTWTTS || 0) * 1000);
       } else {
         isPlaying = false;
         clearInterval(playNextTTSIntervalId);

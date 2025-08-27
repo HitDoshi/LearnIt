@@ -19,9 +19,10 @@ if (typeof speechSynthesis !== "undefined") {
   loadVoices();
 }
 
-function speakText(text) {
+function speakText(text, language) {
   try {
-    const lang = localStorage.getItem("language") || languageList[0].value;
+
+    const lang = language || localStorage.getItem("language") || languageList[0].value;
 
     if (!text?.toString()?.trim()) return;
 

@@ -507,37 +507,64 @@
       style="
         display: flex;
         flex-direction: row;
-        gap: 30px;
+        gap: 15px;
         margin-top: 10px;
         margin-bottom: 10px;
         align-items: center;
       "
       id="continuous_playback_container"
     >
-      <div style="margin-right: 12px; flex-shrink: 0;">
+      <div style="flex:1;">
         <input type="checkbox" id="continuous_playback" />
         <label for="continuous_playback" class="prevent-select">Loop</label>
-      </div>  
+      </div>
       
-        <div
+      <div
           style="
             display: flex;
             align-items: center;
-            justify-content: flex-end;
             flex: 1;
             min-height: 30px;
           "
           id="delay_container"
         >
           <label
-            for="show_in_days"
+            for="delay1"
             class="prevent-select"
             style="margin-right: 5px;margin-top: 2.5px;"
-            >Delay, sec:
+            >Delay1:
           </label>        
           <input
             type="number"
-            id="delay_input"
+            id="delay_input1"
+            autocomplete="off"
+            min="0"
+            max="99"
+            placeholder="Delay"        
+            style="width: 65px"
+            pattern="[0-9]"
+          />
+        </div>
+      
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-height: 30px;
+            justify-content: flex-end;
+          "
+          id="delay_container"
+        >
+          <label
+            for="delay2"
+            class="prevent-select"
+            style="margin-right: 5px;margin-top: 2.5px;"
+            >Delay2:
+          </label>        
+          <input
+            type="number"
+            id="delay_input2"
             autocomplete="off"
             min="0"
             max="99"
@@ -766,19 +793,23 @@
         }
       };
 
-      document
-        .getElementById("delay_input")
-        .addEventListener("input", function (e) {
-          let value = parseInt(e.target.value);
-          if (value < 0) {
-            e.target.value = 0;
-          }else if (value > 100) {
-            e.target.value = 100;
+      var input = document.getElementById("delay_input2");
+      input.onkeydown = function (e) {
+        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+        if (
+          !(
+            (48 <= e.which && e.which <= 57) ||
+            (96 <= e.which && e.which <= 105)
+          )
+        ) {
+          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+          if (e.key.length === 1) {
+            e.preventDefault(); // Prevent the default action (typing)
           }
-          localStorage.setItem("delay", e.target.value);
-        });
+        }
+      };
 
-      var input = document.getElementById("delay_input");
+      var input = document.getElementById("delay_input2");
       input.onkeydown = function (e) {
         // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
         if (
