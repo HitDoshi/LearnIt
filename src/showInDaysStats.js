@@ -73,7 +73,7 @@ userOpenRequest.onupgradeneeded = (event) => {
   if (!userDB.objectStoreNames.contains("userData")) {
     const objectStore = userDB.createObjectStore("userData", { keyPath: "id" });
     // Create a compound index for subjectId and topicId
-    objectStore.createIndex("subjectIndex", ["subjectId"]);
+    objectStore.createIndex("subjectIndex", ["sourceSubjectId","targetSubjectId"]);
   }
 };
 

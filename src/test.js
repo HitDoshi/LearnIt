@@ -5,6 +5,7 @@ var keyIndex = "subjectTopicIndex";
 
 var topic = parseInt(localStorage.getItem("topic"));
 var subject = parseInt(localStorage.getItem("subject")) || 1;
+var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
 var delay1 = localStorage.getItem("delay1");
 var delay2 = localStorage.getItem("delay2");
 
@@ -183,6 +184,11 @@ window.addEventListener("load", function () {
   }
 });
 
+const getTTSLanguge = () => {
+  const language = (toggleQuestion == "true" ? localStorage.getItem("language2") : localStorage.getItem("language")) || "en-US";
+  return language;
+}
+
 function openDeleteAudioDialog() {
   if (EnableAudio == "Y") {
     $("#deleteAudioModal").modal("show");
@@ -220,9 +226,9 @@ openRequest.onupgradeneeded = (event) => {
 
     // Create a compound index for subjectId and topicId
     if (topic == 0) {
-      objectStore.createIndex(keyIndex, ["subjectId"]);
+      objectStore.createIndex(keyIndex, ["sourceSubjectId", "targetSubjectId"]);
     } else {
-      objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+      objectStore.createIndex(keyIndex, ["sourceSubjectId", "topicId"]);
     }
   }
 };
@@ -339,7 +345,7 @@ async function countData() {
 
     // Create a range for the compound index
     if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId]);
+      var range = IDBKeyRange.only([subjectId,targetSubjectId]);
     } else {
       var range = IDBKeyRange.only([subjectId, topicId]);
     }
@@ -451,7 +457,7 @@ function getTotalSkipData() {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
     var range = IDBKeyRange.only([subjectId, topicId]);
   }
@@ -541,13 +547,16 @@ function saveUpdatedValue() {
     if (existingData) {
       let value1 = "";
       let value2 = "";
+      // const updatedUserDefined1 = UserDefined1.value || "";
 
       if (toggleQuestion == "true") {
         value1 = showAns.value;
         value2 = QuestionText.value;
+        // existingData.UserDefined2 = updatedUserDefined1;
       } else {
         value2 = showAns.value;
         value1 = QuestionText.value;
+        // existingData.UserDefined1 = updatedUserDefined1;
       }
       answer = showAns.value?.toString() || "";
       const updatedUserDefined1 = UserDefined1.value || "";
@@ -563,12 +572,14 @@ function saveUpdatedValue() {
             item.value1 = value1;
             item.value2 = value2;
             item.UserDefined1 = updatedUserDefined1;
+            // toggleQuestion == "true" ? item.UserDefined2 = updatedUserDefined1 : item.UserDefined1 = updatedUserDefined1;
           }
         });
 
         data.value1 = value1;
         data.value2 = value2;
         data.UserDefined1 = updatedUserDefined1;
+        // toggleQuestion == "true" ? data.UserDefined2 = updatedUserDefined1 : data.UserDefined1 = updatedUserDefined1;
       };
       updateRequest.onerror = () => {
         showToast("Error while updating data !!");
@@ -609,6 +620,8 @@ function toggleQuestionType() {
       "toggleQuestionValue"
     ).style.backgroundColor = null);
   }
+
+  resetEditUserDefineValueMode();
 
   getData();
 }
@@ -741,8 +754,10 @@ function showData() {
 
     if (toggleQuestion == "true") {
       QuestionText.value = data.value2;
+      // UserDefined1.value = data?.UserDefined2;
     } else {
       QuestionText.value = data.value1;
+      // UserDefined1.value = data?.UserDefined1;
     }
 
     // UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
@@ -958,7 +973,7 @@ async function checkAnswer() {
     enter_ans.style.color = "white";
     isRightDone = true;
     setTimer();
-    playTTS({ isPlayTTS: true, text: answer });
+    playTTS({ isPlayTTS: true, text: answer, language : getTTSLanguge() });
   } else {
     enter_ans.style.backgroundColor = "red";
     enter_ans.style.color = "white";
@@ -977,7 +992,8 @@ function showAnswer() {
     showAns.value = answer;
     showButtonId.innerHTML = "Edit";
     isEditModeOn = 1;
-    playTTS({ isPlayTTS: true, text: answer });
+    const language = getTTSLanguge();
+    playTTS({ isPlayTTS: true, text: answer, language });
     return;
   }
 
@@ -1103,9 +1119,9 @@ async function updateUserShowInDaysValue() {
 
       // Create a compound index for subjectId and topicId
       if (topic == 0) {
-        UserObjectStore.createIndex("subjectIndex", ["subjectId"]);
+        UserObjectStore.createIndex("subjectIndex", ["sourceSubjectId", "targetSubjectId"]);
       } else {
-        UserObjectStore.createIndex("subjectIndex", ["subjectId", "topicId"]);
+        UserObjectStore.createIndex("subjectIndex", ["sourceSubjectId", "topicId"]);
       }
     }
   };
@@ -1217,10 +1233,10 @@ async function updateRegularShowInDaysValue() {
 
       // Create a compound index for subjectId and topicId
       if (topic == 0) {
-        RegularObjectStore.createIndex("subjectTopicIndex", ["subjectId"]);
+        RegularObjectStore.createIndex("subjectTopicIndex", ["sourceSubjectId", "targetSubjectId"]);
       } else {
         RegularObjectStore.createIndex("subjectTopicIndex", [
-          "subjectId",
+          "sourceSubjectId",
           "topicId",
         ]);
       }
@@ -1773,7 +1789,9 @@ function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS, language }) {
 
 function playLoopTTS() {
   try {
-    let delayBTWTTS, speakText, language;
+    let delayBTWTTS, speakText;
+    let language = getTTSLanguge();
+    console.log(language);
     const isFavOnly = document.getElementById("show_fav_only").checked;
 
     ttsLoopData = isFavOnly ? favData : totalData;
@@ -1800,7 +1818,7 @@ function playLoopTTS() {
         speakText = QuestionText.value || "";
         currentTTSIndex = 2;
         delayBTWTTS = localStorage.getItem("delay1") || 0;
-        language = "en-US";
+        // language = "en-US";
       } else {
         speakText = showAns.value || "";
         currentTTSIndex = 1;

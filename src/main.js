@@ -27,6 +27,16 @@ storeName = "userData";
 index = "subjectIndex";
 var userDB;
 
+let languageMap = {
+  "ENG": "en-US",
+  "FRA": "fr-CA",
+  "SPA": "es-ES", 
+  "GER": "de-DE",  
+  "RUS": "ru-RU",
+  "ITA": "it-IT",
+  "POR": "pt-BR",
+};
+
 var indexedDB =
   window.indexedDB ||
   window.mozIndexedDB ||
@@ -41,13 +51,9 @@ userOpenRequest.onupgradeneeded = (event) => {
   if (!userDB.objectStoreNames.contains("userData")) {
     const objectStore = userDB.createObjectStore("userData", { keyPath: "id" });
     // Create a compound index for subjectId and topicId
-    objectStore.createIndex("subjectIndex", ["subjectId"]);
+    objectStore.createIndex("subjectIndex", ["sourceSubjectId", "targetSubjectId"]);
   }
 };
-
-document.addEventListener("DOMContentLoaded", function () {
-  customLanguageRenderSelectOptions();
-});
 
 userOpenRequest.onerror = (event) => {
   console.error("Database error: " + event.target.error);
@@ -106,7 +112,7 @@ topicDataOpenRequest.onupgradeneeded = (event) => {
       keyPath: "id",
     });
     // Create a compound index for subjectId and topicId
-    objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+    // objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
   }
 };
 
@@ -165,7 +171,7 @@ async function openDatabase(dbName, dbVersion, storeName) {
 
         if (dbName == "test") {
           objectStore.createIndex("subjectTopicIndex", [
-            "subjectId",
+            "sourceSubjectId",
             "topicId",
           ]);
         }
@@ -315,12 +321,17 @@ async function getData() {
 function setOption() {
   const selected_subject = parseInt(localStorage.getItem("subject")) || 1;
   const selected_topic = parseInt(localStorage.getItem("topic"));
+  const selected_target_subject = parseInt(localStorage.getItem("targetSubject")) || 1;
 
   var subject = document.getElementById("dropdown-subject");
   var topic = document.getElementById("dropdown-topic");
+  var targetSubject = document.getElementById("dropdown-target-subject");
 
   subject.value = subjectData[selected_subject - 1].id;
   subject.text = subjectData[selected_subject - 1].name;
+  
+  targetSubject.value = subjectData[selected_target_subject - 1].id;
+  targetSubject.text = subjectData[selected_target_subject - 1].name;
 
   console.log(selected_topic == 0);
 
@@ -351,6 +362,8 @@ const customSubjectOptionTemplate = (
 };
 
 const customSubjectRenderSelectOptions = () => {
+
+  customTargetSubjectRenderSelectOptions();
   const selectedSubject = parseInt(localStorage.getItem("subject")) || 1;
 
   subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
@@ -379,6 +392,8 @@ const handleSelectSubjectChange = (event) => {
 
   localStorage.setItem("subject", selectedValue);
   localStorage.setItem("topic", 1);
+  localStorage.setItem("language2", languageMap?.[selectedOption] || "en-US");
+
   setTopicData();
 };
 
@@ -423,11 +438,11 @@ const customRenderSelectOptions = () => {
 
   const options = topicData
     .map((item, index) => {
-      const isSelected = selectedTopic === parseInt(item.topicId);
+      const isSelected = selectedTopic === parseInt(item.id);
       return customOptionTemplate(
-        item.topic,
+        item.name,
         100 * index,
-        item.topicId,
+        item.id,
         isSelected
       );
     })
@@ -461,12 +476,10 @@ const setTopicData = () => {
     request.onsuccess = (event) => {
       console.log(event.target.result);
       event.target.result.forEach((item) => {
-        if (item.subjectId == selected_subject) {
-          topicData.push(item);
-        }
+        topicData.push(item);
       });
 
-      topicData.sort((a, b) => parseInt(a.topicId) - parseInt(b.topicId));
+      topicData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
       customRenderSelectOptions();
     };
   } catch (error) {
@@ -492,11 +505,11 @@ const handleSelectChange = (event) => {
 
 customDropdownSelect.addEventListener("change", handleSelectChange);
 
-const customLanguageDropdownSelect = document.querySelector(
-  ".language-list-custom-dropdown-select"
+const customTargetSubjectDropdownSelect = document.querySelector(
+  ".target-subject-list-custom-dropdown-select"
 );
 
-const customLanguageOptionTemplate = (
+const customTargetSubjectOptionTemplate = (
   text,
   translateValue,
   index,
@@ -507,52 +520,47 @@ const customLanguageOptionTemplate = (
   }>${text}</option>`;
 };
 
-const customLanguageRenderSelectOptions = () => {
-  const selectedLanguage =
-     localStorage.getItem("language") || languageList[0].value;
+const customTargetSubjectRenderSelectOptions = () => {
+  const selectedTargetSubject =
+     parseInt(localStorage.getItem("targetSubject")) || 1;
 
-  languageList.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+  subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-  const options = languageList
+  const options = subjectData
     .map((item, index) => {
-      const isSelected = selectedLanguage === item.value;
+      const isSelected = selectedTargetSubject === parseInt(item.id);
 
-      return customLanguageOptionTemplate(
+      return customTargetSubjectOptionTemplate(
         item.name,
         100 * item.id,
-        item.value,
+        item.id,
         isSelected
       );
     })
     .join("");
 
-  customLanguageDropdownSelect.innerHTML = options;
+  customTargetSubjectDropdownSelect.innerHTML = options;
 };
 
-const handleSelectLanguageChange = (event) => {
+const handleSelectTargetSubjectChange = (event) => {
   const selectedValue = event.target.value;
   const selectedOption = event.target.options[event.target.selectedIndex].text;
 
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
 
-  localStorage.setItem("language", selectedValue);
+  localStorage.setItem("targetSubject", selectedValue);
+  localStorage.setItem("language", languageMap?.[selectedOption] || "en-US");
 };
 
 
-customLanguageDropdownSelect.addEventListener('mousedown', function (event) {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    showToast(
-      "Access to this section requires a login.\nPlease login first !!"
-    );
-    event.preventDefault();
-  }
+customTargetSubjectDropdownSelect.addEventListener('mousedown', function (event) {
+  
 });
 
-customLanguageDropdownSelect.addEventListener(
+customTargetSubjectDropdownSelect.addEventListener(
   "change",
-  handleSelectLanguageChange
+  handleSelectTargetSubjectChange
 );
 
 $(document).ready(function () {

@@ -427,6 +427,10 @@ async function uploadUserDataFunction(showLogs = true) {
           const currentLoadedSubjectId = localStorage.getItem(
             "currentLoadedSubjectId"
           );
+          const currentLoadedTargetSubjectId = localStorage.getItem(
+            "targetSubject"
+          );
+          const topicId = localStorage.getItem("topic");
 
           // Continue with the fetch request inside the .then block
           fetch(`${API_URL}/api/uploadUserData.php?token=${token}`, {
@@ -435,6 +439,8 @@ async function uploadUserDataFunction(showLogs = true) {
               data: data, // Use the retrieved data directly
               subjectData: subjectTestData,
               currentLoadedSubjectId: currentLoadedSubjectId,
+              targetSubjectId: currentLoadedTargetSubjectId,
+              topicId: topicId,
               // timestamp: new Date().toLocaleString()
             }),
           })
@@ -496,6 +502,10 @@ async function uploadDailyUserDataFunction() {
           const currentLoadedSubjectId = localStorage.getItem(
             "currentLoadedSubjectId"
           );
+          const currentLoadedTargetSubjectId = localStorage.getItem(
+            "targetSubject"
+          );
+          const topicId = localStorage.getItem("topic");
 
           fetch(`${API_URL}/api/uploadUserData.php?token=${token}`, {
             method: "POST",
@@ -503,6 +513,8 @@ async function uploadDailyUserDataFunction() {
               data: data, // Use the retrieved data directly
               subjectData: subjectTestData,
               currentLoadedSubjectId: currentLoadedSubjectId,
+              targetSubjectId: currentLoadedTargetSubjectId,  
+              topicId: topicId
               // timestamp: new Date().toLocaleString()
             }),
           })

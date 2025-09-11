@@ -21,6 +21,7 @@ const deleteData = []; // delete data ==> {id}
 let showInDaysDataState = [];
 
 var subject = parseInt(localStorage.getItem("subject")) || 1;
+var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
 
 const urlParams = new URLSearchParams(window.location.search);
 const myParam = urlParams.get("id") || "1";
@@ -126,6 +127,9 @@ document
         isSkip: isSkip,
         showInDays : 0,
         lastShown : 0,
+        targetSubjectId: targetSubjectId,
+        sourceSubjectId: subject,
+        topicId: 0,
       });
       // You can submit the form or perform other actions here.
     }
@@ -170,7 +174,7 @@ userOpenRequest.onupgradeneeded = (event) => {
   if (!userDB.objectStoreNames.contains("userData")) {
     const objectStore = userDB.createObjectStore("userData", { keyPath: "id" });
     // Create a compound index for subjectId and topicId
-    objectStore.createIndex("subjectIndex", ["subjectId"]);
+    objectStore.createIndex("subjectIndex", ["sourceSubjectId", "targetSubjectId"]);
   }
 };
 
@@ -267,7 +271,7 @@ function displayData() {
     // Create a range for the compound index
 
     if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId]);
+      var range = IDBKeyRange.only([subjectId, targetSubjectId]);
     } else {
       var range = IDBKeyRange.only([subjectId, topicId]);
     }
@@ -318,7 +322,7 @@ function displayFavData() {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId]);
+    var range = IDBKeyRange.only([subjectId, targetSubjectId]);
   } else {
     var range = IDBKeyRange.only([subjectId, topicId]);
   }
@@ -363,7 +367,7 @@ function displaySkipData() {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId]);
+    var range = IDBKeyRange.only([subjectId, targetSubjectId]);
   } else {
     var range = IDBKeyRange.only([subjectId, topicId]);
   }
@@ -407,7 +411,7 @@ function displayAudioData() {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
     var range = IDBKeyRange.only([subjectId, topicId]);
   }
@@ -451,7 +455,7 @@ function displayCurrentData() {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
     var range = IDBKeyRange.only([subjectId, topicId]);
   }
@@ -545,7 +549,7 @@ function updateFavoritesTable(db) {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
     var range = IDBKeyRange.only([subjectId, topicId]);
   }
@@ -962,7 +966,7 @@ async function getData() {
 
     // Create a range for the compound index
     if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId]);
+      var range = IDBKeyRange.only([subjectId,targetSubjectId]);
     } else {
       var range = IDBKeyRange.only([subjectId, topicId]);
     }

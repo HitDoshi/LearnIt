@@ -293,8 +293,9 @@
       </div>
     </div> -->
 
+    
     <div class="custom-dropdown">
-      <select class="custom-dropdown-select main-custom-button">
+      <select class="target-subject-list-custom-dropdown-select main-custom-button">
         <!-- Options will be populated dynamically -->
       </select>
       <span class="custom-dropdown-arrow">
@@ -305,8 +306,8 @@
     </div>
     <br />
 
-    <div class="custom-dropdown" >
-      <select class="language-list-custom-dropdown-select main-custom-button">
+    <div class="custom-dropdown">
+      <select class="custom-dropdown-select main-custom-button">
         <!-- Options will be populated dynamically -->
       </select>
       <span class="custom-dropdown-arrow">
@@ -315,6 +316,15 @@
         </svg> -->
       </span>
     </div>
+
+    <!-- <div class="custom-dropdown" >
+      <select class="language-list-custom-dropdown-select main-custom-button">        
+      </select>
+      <span class="custom-dropdown-arrow">        
+      </span>
+    </div> -->
+
+
     <br />
 
     <button type="button" class="btn btn-secondary" id="next-button" onclick="replaceStateWithHistory('test.html')">
@@ -366,13 +376,13 @@
           <p>Subject data will be reloaded. Do you want to proceed?</p>
           <p>Which data do you want to download?</p>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="downloadData" id="initialData" value="initialData">
+            <input class="form-check-input" type="radio" name="downloadData" id="initialData" value="initialData" checked>
             <label class="form-check-label" for="initialData">
               Initial Data
             </label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="downloadData" id="userData" value="userData" checked >
+            <input class="form-check-input" type="radio" name="downloadData" id="userData" value="userData" >
             <label class="form-check-label" for="updatedData">
               User Data
             </label>
@@ -928,6 +938,9 @@
       const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
 
       const SubjectID = localStorage.getItem("subject") || 1;
+      const targetSubjectId = localStorage.getItem("targetSubject") || 1;
+      const topicId = localStorage.getItem("topic") || 1;
+
       $("#modal-loading").modal("show");
       // Wait for a short delay to ensure the modal is fully shown
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -936,7 +949,7 @@
       const token = localStorage.getItem("token");
       
       return fetch(
-        `${API_URL}/api/get_quiz_data.php?SubjectID=${SubjectID}&loadFrom=${loadFrom}${token ? `&token=${token}` : ''}`
+        `${API_URL}/api/get_quiz_data.php?sourceSubjectId=${SubjectID}&targetSubjectId=${targetSubjectId}&topicId=${topicId}&loadFrom=${loadFrom}${token ? `&token=${token}` : ''}`
       )
         .then((response) => response.json())
         .then(async (jsonData) => {
@@ -956,8 +969,8 @@
               jsonData.data.forEach((item) => {                
                 item.isFav = item?.isFav == "Y" ? true : false;
                 item.isSkip = item?.isSkip == "Y" ? true : false;
-                item.showInDays = parseInt(item.showInDays || 0);
-                item.lastShown = parseInt(item.lastShown || 0);                
+                item.showInDays = parseInt(item?.showInDays || 0);
+                item.lastShown = parseInt(item?.lastShown || 0);                
                 objectStore.add(item);
               });
               $("#modal-loading").modal("hide");
@@ -972,8 +985,8 @@
                 jsonData.data.forEach((item) => {
                 item.isFav = item?.isFav == "Y" ? true : false;
                 item.isSkip = item?.isSkip == "Y" ? true : false;
-                item.showInDays = parseInt(item.showInDays || 0);
-                item.lastShown = parseInt(item.lastShown || 0);
+                item.showInDays = parseInt(item?.showInDays || 0);
+                item.lastShown = parseInt(item?.lastShown || 0);
                 
                   objectStore.add(item);
                 });
@@ -1041,7 +1054,8 @@
                 item.id = id;
                 item.isFav = item?.isFav == "Y" ? true : false;
                 item.isSkip = item?.isSkip == "Y" ? true : false;
-                item.subjectId = parseInt(item.subjectId);
+                item.sourceSubjectId = parseInt(item.sourceSubjectId);
+                item.targetSubjectId = parseInt(item.targetSubjectId);
                 item.showInDays = parseInt(item.showInDays || 0);
                 item.lastShown = parseInt(item.lastShown || 0);
                 item.fileName = item.audio_file_name;
@@ -1057,7 +1071,8 @@
                     item.id = id;
                     item.isFav = item?.isFav == "Y" ? true : false;
                     item.isSkip = item?.isSkip == "Y" ? true : false;
-                    item.subjectId = parseInt(item.subjectId);
+                    item.sourceSubjectId = parseInt(item.sourceSubjectId);
+                    item.targetSubjectId = parseInt(item.targetSubjectId);
                     item.showInDays = parseInt(item.showInDays || 0);
                     item.lastShown = parseInt(item.lastShown || 0);
                     item.fileName = item.audio_file_name;

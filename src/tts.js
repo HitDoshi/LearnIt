@@ -21,8 +21,10 @@ if (typeof speechSynthesis !== "undefined") {
 
 function speakText(text, language) {
   try {
+    console.log(language);
 
-    const lang = language || localStorage.getItem("language") || languageList[0].value;
+    const lang = language || localStorage.getItem("language") || "en-US";
+
 
     if (!text?.toString()?.trim()) return;
 

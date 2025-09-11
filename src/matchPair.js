@@ -39,6 +39,7 @@ var questionRow = null;
 var answerRow = null;
 
 var subject = parseInt(localStorage.getItem("subject")) || 1;
+var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
 var topic = parseInt(localStorage.getItem("topic"));
 
 const color = ['#EEE685',"#9F9F5F","#808000","#48D1CC","#C0D9D9","#AFEEEE","#00B2EE","#A4D3EE","#D8BFD8","#ECC8EC",
@@ -59,13 +60,13 @@ openRequest.onupgradeneeded = (event) => {
   if (!db.objectStoreNames.contains(storeName)) {
     db.createObjectStore(storeName, { keyPath: "id" });
     // Create a compound index for subjectId and topicId
-    objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+    objectStore.createIndex(keyIndex, ["sourceSubjectId", "topicId"]);
 
 
     if(topic==0){
-      objectStore.createIndex(keyIndex, ["subjectId"]);
+      objectStore.createIndex(keyIndex, ["sourceSubjectId", "targetSubjectId"]);
     }else{
-      objectStore.createIndex(keyIndex, ["subjectId", "topicId"]);
+      objectStore.createIndex(keyIndex, ["sourceSubjectId", "topicId"]);
     }
   }
 };
@@ -127,7 +128,7 @@ function getData() {
 
    // Create a range for the compound index
    if(topic==0){
-    var range = IDBKeyRange.only([subjectId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   }else{
     var range = IDBKeyRange.only([subjectId, topicId]);
   }
