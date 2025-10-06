@@ -30,8 +30,8 @@ backButton.onclick = function() {
 
 const openRequest = indexedDB.open(dbName, dbVersion);
 let db; // Reference to the IndexedDB database
-var value1 = []; 
-var value2 = []; 
+var source = []; 
+var target = []; 
 var ansId = null;
 var questionId = null;
 var select = 0; // 0-none , 1-left , 2-right
@@ -83,7 +83,7 @@ openRequest.onsuccess = (event) => {
   getData();
 };
 
-// change Postition of value1 & value2 in array
+// change Postition of source & target in array
 
 function shuffle(array) {
   let currentIndex = array.length,
@@ -154,12 +154,12 @@ function getData() {
       favData = favData.slice(0, 20);
 
       favData.forEach((item) => {
-        value1.push({ id: item.id, value: item.value1 });
-        value2.push({ id: item.id, value: item.value2 });
+        source.push({ id: item.id, value: item.source });
+        target.push({ id: item.id, value: item.target });
       });
 
-      value1 = shuffle(value1);
-      value2 = shuffle(value2);
+      source = shuffle(source);
+      target = shuffle(target);
 
       const dataTable = document.getElementById("dataTable");
       const suggestion = document.getElementById("suggestion");
@@ -173,7 +173,7 @@ function getData() {
       }
 
       for (var i = 0; i < favData.length; i++) {
-        const row = appendData(value1[i], value2[i]);
+        const row = appendData(source[i], target[i]);
         tbody.appendChild(row);
       }
     }
@@ -209,7 +209,7 @@ function appendData(data1, data2) {
   return row;
 }
 
-// Call when value1 table item press
+// Call when source table item press
 
 function td1Fun() {
   const id = this.getAttribute("data-id");
@@ -256,7 +256,7 @@ function td1Fun() {
   }
 }
 
-// Call when value2 table item press
+// Call when target table item press
 
 function td2Fun() {
   const id = this.getAttribute("data-id");

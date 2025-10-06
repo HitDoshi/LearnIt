@@ -27,7 +27,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const myParam = urlParams.get("id") || "1";
 var totalUserData = 0;
 
-const value = localStorage.getItem("toggle_question"); //false means value1 show otherwise value2
+const value = localStorage.getItem("toggle_question"); //false means source show otherwise target
 
 var indexedDB =
   window.indexedDB ||
@@ -108,21 +108,21 @@ document
     event.preventDefault(); // Prevent the default form submission
     const form = document.getElementById("addData-Form");
 
-    var value1 = document.getElementById("value1").value;
-    var value2 = document.getElementById("value2").value;
-    var UserDefined1 = document.getElementById("UserDefined1").value;
+    var source = document.getElementById("source").value;
+    var target = document.getElementById("target").value;
+    var targetNote = document.getElementById("targetNote").value;
     var isFav = document.getElementById("favourite").checked;
     var isSkip = document.getElementById("skip").checked;
 
-    // Check if value1 and value2 are not empty
-    if (value1.trim() === "" || value2.trim() === "") {
+    // Check if source and target are not empty
+    if (source.trim() === "" || target.trim() === "") {
     } else {
-      // Perform your custom action here with value1 and value2
+      // Perform your custom action here with source and target
       addUserData({
         subjectId: subject,
-        value1: value1,
-        value2: value2,
-        UserDefined1: UserDefined1,
+        source: source,
+        target: target,
+        targetNote: targetNote,
         isFav: isFav,
         isSkip: isSkip,
         showInDays : 0,
@@ -564,8 +564,8 @@ function updateFavoritesTable(db) {
         const favoritesRow = document.createElement("tr");
         favoritesRow.innerHTML = `
                             <td>${data.id}</td>
-                            <td>${data.value1}</td>
-                            <td>${data.value2}</td>
+                            <td>${data.source}</td>
+                            <td>${data.target}</td>
                         `;
         favoritesTbody.appendChild(favoritesRow);
       }
@@ -696,7 +696,7 @@ function appendData(data, idNumber) {
   row.innerHTML = `
     <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">${idNumber}</td>
     <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">
-      ${value == "true" ? data.value2 : data.value1}
+      ${value == "true" ? data.target : data.source}
     </td>                    
     <td><input data-id="${data.id}" type="number" style="width: 60px;" class="showInDays" value="${data.showInDays}" /></td>                    
     <td><input type="checkbox" data-id="${data.id}" class="favorite" ${data.isFav ? "checked" : ""} /></td>
@@ -919,9 +919,9 @@ async function search() {
     const tbody = dataTable.querySelector("tbody");
     tbody.innerHTML = "";
 
-    // Iterate through the JSON array to find objects with matching "value1" or "value2" properties
+    // Iterate through the JSON array to find objects with matching "source" or "target" properties
     for (const obj of jsonArray) {
-      if (regex.test(obj.value1) || regex.test(obj.value2)) {
+      if (regex.test(obj.source) || regex.test(obj.target)) {
         matchingObjects.push(obj);
         const row = appendData(obj);
         tbody.appendChild(row);

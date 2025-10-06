@@ -31,28 +31,28 @@ testOpenRequest.onsuccess = (event) => {
   testDB = event.target.result;
 
 
-  fetch("data.json")
-  .then((response) => response.json())
-  .then((jsonData) => {
-    const transaction = db.transaction(storeName, "readwrite");
-    const objectStore = transaction.objectStore(storeName);
+  // fetch("data.json")
+  // .then((response) => response.json())
+  // .then((jsonData) => {
+  //   const transaction = db.transaction(storeName, "readwrite");
+  //   const objectStore = transaction.objectStore(storeName);
 
-    // Check if data.json records already exist in IndexedDB
-    objectStore.count().onsuccess = (event) => {
-      const count = event.target.result;
-      const countJsonData = jsonData.length;
+  //   // Check if data.json records already exist in IndexedDB
+  //   objectStore.count().onsuccess = (event) => {
+  //     const count = event.target.result;
+  //     const countJsonData = jsonData.length;
 
-      console.log("Subjects:- ",jsonData);
-      if (count == 0) {
-        // Store data from data.json into IndexedDB
-        jsonData.forEach((item) => {
-          objectStore.add(item);
-        });
-      }
-    };
-  })
-  .catch((error) => {
-    console.error("Error loading JSON data: " + error);
-  });
+  //     console.log("Subjects:- ",jsonData);
+  //     if (count == 0) {
+  //       // Store data from data.json into IndexedDB
+  //       jsonData.forEach((item) => {
+  //         objectStore.add(item);
+  //       });
+  //     }
+  //   };
+  // })
+  // .catch((error) => {
+  //   console.error("Error loading JSON data: " + error);
+  // });
 
 };

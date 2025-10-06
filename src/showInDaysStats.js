@@ -21,7 +21,7 @@ var subject = parseInt(localStorage.getItem("subject")) || 1;
 
 const urlParams = new URLSearchParams(window.location.search);
 
-const value = localStorage.getItem("toggle_question"); //false means value1 show otherwise value2
+const value = localStorage.getItem("toggle_question"); //false means source show otherwise target
 
 var indexedDB =
   window.indexedDB ||

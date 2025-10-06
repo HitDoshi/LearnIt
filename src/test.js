@@ -134,7 +134,7 @@ var indexedDB =
 const openRequest = indexedDB.open(dbName, dbVersion);
 
 const showButtonId = document.getElementById("show_button");
-const UserDefined1 = document.getElementById("show_UserDefined1");
+const targetNote = document.getElementById("show_targetNote");
 const showAns = document.getElementById("show_ans");
 const QuestionText = document.getElementById("value_1");
 
@@ -417,9 +417,9 @@ function getData() {
   }
 
   if (toggleQuestion == "true") {
-    answer = data?.value1?.toString() || "";
+    answer = data?.source?.toString() || "";
   } else {
-    answer = data?.value2?.toString() || "";
+    answer = data?.target?.toString() || "";
   }
 }
 
@@ -545,41 +545,41 @@ function saveUpdatedValue() {
   request.onsuccess = (event) => {
     const existingData = event.target.result;
     if (existingData) {
-      let value1 = "";
-      let value2 = "";
-      // const updatedUserDefined1 = UserDefined1.value || "";
+      let source = "";
+      let target = "";
+      // const updatedTargetNote = targetNote.value || "";
 
       if (toggleQuestion == "true") {
-        value1 = showAns.value;
-        value2 = QuestionText.value;
-        // existingData.UserDefined2 = updatedUserDefined1;
+        source = showAns.value;
+        target = QuestionText.value;
+        // existingData.UserDefined2 = updatedTargetNote;
       } else {
-        value2 = showAns.value;
-        value1 = QuestionText.value;
-        // existingData.UserDefined1 = updatedUserDefined1;
+        target = showAns.value;
+        source = QuestionText.value;
+        // existingData.targetNote = updatedTargetNote;
       }
       answer = showAns.value?.toString() || "";
-      const updatedUserDefined1 = UserDefined1.value || "";
+      const updatedTargetNote = targetNote.value || "";
 
-      existingData.value1 = value1;
-      existingData.value2 = value2;
-      existingData.UserDefined1 = updatedUserDefined1;
+      existingData.source = source;
+      existingData.target = target;
+      existingData.targetNote = updatedTargetNote;
 
       const updateRequest = objectStore.put(existingData);
       updateRequest.onsuccess = () => {
         totalData.forEach((item, index) => {
           if (item.id == data.id) {
-            item.value1 = value1;
-            item.value2 = value2;
-            item.UserDefined1 = updatedUserDefined1;
-            // toggleQuestion == "true" ? item.UserDefined2 = updatedUserDefined1 : item.UserDefined1 = updatedUserDefined1;
+            item.source = source;
+            item.target = target;
+            item.targetNote = updatedTargetNote;
+            // toggleQuestion == "true" ? item.UserDefined2 = updatedTargetNote : item.targetNote = updatedTargetNote;
           }
         });
 
-        data.value1 = value1;
-        data.value2 = value2;
-        data.UserDefined1 = updatedUserDefined1;
-        // toggleQuestion == "true" ? data.UserDefined2 = updatedUserDefined1 : data.UserDefined1 = updatedUserDefined1;
+        data.source = source;
+        data.target = target;
+        data.targetNote = updatedTargetNote;
+        // toggleQuestion == "true" ? data.UserDefined2 = updatedTargetNote : data.targetNote = updatedTargetNote;
       };
       updateRequest.onerror = () => {
         showToast("Error while updating data !!");
@@ -590,10 +590,10 @@ function saveUpdatedValue() {
 
 function resetEditUserDefineValueMode() {
   isEditModeOn = 0;
-  UserDefined1.disabled = true;
+  targetNote.disabled = true;
   showButtonId.innerHTML = "Show";
-  UserDefined1.style.backgroundColor = "lightblue";
-  UserDefined1.style.borderWidth = "0px";
+  targetNote.style.backgroundColor = "lightblue";
+  targetNote.style.borderWidth = "0px";
 
   showAns.disabled = true;
   showAns.style.backgroundColor = "lightblue";
@@ -746,22 +746,22 @@ function showData() {
 
   try {
     currentFile = null;
-    // const UserDefined1 = document.getElementById("show_UserDefined1");
+    // const targetNote = document.getElementById("show_targetNote");
     const isFav = document.getElementById("toggle_fav");
     const isSkip = document.getElementById("toggle_skip");
     const showInDays = document.getElementById("showInDays");
     const lastShown = document.getElementById("last_shown");
 
     if (toggleQuestion == "true") {
-      QuestionText.value = data.value2;
-      // UserDefined1.value = data?.UserDefined2;
+      QuestionText.value = data.target;
+      // targetNote.value = data?.UserDefined2;
     } else {
-      QuestionText.value = data.value1;
-      // UserDefined1.value = data?.UserDefined1;
+      QuestionText.value = data.source;
+      // targetNote.value = data?.targetNote;
     }
 
-    // UserDefined1.innerHTML = data?.UserDefined1 ? data.UserDefined1 : "";
-    UserDefined1.value = data?.UserDefined1 ? data.UserDefined1 : "";
+    // targetNote.innerHTML = data?.targetNote ? data.targetNote : "";
+    targetNote.value = data?.targetNote ? data.targetNote : "";
 
     isFav.checked = data.isFav;
     isSkip.checked = data.isSkip;
@@ -850,7 +850,7 @@ async function nextValue() {
 function shwoBlankData() {
   QuestionText.value = "";
   showAns.value = "";
-  document.getElementById("show_UserDefined1").value = "";
+  document.getElementById("show_targetNote").value = "";
   const isFav = (document.getElementById("toggle_fav").checked = false);
   const isSkip = (document.getElementById("toggle_skip").checked = false);
   const enter_ans = document.getElementById("enter_ans");
@@ -1000,9 +1000,9 @@ function showAnswer() {
   if (isEditModeOn === 1) {
     showButtonId.innerHTML = "Save";
     isEditModeOn = 2;
-    UserDefined1.disabled = false;
-    UserDefined1.style.backgroundColor = "transparent";
-    UserDefined1.style.borderWidth = "1px";
+    targetNote.disabled = false;
+    targetNote.style.backgroundColor = "transparent";
+    targetNote.style.borderWidth = "1px";
 
     showAns.disabled = false;
     showAns.style.backgroundColor = "transparent";
@@ -1805,9 +1805,9 @@ function playLoopTTS() {
       }
 
       if (toggleQuestion == "true") {
-        answer = data?.value1?.toString() || "";
+        answer = data?.source?.toString() || "";
       } else {
-        answer = data?.value2?.toString() || "";
+        answer = data?.target?.toString() || "";
       }
 
       showAns.value = answer;

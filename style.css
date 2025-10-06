@@ -41,8 +41,8 @@ function displayData(data) {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${item.id}</td>
-            <td>${item.value1}</td>
-            <td>${item.value2}</td>
+            <td>${item.source}</td>
+            <td>${item.target}</td>
         `;
         tbody.appendChild(row);
     });
