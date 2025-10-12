@@ -9,6 +9,16 @@ var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
 var delay1 = localStorage.getItem("delay1");
 var delay2 = localStorage.getItem("delay2");
 
+let languageMap = {
+  "ENG": "en-US",
+  "FRA": "fr-CA",
+  "SPA": "es-ES", 
+  "GER": "de-DE",  
+  "RUS": "ru-RU",
+  "ITA": "it-IT",
+  "POR": "pt-BR",
+};
+
 if (topic == 0) {
   dbName = "user";
   dbVersion = 1;
@@ -143,6 +153,15 @@ window.addEventListener("load", function () {
   const maxUD = parseInt(user?.maxUD || 0);
   document.getElementById("maxUD").innerText = `${maxUD}`;
 
+  if(user?.secondaryEnable?.toUpperCase() == "Y"){
+    document.getElementById("show_secondary_language_container").style.display = "";
+    document.getElementById("show_SecondaryNote").style.display = "";
+  }else{
+    document.getElementById("show_secondary_language_container").style.display = "none";
+    document.getElementById("show_SecondaryNote").style.display = "none";
+  }
+
+
   if (topic != 0) {
     document.getElementById("file-info").style.display = "none";
     document.getElementById("continuous_playback").disabled = true;
@@ -184,8 +203,24 @@ window.addEventListener("load", function () {
   }
 });
 
-const getTTSLanguge = () => {
-  const language = (toggleQuestion == "true" ? localStorage.getItem("language2") : localStorage.getItem("language")) || "en-US";
+const getTTSLanguge = (isLoopTTS) => {
+  let language = "en-US";
+  toggleQuestion = localStorage.getItem("toggle_question");
+
+  if(!isLoopTTS){
+    return toggleQuestion == "true" ? localStorage.getItem("language2") : localStorage.getItem("language");
+  }
+  console.log(toggleQuestion, currentTTSIndex, localStorage.getItem("language"), localStorage.getItem("language2"));
+  if(toggleQuestion == "true" && currentTTSIndex == 1){
+    language = localStorage.getItem("language");
+  }else if(toggleQuestion == "true" && currentTTSIndex == 2){
+    language = localStorage.getItem("language2");
+  }else if(toggleQuestion == "false" && currentTTSIndex == 1){
+    language = localStorage.getItem("language2");
+  }else if(toggleQuestion == "false" && currentTTSIndex == 2){
+    language = localStorage.getItem("language");
+  }
+
   return language;
 }
 
@@ -745,6 +780,9 @@ function showData() {
   }
 
   try {
+    document.getElementById("show_secondary_language").value = "";
+    document.getElementById("show_SecondaryNote").value = "";
+
     currentFile = null;
     // const targetNote = document.getElementById("show_targetNote");
     const isFav = document.getElementById("toggle_fav");
@@ -862,6 +900,8 @@ function shwoBlankData() {
   document.getElementById("last_shown").innerHTML = 0;
   document.getElementById("valueID").innerText = "-";
   document.getElementById("show_in_days_stats").innerText = "-";
+  document.getElementById("show_secondary_language").value = "";
+  document.getElementById("show_SecondaryNote").value = "";
   // setTimer();
 }
 
@@ -973,7 +1013,7 @@ async function checkAnswer() {
     enter_ans.style.color = "white";
     isRightDone = true;
     setTimer();
-    playTTS({ isPlayTTS: true, text: answer, language : getTTSLanguge() });
+    playTTS({ isPlayTTS: true, text: answer, language : getTTSLanguge(false) });
   } else {
     enter_ans.style.backgroundColor = "red";
     enter_ans.style.color = "white";
@@ -992,7 +1032,7 @@ function showAnswer() {
     showAns.value = answer;
     showButtonId.innerHTML = "Edit";
     isEditModeOn = 1;
-    const language = getTTSLanguge();
+    const language = getTTSLanguge(false);
     playTTS({ isPlayTTS: true, text: answer, language });
     return;
   }
@@ -1766,7 +1806,7 @@ function stopErrorSound() {
   } catch (error) {}
 }
 
-function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS, language }) {
+function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS, language = 'en-US' }) {
   try {
     const token = localStorage.getItem("token");
 
@@ -1790,7 +1830,7 @@ function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS, language }) {
 function playLoopTTS() {
   try {
     let delayBTWTTS, speakText;
-    let language = getTTSLanguge();
+    let language = getTTSLanguge(true);
     console.log(language);
     const isFavOnly = document.getElementById("show_fav_only").checked;
 
@@ -1818,12 +1858,10 @@ function playLoopTTS() {
         speakText = QuestionText.value || "";
         currentTTSIndex = 2;
         delayBTWTTS = localStorage.getItem("delay1") || 0;
-        // language = "en-US";
       } else {
         speakText = showAns.value || "";
         currentTTSIndex = 1;
         delayBTWTTS = localStorage.getItem("delay2") || 0;
-        language = null;
       }
 
 
@@ -1897,4 +1935,48 @@ function ttsUDLevelPlay() {
     document.getElementById("continuous_playback").disabled = false;
   }
   console.log("ttsUDLevelPlay", isPlaying);
+}
+
+async function showSecondaryLanguage() {
+  const btn = document.getElementById("show_secondary_language_button");
+  const spinner = document.getElementById("new-spinner");
+  const btnText = document.getElementById("show_text");
+  const input = document.getElementById("show_secondary_language");
+  const input2 = document.getElementById("show_SecondaryNote");
+
+  try {
+    const secondaryLanguageIndex = localStorage.getItem("secondary-language");
+    const secondLanguage = Object.keys(languageMap)?.[secondaryLanguageIndex - 1] || 'ENG';
+    const languagePhrase = languageMap?.[secondLanguage] || 'en-US';
+
+    if(input.value){
+      playTTS({ isPlayTTS: true, text: input.value, language : languagePhrase});
+      return;
+    }
+
+    btn.disabled = true;
+    spinner.classList.remove("d-none");
+    btnText.classList.add("d-none");
+
+    const response = await fetch(`${API_URL}/api/get_language_data.php?sourceSubjectId=${data?.sourceSubjectId}&source=${data?.source}`);
+    const result = await response.json();
+
+    if (result?.success) {
+      input.value = result?.data?.[secondLanguage];
+      input2.value = result?.data?.[secondLanguage + "_NOTE"];
+
+      playTTS({ isPlayTTS: true, text: input.value, language : languagePhrase});
+    } else {
+      input.value = "Not found.";
+      showToast(result?.message);
+    }
+  } catch (error) {
+    input.value = "Not found.";
+    console.error(error);
+    showToast(error?.message)
+  } finally {
+    btn.disabled = false;
+    spinner.classList.add("d-none");
+    btnText.classList.remove("d-none");
+  }
 }

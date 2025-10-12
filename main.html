@@ -330,6 +330,19 @@
     <button type="button" class="btn btn-secondary" id="next-button" onclick="replaceStateWithHistory('test.html')">
       NEXT
     </button>
+
+    <br />
+
+    <div class="custom-dropdown secondary-language-dropdown" style="display: none;">
+      <select class="secondary-language-list-custom-dropdown-select main-custom-button">
+        <!-- Options will be populated dynamically -->
+      </select>
+      <span class="custom-dropdown-arrow">
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+        </svg> -->
+      </span>
+    </div>
   </div>
 
   <div class="fixed-bottom d-flex justify-content-center" id="message-list" style="display: none;padding: 10px;">
@@ -1115,9 +1128,15 @@
             toggleNavIcon();
             isTokenChange();
             showToast(data.message);
+            document.querySelector(".secondary-language-dropdown").style.display = "none";
           }else{
             localStorage.setItem('EnableAudio',data?.data.EnableAudio);
-            localStorage.setItem('user',JSON.stringify(data?.data || "{}"));
+            localStorage.setItem('user',JSON.stringify(data?.data || "{}"));      
+            if(data?.data?.secondaryEnable?.toUpperCase() == "Y"){
+              document.querySelector(".secondary-language-dropdown").style.display = "";
+            }else{
+              document.querySelector(".secondary-language-dropdown").style.display = "none";
+            }      
           }
         })
         .catch((error) => {

@@ -364,6 +364,7 @@ const customSubjectOptionTemplate = (
 const customSubjectRenderSelectOptions = () => {
 
   customTargetSubjectRenderSelectOptions();
+  customSecondaryLanguageRenderSelectOptions();
   const selectedSubject = parseInt(localStorage.getItem("subject")) || 1;
 
   subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
@@ -561,6 +562,67 @@ customTargetSubjectDropdownSelect.addEventListener('mousedown', function (event)
 customTargetSubjectDropdownSelect.addEventListener(
   "change",
   handleSelectTargetSubjectChange
+);
+
+const customSecondaryLanguageDropdownSelect = document.querySelector(
+  ".secondary-language-list-custom-dropdown-select"
+);
+
+const customSecondaryLanguageOptionTemplate = (
+  text,
+  translateValue,
+  index,
+  selected = false
+) => {
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${
+    selected ? "selected" : ""
+  }>${text}</option>`;
+};
+
+const customSecondaryLanguageRenderSelectOptions = () => {
+  let selectedSecondaryLanguage =
+     (localStorage.getItem("secondary-language")) || 'en-US';
+
+  const keyFromValue = (value, map) => Object.keys(map).find(key => map[key] === value);
+  const selectedSecondaryLanguageKey = keyFromValue(selectedSecondaryLanguage, languageMap);
+  const selectedSecondaryLanguageValue = languageMap?.[selectedSecondaryLanguageKey] || 'en-US';
+
+  subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+  const options = subjectData
+    .map((item, index) => {
+      const isSelected = selectedSecondaryLanguageKey == item.name;
+
+      return customSecondaryLanguageOptionTemplate(
+        item.name,
+        100 * item.id,
+        item.id,
+        isSelected
+      );
+    })
+    .join("");
+
+  customSecondaryLanguageDropdownSelect.innerHTML = options;
+};
+
+const handleSelectSecondaryLanguageChange = (event) => {
+  const selectedValue = event.target.value;
+  const selectedOption = event.target.options[event.target.selectedIndex].text;
+
+  console.log(`Selected Value: ${selectedValue}`);
+  console.log(`Selected Option: ${selectedOption}`);
+
+  localStorage.setItem("secondary-language", selectedValue);
+};
+
+
+customSecondaryLanguageDropdownSelect.addEventListener('mousedown', function (event) {
+  
+});
+
+customSecondaryLanguageDropdownSelect.addEventListener(
+  "change",
+  handleSelectSecondaryLanguageChange
 );
 
 $(document).ready(function () {

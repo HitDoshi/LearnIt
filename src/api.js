@@ -536,7 +536,9 @@ async function uploadDailyUserDataFunction() {
 }
 
 function isTokenChange() {
-  var isLoggedIn = localStorage.getItem("token"); // or false depending on your authentication logic
+  var isLoggedIn = localStorage.getItem("token");
+  var user = localStorage.getItem("user");
+  user = JSON.parse(user || "{}");
 
   if (isLoggedIn) {
     document.getElementById("notLogInContainer").style.display = "none";
@@ -545,9 +547,16 @@ function isTokenChange() {
     const userEmailText = localStorage.getItem("useremail") || "";
     document.getElementById("userNameText").innerText = userNameText;
     document.getElementById("userEmailText").innerText = userEmailText;
+
+    if(user?.secondaryEnable?.toUpperCase() == "Y"){
+      document.querySelector(".secondary-language-dropdown").style.display = "";
+    }else{
+      document.querySelector(".secondary-language-dropdown").style.display = "none";
+    }
   } else {
     document.getElementById("notLogInContainer").style.display = "block";
     document.getElementById("logInContainer").style.display = "none";
+    document.querySelector(".secondary-language-dropdown").style.display = "none";
   }
 }
 
