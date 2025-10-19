@@ -263,7 +263,7 @@ openRequest.onupgradeneeded = (event) => {
     if (topic == 0) {
       objectStore.createIndex(keyIndex, ["sourceSubjectId", "targetSubjectId"]);
     } else {
-      objectStore.createIndex(keyIndex, ["sourceSubjectId", "topicId"]);
+      objectStore.createIndex(keyIndex, ["sourceSubjectId","targetSubjectId", "topicId"]);
     }
   }
 };
@@ -382,7 +382,7 @@ async function countData() {
     if (topic == 0) {
       var range = IDBKeyRange.only([subjectId,targetSubjectId]);
     } else {
-      var range = IDBKeyRange.only([subjectId, topicId]);
+      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
     }
     // Use the compound index for the search
     var request = objectStore.index(keyIndex);
@@ -494,7 +494,7 @@ function getTotalSkipData() {
   if (topic == 0) {
     var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(keyIndex);
@@ -1161,7 +1161,7 @@ async function updateUserShowInDaysValue() {
       if (topic == 0) {
         UserObjectStore.createIndex("subjectIndex", ["sourceSubjectId", "targetSubjectId"]);
       } else {
-        UserObjectStore.createIndex("subjectIndex", ["sourceSubjectId", "topicId"]);
+        UserObjectStore.createIndex("subjectIndex", ["sourceSubjectId","targetSubjectId", "topicId"]);
       }
     }
   };
@@ -1277,6 +1277,7 @@ async function updateRegularShowInDaysValue() {
       } else {
         RegularObjectStore.createIndex("subjectTopicIndex", [
           "sourceSubjectId",
+          "targetSubjectId",
           "topicId",
         ]);
       }
@@ -1945,11 +1946,10 @@ async function showSecondaryLanguage() {
   const input2 = document.getElementById("show_SecondaryNote");
 
   try {
-    const secondaryLanguageIndex = localStorage.getItem("secondary-language");
-    const secondLanguage = Object.keys(languageMap)?.[secondaryLanguageIndex - 1] || 'ENG';
-    const languagePhrase = languageMap?.[secondLanguage] || 'en-US';
+    const languagePhrase = localStorage.getItem("secondary-language") || "en-US";
+    const secondLanguage = Object.keys(languageMap).find(key => languageMap?.[key] == languagePhrase);
 
-    if(input.value){
+    if(input.value && input.value != "Not found."){
       playTTS({ isPlayTTS: true, text: input.value, language : languagePhrase});
       return;
     }
@@ -1968,12 +1968,10 @@ async function showSecondaryLanguage() {
       playTTS({ isPlayTTS: true, text: input.value, language : languagePhrase});
     } else {
       input.value = "Not found.";
-      showToast(result?.message);
     }
   } catch (error) {
     input.value = "Not found.";
     console.error(error);
-    showToast(error?.message)
   } finally {
     btn.disabled = false;
     spinner.classList.add("d-none");

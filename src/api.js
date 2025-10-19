@@ -349,6 +349,7 @@ const openSubjectTestDB = () => {
         });
         apiObjectStore.createIndex("subjectTopicIndex", [
           "subjectId",
+          "targetSubjectId",
           "topicId",
         ]);
       }

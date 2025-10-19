@@ -273,7 +273,7 @@ function displayData() {
     if (topic == 0) {
       var range = IDBKeyRange.only([subjectId, targetSubjectId]);
     } else {
-      var range = IDBKeyRange.only([subjectId, topicId]);
+      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
     }
 
     // Use the compound index for the search
@@ -324,7 +324,7 @@ function displayFavData() {
   if (topic == 0) {
     var range = IDBKeyRange.only([subjectId, targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(index);
@@ -369,7 +369,7 @@ function displaySkipData() {
   if (topic == 0) {
     var range = IDBKeyRange.only([subjectId, targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(index);
@@ -413,7 +413,7 @@ function displayAudioData() {
   if (topic == 0) {
     var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(index);
@@ -457,7 +457,7 @@ function displayCurrentData() {
   if (topic == 0) {
     var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(index);
@@ -551,7 +551,7 @@ function updateFavoritesTable(db) {
   if (topic == 0) {
     var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(index);
@@ -968,7 +968,7 @@ async function getData() {
     if (topic == 0) {
       var range = IDBKeyRange.only([subjectId,targetSubjectId]);
     } else {
-      var range = IDBKeyRange.only([subjectId, topicId]);
+      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
     }
     // Use the compound index for the search
     var request = objectStore.index(index);

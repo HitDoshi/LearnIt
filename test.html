@@ -497,60 +497,7 @@
         />
       </div>
 
-       <div id="show_secondary_language_container" style="display: none;margin-top: 10px;">
-          <div class="data-display">        
-            <input
-              type="text"
-              id="show_secondary_language"
-              class="form-control"
-              style="
-                  flex: 1;
-                  white-space: normal;
-                  word-wrap: break-word;
-                  min-height: 40px;
-                  border-width: 0px;
-                  background-color: lightblue;
-                  color: black;
-                  margin-right: 10px;
-                  margin-bottom: 10px;
-              "
-              autocomplete="off"
-              disabled
-            />
-
-            <button
-              onclick="showSecondaryLanguage()"
-              id="show_secondary_language_button"
-              type="button"
-              class="btn btn-secondary d-flex align-items-center justify-content-center"
-              style="outline: none; box-shadow: none; width: 80px; min-height: 40px;"
-            >
-              <span id="new-spinner" class="spinner-border spinner-border-sm text-white d-none" role="status" aria-hidden="true"></span>
-              <span id="show_text">Show</span>
-            </button>
-          </div>
-
-          <div class="data-display">        
-              <input
-                type="text"
-                id="show_SecondaryNote"
-                class="text_container"
-                style="
-                  flex: 1;
-                  white-space: normal;
-                  word-wrap: break-word;
-                  min-height: 40px;
-                  border-width: 0px;
-                  background-color: lightblue;
-                  color: black;
-                "
-                autocomplete="off"
-                disabled
-              />
-          </div>
-      </div>
-
-      <div
+       <div
       style="
         display: flex;
         flex-direction: row;
@@ -623,8 +570,64 @@
 
       </div>
 
+
+       <div id="show_secondary_language_container" style="display: none;margin-top: 10px;">
+        <hr style="border: 1px dotted black;">
+          <div class="data-display">        
+            <input
+              type="text"
+              id="show_secondary_language"
+              class="form-control"
+              style="
+                  flex: 1;
+                  white-space: normal;
+                  word-wrap: break-word;
+                  min-height: 40px;
+                  border-width: 0px;
+                  background-color: lightblue;
+                  color: black;
+                  margin-right: 10px;
+                  margin-bottom: 10px;
+              "
+              autocomplete="off"
+              disabled
+            />
+
+            <button
+              onclick="showSecondaryLanguage()"
+              id="show_secondary_language_button"
+              type="button"
+              class="btn btn-secondary d-flex align-items-center justify-content-center"
+              style="outline: none; box-shadow: none; width: 80px; min-height: 40px;"
+            >
+              <span id="new-spinner" class="spinner-border spinner-border-sm text-white d-none" role="status" aria-hidden="true"></span>
+              <span id="show_text">Show</span>
+            </button>
+          </div>
+
+          <div class="data-display">        
+              <input
+                type="text"
+                id="show_SecondaryNote"
+                class="text_container"
+                style="
+                  flex: 1;
+                  white-space: normal;
+                  word-wrap: break-word;
+                  min-height: 40px;
+                  border-width: 0px;
+                  background-color: lightblue;
+                  color: black;
+                "
+                autocomplete="off"
+                disabled
+              />
+          </div>
+      </div>
+
+     
       
-      <div class="upload-container">
+      <div class="upload-container" style="margin-top: 10px;">
         <div id="file-info">
           <!-- Initial empty state -->
           <div

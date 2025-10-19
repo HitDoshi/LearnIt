@@ -80,7 +80,6 @@ subjectDataOpenRequest.onupgradeneeded = (event) => {
 subjectDataOpenRequest.onerror = (event) => {
   console.error("Database error: " + event.target.error);
 };
-
 subjectDataOpenRequest.onsuccess = (event) => {
   subjectDB = event.target.result;
 
@@ -94,11 +93,20 @@ subjectDataOpenRequest.onsuccess = (event) => {
     const isUserOnline = navigator.onLine;
     console.log(event.target.result);
     subjectData = event.target.result;
+
+    subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+    subjectData = subjectData?.map(item => ({
+      ...item,
+      name: item.name?.trim() || "",
+    }));
+
     const isLatestSubjectLoaded = localStorage.getItem("latestSubjectLoaded");
     if (isLatestSubjectLoaded === "true") {
       customSubjectRenderSelectOptions();
       // customNewSubjectRenderSelectOptions();
     }
+
   };
 };
 
@@ -172,6 +180,7 @@ async function openDatabase(dbName, dbVersion, storeName) {
         if (dbName == "test") {
           objectStore.createIndex("subjectTopicIndex", [
             "sourceSubjectId",
+            "targetSubjectId",
             "topicId",
           ]);
         }
@@ -382,6 +391,23 @@ const customSubjectRenderSelectOptions = () => {
     .join("");
 
   customSubjectDropdownSelect.innerHTML = options;
+
+  if(subjectData?.length > 0){
+    if(!localStorage.getItem("language") || !localStorage.getItem("subject")) {
+      localStorage.setItem("subject", subjectData?.[0]?.id)
+      localStorage.setItem("language", languageMap?.[subjectData?.[0]?.name] || "en-US");
+    }
+
+    if(!localStorage.getItem("language2") || !localStorage.getItem("targetSubject")) {
+      localStorage.setItem("targetSubject", subjectData[0].id);
+      localStorage.setItem("language2", languageMap?.[subjectData?.[0]?.name] || "en-US");
+    }
+
+    if(!localStorage.getItem("secondary-language") || !localStorage.getItem("secondarySubject")) {
+      localStorage.setItem("secondarySubject", subjectData[0].id);
+      localStorage.setItem("secondary-language", languageMap?.[subjectData?.[0]?.name] || "en-US");
+    }
+  }
 };
 
 const handleSelectSubjectChange = (event) => {
@@ -581,17 +607,14 @@ const customSecondaryLanguageOptionTemplate = (
 
 const customSecondaryLanguageRenderSelectOptions = () => {
   let selectedSecondaryLanguage =
-     (localStorage.getItem("secondary-language")) || 'en-US';
-
-  const keyFromValue = (value, map) => Object.keys(map).find(key => map[key] === value);
-  const selectedSecondaryLanguageKey = keyFromValue(selectedSecondaryLanguage, languageMap);
-  const selectedSecondaryLanguageValue = languageMap?.[selectedSecondaryLanguageKey] || 'en-US';
+     parseInt(localStorage.getItem("secondarySubject")) || 1;
 
   subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
   const options = subjectData
     .map((item, index) => {
-      const isSelected = selectedSecondaryLanguageKey == item.name;
+
+      const isSelected = selectedSecondaryLanguage == parseInt(item.id);
 
       return customSecondaryLanguageOptionTemplate(
         item.name,
@@ -611,10 +634,10 @@ const handleSelectSecondaryLanguageChange = (event) => {
 
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
-
-  localStorage.setItem("secondary-language", selectedValue);
+  
+  localStorage.setItem("secondarySubject", selectedValue);
+  localStorage.setItem("secondary-language", languageMap?.[selectedOption] || "en-US");
 };
-
 
 customSecondaryLanguageDropdownSelect.addEventListener('mousedown', function (event) {
   

@@ -19,7 +19,7 @@ testOpenRequest.onupgradeneeded = (event) => {
   // Create the object store if it doesn't exist
   if (!testDB.objectStoreNames.contains(testStoreName)) {
     const objectStore = testDB.createObjectStore(testStoreName, { keyPath: "id" });
-    objectStore.createIndex("subjectTopicIndex", ["subjectId","topicId"]);
+    objectStore.createIndex("subjectTopicIndex", ["subjectId", "targetSubjectId", "topicId"]);
   }
 };
 

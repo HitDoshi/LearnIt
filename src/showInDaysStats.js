@@ -18,6 +18,7 @@ let db, userDB; // Reference to the IndexedDB database
 let statsData = Array.from({ length: 100 }, (_, i) => 0);
 
 var subject = parseInt(localStorage.getItem("subject")) || 1;
+var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -111,9 +112,9 @@ async function displayData() {
     var topicId = topic;
 
     if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId]);
+      var range = IDBKeyRange.only([subjectId, targetSubjectId]);
     } else {
-      var range = IDBKeyRange.only([subjectId, topicId]);
+      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
     }
 
     var request = objectStore.index(index);
@@ -185,9 +186,9 @@ async function getData() {
     var topicId = topic;
 
     if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId]);
+      var range = IDBKeyRange.only([subjectId, targetSubjectId]);
     } else {
-      var range = IDBKeyRange.only([subjectId, topicId]);
+      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
     }
     var request = objectStore.index(index);
 

@@ -60,13 +60,10 @@ openRequest.onupgradeneeded = (event) => {
   if (!db.objectStoreNames.contains(storeName)) {
     db.createObjectStore(storeName, { keyPath: "id" });
     // Create a compound index for subjectId and topicId
-    objectStore.createIndex(keyIndex, ["sourceSubjectId", "topicId"]);
-
-
     if(topic==0){
       objectStore.createIndex(keyIndex, ["sourceSubjectId", "targetSubjectId"]);
     }else{
-      objectStore.createIndex(keyIndex, ["sourceSubjectId", "topicId"]);
+      objectStore.createIndex(keyIndex, ["sourceSubjectId","targetSubjectId", "topicId"]);
     }
   }
 };
@@ -130,7 +127,7 @@ function getData() {
    if(topic==0){
     var range = IDBKeyRange.only([subjectId,targetSubjectId]);
   }else{
-    var range = IDBKeyRange.only([subjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
   }
    // Use the compound index for the search
    var request = objectStore.index(keyIndex);
