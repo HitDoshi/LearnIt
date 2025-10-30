@@ -428,9 +428,9 @@ async function uploadUserDataFunction(showLogs = true) {
           const currentLoadedSubjectId = localStorage.getItem(
             "currentLoadedSubjectId"
           );
-          const currentLoadedTargetSubjectId = localStorage.getItem(
-            "targetSubject"
-          );
+          
+          const currentLoadedTargetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id);
+
           const topicId = localStorage.getItem("topic");
 
           // Continue with the fetch request inside the .then block
@@ -502,10 +502,9 @@ async function uploadDailyUserDataFunction() {
 
           const currentLoadedSubjectId = localStorage.getItem(
             "currentLoadedSubjectId"
-          );
-          const currentLoadedTargetSubjectId = localStorage.getItem(
-            "targetSubject"
-          );
+          );        
+          const currentLoadedTargetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
+
           const topicId = localStorage.getItem("topic");
 
           fetch(`${API_URL}/api/uploadUserData.php?token=${token}`, {

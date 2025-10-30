@@ -38,8 +38,8 @@ var select = 0; // 0-none , 1-left , 2-right
 var questionRow = null;
 var answerRow = null;
 
-var subject = parseInt(localStorage.getItem("subject")) || 1;
-var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
+var subject = parseInt(JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1);
+var targetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
 var topic = parseInt(localStorage.getItem("topic"));
 
 const color = ['#EEE685',"#9F9F5F","#808000","#48D1CC","#C0D9D9","#AFEEEE","#00B2EE","#A4D3EE","#D8BFD8","#ECC8EC",

@@ -23,7 +23,7 @@ function speakText(text, language) {
   try {
     console.log(language);
 
-    const lang = language || localStorage.getItem("language") || "en-US";
+    const lang = language || "en-US";
 
 
     if (!text?.toString()?.trim()) return;

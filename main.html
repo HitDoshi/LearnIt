@@ -950,8 +950,8 @@
       
       const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
 
-      const SubjectID = localStorage.getItem("subject") || 1;
-      const targetSubjectId = localStorage.getItem("targetSubject") || 1;
+      const SubjectID = JSON.parse(localStorage.getItem("source-language") || '{}')?.id;
+      const targetSubjectId = JSON.parse(localStorage.getItem("target-language") || '{}')?.id;
       const topicId = localStorage.getItem("topic") || 1;
 
       $("#modal-loading").modal("show");

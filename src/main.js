@@ -27,16 +27,6 @@ storeName = "userData";
 index = "subjectIndex";
 var userDB;
 
-let languageMap = {
-  "ENG": "en-US",
-  "FRA": "fr-CA",
-  "SPA": "es-ES", 
-  "GER": "de-DE",  
-  "RUS": "ru-RU",
-  "ITA": "it-IT",
-  "POR": "pt-BR",
-};
-
 var indexedDB =
   window.indexedDB ||
   window.mozIndexedDB ||
@@ -96,7 +86,7 @@ subjectDataOpenRequest.onsuccess = (event) => {
 
     subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-    subjectData = subjectData?.map(item => ({
+    subjectData = subjectData?.map((item) => ({
       ...item,
       name: item.name?.trim() || "",
     }));
@@ -106,7 +96,6 @@ subjectDataOpenRequest.onsuccess = (event) => {
       customSubjectRenderSelectOptions();
       // customNewSubjectRenderSelectOptions();
     }
-
   };
 };
 
@@ -195,7 +184,6 @@ async function getTopicData() {
   try {
     const isUserOnline = navigator.onLine;
     if (isUserOnline && !latestSubjectLoaded) {
-      const subjectID = localStorage.getItem("subject") || 1;
       const url = `${API_URL}/api/get_topic_data.php`;
       const response = await fetch(url);
 
@@ -276,6 +264,15 @@ async function getData() {
       if (responseData.success) {
         if (!subjectDB) {
           subjectData = responseData.data;
+
+          subjectData =
+            subjectData?.length > 0
+              ? subjectData?.map((item) => ({
+                  ...item,
+                  name: item?.name?.trim() || "",
+                }))
+              : [];
+
           customSubjectRenderSelectOptions();
           getTopicData();
           console.error("Database is not open yet.");
@@ -327,32 +324,6 @@ async function getData() {
   }
 }
 
-function setOption() {
-  const selected_subject = parseInt(localStorage.getItem("subject")) || 1;
-  const selected_topic = parseInt(localStorage.getItem("topic"));
-  const selected_target_subject = parseInt(localStorage.getItem("targetSubject")) || 1;
-
-  var subject = document.getElementById("dropdown-subject");
-  var topic = document.getElementById("dropdown-topic");
-  var targetSubject = document.getElementById("dropdown-target-subject");
-
-  subject.value = subjectData[selected_subject - 1].id;
-  subject.text = subjectData[selected_subject - 1].name;
-  
-  targetSubject.value = subjectData[selected_target_subject - 1].id;
-  targetSubject.text = subjectData[selected_target_subject - 1].name;
-
-  console.log(selected_topic == 0);
-
-  if (selected_topic == 0) {
-    topic.value = 0;
-    topic.text = "User Data";
-  } else {
-    topic.value = topicData.id;
-    topic.text = topicData.name;
-  }
-}
-
 const root = document.documentElement;
 
 const customSubjectDropdownSelect = document.querySelector(
@@ -374,40 +345,47 @@ const customSubjectRenderSelectOptions = () => {
 
   customTargetSubjectRenderSelectOptions();
   customSecondaryLanguageRenderSelectOptions();
-  const selectedSubject = parseInt(localStorage.getItem("subject")) || 1;
+  const selectedSubject =
+    parseInt(JSON.parse(localStorage.getItem("source-language") || "{}")?.id) ||
+    1;
 
   subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
+    subjectData = subjectData?.map((item) => ({
+      ...item,
+      name: item.name?.trim() || "",
+    }));
+    
   const options = subjectData
     .map((item, index) => {
       const isSelected = selectedSubject === parseInt(item.id);
-      return customSubjectOptionTemplate(
-        item.name,
-        100 * index,
-        item.id,
-        isSelected
-      );
+      return customSubjectOptionTemplate(item.name, 100 * index, item.id, isSelected);
     })
     .join("");
 
-  customSubjectDropdownSelect.innerHTML = options;
+    customSubjectDropdownSelect.innerHTML = options;
 
-  if(subjectData?.length > 0){
-    if(!localStorage.getItem("language") || !localStorage.getItem("subject")) {
-      localStorage.setItem("subject", subjectData?.[0]?.id)
-      localStorage.setItem("language", languageMap?.[subjectData?.[0]?.name] || "en-US");
-    }
+    if (subjectData?.length > 0) {
 
-    if(!localStorage.getItem("language2") || !localStorage.getItem("targetSubject")) {
-      localStorage.setItem("targetSubject", subjectData[0].id);
-      localStorage.setItem("language2", languageMap?.[subjectData?.[0]?.name] || "en-US");
-    }
+      const source = JSON.parse(localStorage.getItem("source-language") || "{}");
+      const target = JSON.parse(localStorage.getItem("target-language") || "{}");
+      const secondary = JSON.parse(localStorage.getItem("secondary-language") || "{}");
 
-    if(!localStorage.getItem("secondary-language") || !localStorage.getItem("secondarySubject")) {
-      localStorage.setItem("secondarySubject", subjectData[0].id);
-      localStorage.setItem("secondary-language", languageMap?.[subjectData?.[0]?.name] || "en-US");
+      if (!source?.id) {
+        localStorage.setItem("source-language", JSON.stringify(subjectData?.[0]));
+      }
+
+      if (!target?.id) {
+        localStorage.setItem("target-language", JSON.stringify(subjectData?.[0]));
+      }
+
+      if (!secondary?.id) {
+        localStorage.setItem(
+          "secondary-language",
+          JSON.stringify(subjectData?.[0])
+        );
+      }
     }
-  }
 };
 
 const handleSelectSubjectChange = (event) => {
@@ -417,10 +395,9 @@ const handleSelectSubjectChange = (event) => {
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
 
-  localStorage.setItem("subject", selectedValue);
-  localStorage.setItem("topic", 1);
-  localStorage.setItem("language2", languageMap?.[selectedOption] || "en-US");
+  const selectedData = subjectData?.find((item) => item?.id == selectedValue);
 
+  localStorage.setItem("source-language", JSON.stringify(selectedData));
   setTopicData();
 };
 
@@ -494,8 +471,6 @@ const setTopicData = () => {
 
     topicData = [];
 
-    const selected_subject = localStorage.getItem("subject") || 1;
-
     const transaction = topicDB.transaction(topicStoreName, "readonly");
     const objectStore = transaction.objectStore(topicStoreName);
 
@@ -507,6 +482,11 @@ const setTopicData = () => {
       });
 
       topicData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+      if(localStorage.getItem("topic") == null && topicData?.length > 0){        
+        localStorage.setItem("topic", topicData?.[0]?.id);
+      }
+
       customRenderSelectOptions();
     };
   } catch (error) {
@@ -549,7 +529,8 @@ const customTargetSubjectOptionTemplate = (
 
 const customTargetSubjectRenderSelectOptions = () => {
   const selectedTargetSubject =
-     parseInt(localStorage.getItem("targetSubject")) || 1;
+    parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id) ||
+    1;
 
   subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
@@ -576,14 +557,15 @@ const handleSelectTargetSubjectChange = (event) => {
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
 
-  localStorage.setItem("targetSubject", selectedValue);
-  localStorage.setItem("language", languageMap?.[selectedOption] || "en-US");
+  const selectedData = subjectData?.find((item) => item?.id == selectedValue);
+
+  localStorage.setItem("target-language", JSON.stringify(selectedData));
 };
 
-
-customTargetSubjectDropdownSelect.addEventListener('mousedown', function (event) {
-  
-});
+customTargetSubjectDropdownSelect.addEventListener(
+  "mousedown",
+  function (event) {}
+);
 
 customTargetSubjectDropdownSelect.addEventListener(
   "change",
@@ -606,14 +588,15 @@ const customSecondaryLanguageOptionTemplate = (
 };
 
 const customSecondaryLanguageRenderSelectOptions = () => {
-  let selectedSecondaryLanguage =
-     parseInt(localStorage.getItem("secondarySubject")) || 1;
+  const selectedSecondaryLanguage =
+    parseInt(
+      JSON.parse(localStorage.getItem("secondary-language") || "{}")?.id
+    ) || 1;
 
   subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
   const options = subjectData
     .map((item, index) => {
-
       const isSelected = selectedSecondaryLanguage == parseInt(item.id);
 
       return customSecondaryLanguageOptionTemplate(
@@ -634,14 +617,16 @@ const handleSelectSecondaryLanguageChange = (event) => {
 
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
-  
-  localStorage.setItem("secondarySubject", selectedValue);
-  localStorage.setItem("secondary-language", languageMap?.[selectedOption] || "en-US");
+
+  const selectedData = subjectData?.find((item) => item?.id == selectedValue);
+
+  localStorage.setItem("secondary-language", JSON.stringify(selectedData));
 };
 
-customSecondaryLanguageDropdownSelect.addEventListener('mousedown', function (event) {
-  
-});
+customSecondaryLanguageDropdownSelect.addEventListener(
+  "mousedown",
+  function (event) {}
+);
 
 customSecondaryLanguageDropdownSelect.addEventListener(
   "change",

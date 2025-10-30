@@ -20,8 +20,8 @@ const changeSkipDataState = []; // skip data ==> {id,isSkip}
 const deleteData = []; // delete data ==> {id}
 let showInDaysDataState = [];
 
-var subject = parseInt(localStorage.getItem("subject")) || 1;
-var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
+var subject = parseInt(JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1);
+var targetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
 
 const urlParams = new URLSearchParams(window.location.search);
 const myParam = urlParams.get("id") || "1";

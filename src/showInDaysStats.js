@@ -17,8 +17,8 @@ const userOpenRequest = indexedDB.open("user", 1);
 let db, userDB; // Reference to the IndexedDB database
 let statsData = Array.from({ length: 100 }, (_, i) => 0);
 
-var subject = parseInt(localStorage.getItem("subject")) || 1;
-var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
+var subject = parseInt(JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1);
+var targetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
 
 const urlParams = new URLSearchParams(window.location.search);
 
