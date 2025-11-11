@@ -505,20 +505,27 @@
         margin-top: 10px;
         margin-bottom: 10px;
         align-items: center;
+        justify-content: space-between;
       "
       id="continuous_playback_container"
     >
-      <div style="flex:1;">
+
+      <div style="flex-direction: column;display: flex;align-items: center;">
+        <input type="checkbox" id="random_checkbox" disabled/>
+        <label for="random_checkbox" class="prevent-select">Random</label>
+      </div>
+
+      <div style="flex-direction: column;display: flex;align-items: center;">
         <input type="checkbox" id="continuous_playback" />
         <label for="continuous_playback" class="prevent-select">Loop</label>
       </div>
-      
+
       <div
           style="
             display: flex;
             align-items: center;
-            flex: 1;
             min-height: 30px;
+            flex-direction: column;
           "
           id="delay_container"
         >
@@ -544,9 +551,9 @@
           style="
             display: flex;
             align-items: center;
-            flex: 1;
             min-height: 30px;
             justify-content: flex-end;
+            flex-direction: column;
           "
           id="delay_container"
         >

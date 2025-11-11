@@ -4,20 +4,16 @@ var storeName = "data";
 var keyIndex = "subjectTopicIndex";
 
 var topic = parseInt(localStorage.getItem("topic"));
-var subject = parseInt(localStorage.getItem("subject")) || 1;
-var targetSubjectId = parseInt(localStorage.getItem("targetSubject")) || 1;
+var subject = parseInt(
+  JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1
+);
+var targetSubjectId = parseInt(
+  JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1
+);
+
 var delay1 = localStorage.getItem("delay1");
 var delay2 = localStorage.getItem("delay2");
 
-let languageMap = {
-  "ENG": "en-US",
-  "FRA": "fr-CA",
-  "SPA": "es-ES", 
-  "GER": "de-DE",  
-  "RUS": "ru-RU",
-  "ITA": "it-IT",
-  "POR": "pt-BR",
-};
 
 if (topic == 0) {
   dbName = "user";
@@ -42,7 +38,7 @@ var totalFavData = 0;
 var totalRightAnswer = 0;
 var totalFullDayRightAns = 0;
 var isRightDone = false;
-var toggleQuestion = "false";
+var toggleQuestion = localStorage.getItem("toggle_question");
 var answer = "";
 var timer;
 var startSessionTime;
@@ -50,7 +46,6 @@ var sessionStartTimerBasicTime = 300000; // 5 min = 300000 sec
 var sessionInterval, dailyInterval;
 var playNextAudioIntervalId;
 var playNextTTSIntervalId;
-
 let currentFile = null;
 let audioPlayer = null;
 let isPlaying = false;
@@ -67,6 +62,8 @@ const delayInput2 = document.getElementById("delay_input2");
 // const startStopButton = document.getElementById("startStopButton");
 const deleteAudioButton = document.getElementById("deleteAudioButton");
 const ttsCheckbox = document.getElementById("toggle_tts");
+const randomCheckbox = document.getElementById("random_checkbox");
+const continuous_playback = document.getElementById("continuous_playback");
 const audio = document.getElementById("errorSound");
 const showInDaysInput = document.getElementById("showInDays");
 
@@ -85,6 +82,12 @@ ttsCheckbox.addEventListener("click", function (event) {
     } else {
       document.getElementById("continuous_playback").disabled = true;
     }
+  }
+
+  if (ttsCheckbox.checked) {
+    randomCheckbox.disabled = false;
+  } else {
+    randomCheckbox.disabled = true;
   }
 });
 
@@ -153,14 +156,15 @@ window.addEventListener("load", function () {
   const maxUD = parseInt(user?.maxUD || 0);
   document.getElementById("maxUD").innerText = `${maxUD}`;
 
-  if(user?.secondaryEnable?.toUpperCase() == "Y"){
-    document.getElementById("show_secondary_language_container").style.display = "";
+  if (user?.secondaryEnable?.toUpperCase() == "Y") {
+    document.getElementById("show_secondary_language_container").style.display =
+      "";
     document.getElementById("show_SecondaryNote").style.display = "";
-  }else{
-    document.getElementById("show_secondary_language_container").style.display = "none";
+  } else {
+    document.getElementById("show_secondary_language_container").style.display =
+      "none";
     document.getElementById("show_SecondaryNote").style.display = "none";
   }
-
 
   if (topic != 0) {
     document.getElementById("file-info").style.display = "none";
@@ -205,24 +209,28 @@ window.addEventListener("load", function () {
 
 const getTTSLanguge = (isLoopTTS) => {
   let language = "en-US";
-  toggleQuestion = localStorage.getItem("toggle_question");
+  const source =
+    JSON.parse(localStorage.getItem("source-language") || "{}")?.code ||
+    "en-US";
+  const target =
+    JSON.parse(localStorage.getItem("target-language") || "{}")?.code ||
+    "en-US";
 
-  if(!isLoopTTS){
-    return toggleQuestion == "true" ? localStorage.getItem("language2") : localStorage.getItem("language");
+  if (!isLoopTTS) {
+    return toggleQuestion == "true" ? source : target;
   }
-  console.log(toggleQuestion, currentTTSIndex, localStorage.getItem("language"), localStorage.getItem("language2"));
-  if(toggleQuestion == "true" && currentTTSIndex == 1){
-    language = localStorage.getItem("language");
-  }else if(toggleQuestion == "true" && currentTTSIndex == 2){
-    language = localStorage.getItem("language2");
-  }else if(toggleQuestion == "false" && currentTTSIndex == 1){
-    language = localStorage.getItem("language2");
-  }else if(toggleQuestion == "false" && currentTTSIndex == 2){
-    language = localStorage.getItem("language");
+  if (toggleQuestion == "true" && currentTTSIndex == 1) {
+    language = source;
+  } else if (toggleQuestion == "true" && currentTTSIndex == 2) {
+    language = target;
+  } else if (toggleQuestion == "false" && currentTTSIndex == 1) {
+    language = target;
+  } else if (toggleQuestion == "false" && currentTTSIndex == 2) {
+    language = source;
   }
 
   return language;
-}
+};
 
 function openDeleteAudioDialog() {
   if (EnableAudio == "Y") {
@@ -263,7 +271,11 @@ openRequest.onupgradeneeded = (event) => {
     if (topic == 0) {
       objectStore.createIndex(keyIndex, ["sourceSubjectId", "targetSubjectId"]);
     } else {
-      objectStore.createIndex(keyIndex, ["sourceSubjectId","targetSubjectId", "topicId"]);
+      objectStore.createIndex(keyIndex, [
+        "sourceSubjectId",
+        "targetSubjectId",
+        "topicId",
+      ]);
     }
   }
 };
@@ -293,9 +305,7 @@ openRequest.onsuccess = async function (event) {
     );
     toggleQuestionCheckbox.addEventListener("change", toggleQuestionType);
 
-    const t = localStorage.getItem("toggle_question");
-
-    if (t == "true") {
+    if (toggleQuestion == "true") {
       document.getElementById("toggleQuestionValue").style.backgroundColor =
         "darkgray";
     } else {
@@ -313,7 +323,6 @@ openRequest.onsuccess = async function (event) {
     isFavOnly = localStorage.getItem("showFavOnly") || "false";
     totalRightAnswer = localStorage.getItem("total_right") || 0;
     totalFullDayRightAns = localStorage.getItem("totalRightAns") || 0;
-    toggleQuestion = localStorage.getItem("toggle_question") || "false";
 
     document.getElementById("show_fav_only").checked = isFavOnly == "true";
     document.getElementById("toggle_question_type").checked =
@@ -380,9 +389,9 @@ async function countData() {
 
     // Create a range for the compound index
     if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId,targetSubjectId]);
+      var range = IDBKeyRange.only([subjectId, targetSubjectId]);
     } else {
-      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
+      var range = IDBKeyRange.only([subjectId, targetSubjectId, topicId]);
     }
     // Use the compound index for the search
     var request = objectStore.index(keyIndex);
@@ -492,9 +501,9 @@ function getTotalSkipData() {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
+    var range = IDBKeyRange.only([subjectId, targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId, targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(keyIndex);
@@ -640,10 +649,13 @@ function resetEditUserDefineValueMode() {
 }
 
 function toggleQuestionType() {
+
+  if(continuous_playback.checked){
+    return;
+  }
+
   const q = localStorage.getItem("toggle_question");
-  console.log(q);
-  toggleQuestion = q == "true" ? "false" : "true";
-  console.log(toggleQuestion);
+  toggleQuestion = q == "true" ? "false" : "true";  
   localStorage.setItem("toggle_question", toggleQuestion);
 
   if (toggleQuestion == "true") {
@@ -816,7 +828,6 @@ function showData() {
 
     document.getElementById("show_in_days_stats").innerText =
       data?.showInDaysStat || "-";
-    const continuous_playback = document.getElementById("continuous_playback");
 
     if (data?.fileName) {
       if (audioPlayer) {
@@ -1013,7 +1024,7 @@ async function checkAnswer() {
     enter_ans.style.color = "white";
     isRightDone = true;
     setTimer();
-    playTTS({ isPlayTTS: true, text: answer, language : getTTSLanguge(false) });
+    playTTS({ isPlayTTS: true, text: answer, language: getTTSLanguge(false) });
   } else {
     enter_ans.style.backgroundColor = "red";
     enter_ans.style.color = "white";
@@ -1159,9 +1170,16 @@ async function updateUserShowInDaysValue() {
 
       // Create a compound index for subjectId and topicId
       if (topic == 0) {
-        UserObjectStore.createIndex("subjectIndex", ["sourceSubjectId", "targetSubjectId"]);
+        UserObjectStore.createIndex("subjectIndex", [
+          "sourceSubjectId",
+          "targetSubjectId",
+        ]);
       } else {
-        UserObjectStore.createIndex("subjectIndex", ["sourceSubjectId","targetSubjectId", "topicId"]);
+        UserObjectStore.createIndex("subjectIndex", [
+          "sourceSubjectId",
+          "targetSubjectId",
+          "topicId",
+        ]);
       }
     }
   };
@@ -1273,7 +1291,10 @@ async function updateRegularShowInDaysValue() {
 
       // Create a compound index for subjectId and topicId
       if (topic == 0) {
-        RegularObjectStore.createIndex("subjectTopicIndex", ["sourceSubjectId", "targetSubjectId"]);
+        RegularObjectStore.createIndex("subjectTopicIndex", [
+          "sourceSubjectId",
+          "targetSubjectId",
+        ]);
       } else {
         RegularObjectStore.createIndex("subjectTopicIndex", [
           "sourceSubjectId",
@@ -1713,6 +1734,22 @@ continuous_playback.addEventListener("change", function () {
       // startStopButton.querySelector(".text").textContent = "Start";
       document.getElementById("total_question").innerHTML =
         isFavOnly == "true" ? favData.length : totalData.length;
+
+      toggleQuestion = localStorage.getItem("toggle_question");
+      if (toggleQuestion == "true") {
+        const toggle = (document.getElementById(
+          "toggleQuestionValue"
+        ).style.backgroundColor = "darkgray");
+      } else {
+        const toggle = (document.getElementById(
+          "toggleQuestionValue"
+        ).style.backgroundColor = null);
+      }
+      if (toggleQuestion == "true") {
+        answer = data?.source?.toString() || "";
+      } else {
+        answer = data?.target?.toString() || "";
+      }
       showData();
     }
 
@@ -1807,19 +1844,25 @@ function stopErrorSound() {
   } catch (error) {}
 }
 
-function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS, language = 'en-US' }) {
+function playTTS({
+  text,
+  isPlayTTS,
+  isPlayErrorSound,
+  isLoopTTS,
+  language = "en-US",
+}) {
   try {
     const token = localStorage.getItem("token");
 
     if (isLoopTTS && token) {
-      speakText(text,language);
+      speakText(text, language);
     } else {
       if (token && ttsCheckbox.checked) {
         if (isPlayErrorSound) {
           playErrorSound();
         }
         if (isPlayTTS) {
-          speakText(text,language);
+          speakText(text, language);
         }
       }
     }
@@ -1831,14 +1874,30 @@ function playTTS({ text, isPlayTTS, isPlayErrorSound, isLoopTTS, language = 'en-
 function playLoopTTS() {
   try {
     let delayBTWTTS, speakText;
-    let language = getTTSLanguge(true);
-    console.log(language);
     const isFavOnly = document.getElementById("show_fav_only").checked;
 
     ttsLoopData = isFavOnly ? favData : totalData;
 
     if (ttsLoopData?.length > 0) {
       if (currentTTSIndex == 1) {
+        if (
+          continuous_playback.checked &&
+          ttsCheckbox.checked &&
+          randomCheckbox.checked
+        ) {
+          const bin = Math.round(Math.random());
+          toggleQuestion = bin == 1 ? "true" : "false";
+          if (toggleQuestion == "true") {
+            const toggle = (document.getElementById(
+              "toggleQuestionValue"
+            ).style.backgroundColor = "darkgray");
+          } else {
+            const toggle = (document.getElementById(
+              "toggleQuestionValue"
+            ).style.backgroundColor = null);
+          }
+        }
+
         const randomIndex = Math.floor(Math.random() * ttsLoopData.length);
         index = randomIndex;
         const audioData = ttsLoopData[index];
@@ -1865,7 +1924,7 @@ function playLoopTTS() {
         delayBTWTTS = localStorage.getItem("delay2") || 0;
       }
 
-
+      let language = getTTSLanguge(true);
       playNextTTS(speakText, delayBTWTTS, language);
     } else {
       showToast("No data found !!");
@@ -1886,7 +1945,7 @@ const playNextTTS = (speakText, delayBTWTTS, language) => {
 
     speechSynthesis.cancel();
 
-    playTTS({ text: speakText, isLoopTTS: true,language });
+    playTTS({ text: speakText, isLoopTTS: true, language });
 
     utterance.onend = () => {
       if (continuous_playback.checked && isPlaying) {
@@ -1946,11 +2005,14 @@ async function showSecondaryLanguage() {
   const input2 = document.getElementById("show_SecondaryNote");
 
   try {
-    const languagePhrase = localStorage.getItem("secondary-language") || "en-US";
-    const secondLanguage = Object.keys(languageMap).find(key => languageMap?.[key] == languagePhrase);
+    const secondaryLanguage = JSON.parse(
+      localStorage.getItem("secondary-language") || "{}"
+    );
+    const languagePhrase = secondaryLanguage?.code || "en-US";
+    const secondLanguage = secondaryLanguage?.name;
 
-    if(input.value && input.value != "Not found."){
-      playTTS({ isPlayTTS: true, text: input.value, language : languagePhrase});
+    if (input.value && input.value != "Not found.") {
+      playTTS({ isPlayTTS: true, text: input.value, language: languagePhrase });
       return;
     }
 
@@ -1958,14 +2020,16 @@ async function showSecondaryLanguage() {
     spinner.classList.remove("d-none");
     btnText.classList.add("d-none");
 
-    const response = await fetch(`${API_URL}/api/get_language_data.php?sourceSubjectId=${data?.sourceSubjectId}&source=${data?.source}`);
+    const response = await fetch(
+      `${API_URL}/api/get_language_data.php?sourceSubjectId=${data?.sourceSubjectId}&source=${data?.source}`
+    );
     const result = await response.json();
 
     if (result?.success) {
       input.value = result?.data?.[secondLanguage];
       input2.value = result?.data?.[secondLanguage + "_NOTE"];
 
-      playTTS({ isPlayTTS: true, text: input.value, language : languagePhrase});
+      playTTS({ isPlayTTS: true, text: input.value, language: languagePhrase });
     } else {
       input.value = "Not found.";
     }
