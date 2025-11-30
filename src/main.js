@@ -647,3 +647,18 @@ $(document).ready(function () {
     console.log("Modal is hidden");
   });
 });
+
+const redirectionToAI = () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if(user?.userType != "1"){
+    showToast('Coming soon...');
+    return;
+  }
+
+  if(user?.AI_Enable == 'Y'){
+    window.location.href = 'ai.html';
+  }else{
+    showToast('This feature is not available for your account.');
+  }
+};

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>JSON Paste / Parse / Validate</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/toast.style.css" />
+    <link rel="stylesheet" href="./styles/navBar.style.css" />
+
+    <style>
+      body {
+        background: #f7f9fc;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+      }
+      .monospace {
+        font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", monospace;
+      }
+      textarea {
+        font-size: 13px;
+      }
+      pre.json-output {
+        background: #0f1724;
+        color: #e6eef6;
+        padding: 12px;
+        border-radius: 8px;
+        max-height: 320px;
+        overflow: auto;
+      }
+      .error-snippet {
+        background: #fff5f5;
+        border: 1px solid #ffcccc;
+        padding: 8px;
+        border-radius: 6px;
+      }
+      .line-num {
+        color: #9aa6b2;
+        display: inline-block;
+        width: 3ch;
+        text-align: right;
+        margin-right: 8px;
+        user-select: none;
+      }
+    </style>
+
+    <script src="./constant.js"></script>
+  </head>
+
+  <body>
+
+    <nav
+      id="mobile-navbar"
+      class="navbar navbar-expand-lg"
+      style="background-color: #00569d;margin-bottom: 20px;"
+    >
+      <div style="display: flex; width: 100%">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          fill="white"
+          class="bi bi-arrow-left-short"
+          style="align-self: center; margin-right: 5px;cursor: pointer;"
+          id="backButton"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"
+          />
+        </svg>
+
+        <a
+          class="navbar-brand"
+          style="color: white; align-self: center; font-size: 20px"
+          >JSON Parser</a
+        >
+      </div>
+
+    </nav>
+
+    <div class="container">
+      <h3>JSON Paste / Parse / Validate</h3>
+      <p class="text-muted">
+        Paste JSON and check if syntax is valid. Save only works when JSON is
+        valid.
+      </p>
+
+      <div class="row g-3">
+        <div class="col-12 col-lg-7">
+          <label class="form-label">JSON Input</label>
+          <textarea
+            id="jsonInput"
+            rows="18"
+            class="form-control monospace"
+            placeholder="Paste JSON here..."
+          ></textarea>
+
+          <div class="mt-2 d-flex flex-wrap">
+            <button id="parseBtn" class="btn btn-primary me-2">Parse</button>
+            <button id="saveBtn" class="btn btn-success me-2" disabled>
+              Save
+            </button>
+            <button id="prettyBtn" class="btn btn-outline-secondary me-2">
+              Pretty-print
+            </button>
+            <button id="copyBtn" class="btn btn-outline-success me-2">
+              Copy Parsed Output
+            </button>
+            <button id="clearBtn" class="btn btn-outline-danger">Clear</button>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+          <label class="form-label">Result</label>
+          <div
+            id="resultArea"
+            class="p-3 bg-white border rounded"
+            style="min-height: 360px"
+          >
+            <div id="status"></div>
+            <div id="errorBox" style="display: none"></div>
+            <div id="treeBox" style="display: none" class="mt-2">
+              <label class="form-label">Parsed JSON (preview)</label>
+              <pre id="jsonPretty" class="json-output monospace"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast-container" id="toastContainer"></div>
+      <div id="snackbar"></div>
+    </div>
+
+    <script src="./src/displayToast.js"></script>
+
+    <script>
+      const jsonInput = document.getElementById("jsonInput");
+      const parseBtn = document.getElementById("parseBtn");
+      const saveBtn = document.getElementById("saveBtn");
+      const prettyBtn = document.getElementById("prettyBtn");
+      const copyBtn = document.getElementById("copyBtn");
+      const clearBtn = document.getElementById("clearBtn");
+
+      const statusEl = document.getElementById("status");
+      const errorBox = document.getElementById("errorBox");
+      const treeBox = document.getElementById("treeBox");
+      const jsonPretty = document.getElementById("jsonPretty");
+
+      let isJsonValid = false;
+
+      /* ----------------------------------
+      UTILITIES
+---------------------------------- */
+      function showStatus(html, type = "info") {
+        statusEl.innerHTML = `<div class="alert alert-${type} py-2 mb-2">${html}</div>`;
+      }
+
+      function clearResult() {
+        statusEl.innerHTML = "";
+        errorBox.innerHTML = "";
+        errorBox.style.display = "none";
+        jsonPretty.innerText = "";
+        treeBox.style.display = "none";
+      }
+
+      function indexToLineCol(text, index) {
+        const upto = text.slice(0, index);
+        const lines = upto.split(/\r\n|\r|\n/);
+        return { line: lines.length, col: lines[lines.length - 1].length + 1 };
+      }
+
+      function snippetAt(text, index, context = 40) {
+        const start = Math.max(0, index - context);
+        const end = Math.min(text.length, index + context);
+        const before = text.slice(start, index);
+        const errorChar = text[index] || "";
+        const after = text.slice(index + 1, end);
+        return { before, errorChar, after };
+      }
+
+      function escapeHtml(s) {
+        return String(s).replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[m])
+        );
+      }
+
+      function parseJSONWithPosition(text) {
+        try {
+          return { ok: true, value: JSON.parse(text) };
+        } catch (e) {
+          const msg = e.message;
+          let pos = null;
+
+          const m = msg.match(/position (\d+)/i);
+          if (m) pos = parseInt(m[1], 10);
+
+          return { ok: false, message: msg, position: pos };
+        }
+      }
+
+      function renderErrorDetails(text, pos, message) {
+        errorBox.style.display = "block";
+        const { line, col } = indexToLineCol(text, pos ?? 0);
+        const sn = snippetAt(text, pos ?? 0);
+        errorBox.innerHTML = `
+    <div class="error-snippet">
+      <strong>Syntax error:</strong> ${escapeHtml(message)}<br>
+      <small>Line <b>${line}</b>, Column <b>${col}</b></small>
+      <pre class="monospace mt-2">${escapeHtml(sn.before)}
+<span style="background:#ffd2d2">${escapeHtml(sn.errorChar)}</span>${escapeHtml(
+          sn.after
+        )}</pre>
+    </div>
+  `;
+      }
+
+      /* ----------------------------------
+      EVENTS
+---------------------------------- */
+
+      // Parse JSON
+      parseBtn.addEventListener("click", () => {
+        clearResult();
+
+        const text = jsonInput.value.trim();
+        if (!text) {
+          showStatus("No JSON provided.", "danger");
+          saveBtn.disabled = true;
+          isJsonValid = false;
+          return;
+        }
+
+        const parsed = parseJSONWithPosition(text);
+
+        if (!parsed.ok) {
+          showStatus("JSON syntax error.", "danger");
+          renderErrorDetails(text, parsed.position, parsed.message);
+          saveBtn.disabled = true;
+          isJsonValid = false;
+          return;
+        }
+
+        showStatus("JSON is valid!", "success");
+
+        jsonPretty.innerText = JSON.stringify(parsed.value, null, 2);
+        treeBox.style.display = "block";
+
+        isJsonValid = true;
+        saveBtn.disabled = false;
+      });
+
+      // Pretty print
+      prettyBtn.addEventListener("click", () => {
+        try {
+          const obj = JSON.parse(jsonInput.value);
+          jsonInput.value = JSON.stringify(obj, null, 2);
+          showStatus("Pretty printed.", "success");
+        } catch {
+          showStatus("Cannot pretty-print invalid JSON.", "danger");
+        }
+      });
+
+      // Copy
+      copyBtn.addEventListener("click", async () => {
+        const text = jsonPretty.innerText || jsonInput.value;
+        await navigator.clipboard.writeText(text);
+        showStatus("Copied!", "success");
+      });
+
+      // Clear
+      clearBtn.addEventListener("click", () => {
+        jsonInput.value = "";
+        clearResult();
+        saveBtn.disabled = true;
+        isJsonValid = false;
+        showStatus("Cleared.", "info");
+      });
+
+      // SAVE API
+      saveBtn.addEventListener("click", async () => {
+        if (!isJsonValid) return;
+
+        try {
+          console.log(jsonInput.value);
+          const res = await fetch(API_URL + "/api/save_dialogue.php", {
+            method: "POST",
+            body: jsonInput.value,
+          });
+
+          const data = await res.json();
+          if (data?.success) {
+            showToast(data.message);
+          } else {
+            showStatus("Save failed: " + data.error, "danger");
+            showToast("Save failed: " + data.error);
+          }
+        } catch (err) {
+          showStatus("API Error: " + err.message, "danger");
+          showToast("API Error: " + err.message);
+        }
+      });
+
+      const backButton = document.getElementById('backButton');
+      backButton.onclick = function() {
+        window.location.href = 'ai.html';
+      };
+    </script>
+  </body>
+</html>
