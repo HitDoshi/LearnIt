@@ -26,6 +26,23 @@
     display: none;
   }
 
+  .search-container {
+    padding: 0px 16px;
+    padding-top: 16px;
+    display: flex;
+    justify-content: center;
+  }
+
+  #recordSearchInput {
+    width: 100%;
+    max-width: 34rem;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 16px;
+    outline: none;
+  }
+
     /* Rest of the CSS remains the same */
   </style>
 </head>
@@ -140,6 +157,15 @@
 
   <div class="toast-container" id="toastContainer"></div>
   <div id="snackbar"></div>
+
+  <div class="search-container">
+    <input
+      type="search"
+      id="recordSearchInput"
+      placeholder="Search source or target..."
+      aria-label="Search records"
+    />
+  </div>
 
   <!-- Modal -->
   <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"

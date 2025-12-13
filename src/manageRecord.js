@@ -19,6 +19,8 @@ const changeFavDataState = []; // fav data ==> {id,isFav}
 const changeSkipDataState = []; // skip data ==> {id,isSkip}
 const deleteData = []; // delete data ==> {id}
 let showInDaysDataState = [];
+let currentViewData = []; // cache for the currently rendered dataset
+let currentViewType = "all";
 
 var subject = parseInt(JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1);
 var targetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
@@ -192,19 +194,19 @@ openRequest.onsuccess = (event) => {
 
   if (myParam == "1") {
     dropdownItems[0].style.color = "green";
-    displayData();
+    renderView("all");
   } else if (myParam == "2") {
     dropdownItems[1].style.color = "green";
-    displayFavData();
+    renderView("fav");
   } else if (myParam == "3") {
     dropdownItems[2].style.color = "green";
-    displaySkipData();
+    renderView("skip");
   }else if(myParam == "4"){
     dropdownItems[3].style.color = "green";
-    displayCurrentData();
+    renderView("current");
   }else if(myParam == "5"){
     dropdownItems[4].style.color = "green";
-    displayAudioData();
+    renderView("audio");
   }
 
 
@@ -249,233 +251,114 @@ function countTotalUserData() {
 }
 
 
-function displayData() {
+// Apply pending changes to data before rendering/searching
+function applyPendingChanges(data) {
+  // Create a deep copy of the data array
+  const dataWithChanges = data.map(item => ({ ...item }));
+  
+  // Apply favorite changes
+  changeFavDataState.forEach(change => {
+    const item = dataWithChanges.find(d => d.id === change.id);
+    if (item) {
+      item.isFav = change.isFav;
+    }
+  });
+  
+  // Apply skip changes
+  changeSkipDataState.forEach(change => {
+    const item = dataWithChanges.find(d => d.id === change.id);
+    if (item) {
+      item.isSkip = change.isSkip;
+    }
+  });
+  
+  // Apply showInDays changes
+  showInDaysDataState.forEach(change => {
+    const item = dataWithChanges.find(d => d.id === change.id);
+    if (item) {
+      item.showInDays = change.value;
+    }
+  });
+  
+  return dataWithChanges;
+}
+
+function renderRows(data) {
+  const dataTable = document.getElementById("dataTable");
+  const tbody = dataTable.querySelector("tbody");
+  tbody.innerHTML = "";
+
+  // Apply pending changes before rendering
+  const dataWithChanges = applyPendingChanges(data);
+
+  let idNumber = 1;
+  dataWithChanges.forEach((rowData) => {
+    const row = appendData(rowData, idNumber);
+    tbody.appendChild(row);
+    idNumber++;
+  });
+}
+
+async function renderView(viewType = "all") {
   if (!db) {
     console.error("Database is not open yet.");
     return;
   }
+
   try {
-    const transaction = db.transaction(storeName, "readonly");
-    const objectStore = transaction.objectStore(storeName);
-    const dataTable = document.getElementById("dataTable");
+    const allData = await getData();
+    let filteredData = allData;
 
-    const tbody = dataTable.querySelector("tbody");
-    tbody.innerHTML = "";
-    // const favoritesTable = document.getElementById("favoritesTable");
-    // const favoritesTbody = favoritesTable.querySelector("tbody");
-
-    // Specify the subjectId and topicId you want to search for
-    var subjectId = subject; // Change this to the subjectId you want to search for
-    var topicId = topic; // Change this to the topicId you want to search for
-
-    // Create a range for the compound index
-
-    if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId, targetSubjectId]);
-    } else {
-      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
+    switch (viewType) {
+      case "fav":
+        filteredData = allData.filter((item) => item.isFav);
+        break;
+      case "skip":
+        filteredData = allData.filter((item) => item.isSkip);
+        break;
+      case "current":
+        filteredData = allData.filter((item) => item?.showInDays == 0);
+        break;
+      case "audio":
+        filteredData = allData.filter((item) => item?.fileName);
+        break;
+      default:
+        filteredData = allData;
+        break;
     }
 
-    // Use the compound index for the search
+    currentViewType = viewType;
+    currentViewData = filteredData;
+    renderRows(filteredData);
 
-    var request = objectStore.index(index);
-    var idNumber = 1;
-
-    request.openCursor(range).onsuccess = (event) => {
-      const cursor = event.target.result;
-
-      if (cursor) {
-        const data = cursor.value;
-
-        console.log(data);
-
-        const row = appendData(data, idNumber);
-        tbody.appendChild(row);
-
-        cursor.continue();
-        idNumber++;
-      }
-    };
+    // Re-apply active search, if any
+    const searchInput = document.getElementById("recordSearchInput");
+    if (searchInput && searchInput.value.trim()) {
+      handleSearchInput({ target: searchInput });
+    }
   } catch (error) {
-    console.log(error);
+    console.error("Error rendering data:", error);
   }
+}
+
+function displayData() {
+  renderView("all");
 }
 
 function displayFavData() {
-  if (!db) {
-    console.error("Database is not open yet.");
-    return;
-  }
-
-  const transaction = db.transaction(storeName, "readonly");
-  const objectStore = transaction.objectStore(storeName);
-  const dataTable = document.getElementById("dataTable");
-
-  const tbody = dataTable.querySelector("tbody");
-  tbody.innerHTML = "";
-  // const favoritesTable = document.getElementById("favoritesTable");
-  // const favoritesTbody = favoritesTable.querySelector("tbody");
-
-  // Specify the subjectId and topicId you want to search for
-  var subjectId = subject; // Change this to the subjectId you want to search for
-  var topicId = topic; // Change this to the topicId you want to search for
-
-  // Create a range for the compound index
-  if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId, targetSubjectId]);
-  } else {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
-  }
-  // Use the compound index for the search
-  var request = objectStore.index(index);
-  var idNumber = 1;
-
-  request.openCursor(range).onsuccess = (event) => {
-    const cursor = event.target.result;
-
-    if (cursor) {
-      const data = cursor.value;
-
-      if (data.isFav) {
-        const row = appendData(data, idNumber);
-        tbody.appendChild(row);
-        idNumber++;
-      }
-      cursor.continue();
-    }
-  };
+  renderView("fav");
 }
 
 function displaySkipData() {
-  if (!db) {
-    console.error("Database is not open yet.");
-    return;
-  }
-
-  const transaction = db.transaction(storeName, "readonly");
-  const objectStore = transaction.objectStore(storeName);
-  const dataTable = document.getElementById("dataTable");
-
-  const tbody = dataTable.querySelector("tbody");
-  tbody.innerHTML = "";
-  // const favoritesTable = document.getElementById("favoritesTable");
-  // const favoritesTbody = favoritesTable.querySelector("tbody");
-
-  // Specify the subjectId and topicId you want to search for
-  var subjectId = subject; // Change this to the subjectId you want to search for
-  var topicId = topic; // Change this to the topicId you want to search for
-
-  // Create a range for the compound index
-  if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId, targetSubjectId]);
-  } else {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
-  }
-  // Use the compound index for the search
-  var request = objectStore.index(index);
-  var idNumber = 1;
-
-  request.openCursor(range).onsuccess = (event) => {
-    const cursor = event.target.result;
-    if (cursor) {
-      const data = cursor.value;
-
-      if (data.isSkip) {
-        const row = appendData(data, idNumber);
-        tbody.appendChild(row);
-        idNumber++;
-      }
-      cursor.continue();
-    }
-  };
+  renderView("skip");
 }
 
 function displayAudioData() {
-  if (!db) {
-    console.error("Database is not open yet.");
-    return;
-  }
-
-  const transaction = db.transaction(storeName, "readonly");
-  const objectStore = transaction.objectStore(storeName);
-  const dataTable = document.getElementById("dataTable");
-
-  const tbody = dataTable.querySelector("tbody");
-  tbody.innerHTML = "";
-  // const favoritesTable = document.getElementById("favoritesTable");
-  // const favoritesTbody = favoritesTable.querySelector("tbody");
-
-  // Specify the subjectId and topicId you want to search for
-  var subjectId = subject; // Change this to the subjectId you want to search for
-  var topicId = topic; // Change this to the topicId you want to search for
-
-  // Create a range for the compound index
-  if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
-  } else {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
-  }
-  // Use the compound index for the search
-  var request = objectStore.index(index);
-  var idNumber = 1;
-
-  request.openCursor(range).onsuccess = (event) => {
-    const cursor = event.target.result;
-    if (cursor) {
-      const data = cursor.value;
-
-      if (data?.fileName) {
-        const row = appendData(data, idNumber);
-        tbody.appendChild(row);
-        idNumber++;
-      }
-      cursor.continue();
-    }
-  };
+  renderView("audio");
 }
 
 function displayCurrentData() {
-  if (!db) {
-    console.error("Database is not open yet.");
-    return;
-  }
-
-  const transaction = db.transaction(storeName, "readonly");
-  const objectStore = transaction.objectStore(storeName);
-  const dataTable = document.getElementById("dataTable");
-
-  const tbody = dataTable.querySelector("tbody");
-  tbody.innerHTML = "";
-  // const favoritesTable = document.getElementById("favoritesTable");
-  // const favoritesTbody = favoritesTable.querySelector("tbody");
-
-  // Specify the subjectId and topicId you want to search for
-  var subjectId = subject; // Change this to the subjectId you want to search for
-  var topicId = topic; // Change this to the topicId you want to search for
-
-  // Create a range for the compound index
-  if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
-  } else {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
-  }
-  // Use the compound index for the search
-  var request = objectStore.index(index);
-  var idNumber = 1;
-
-  request.openCursor(range).onsuccess = (event) => {
-    const cursor = event.target.result;
-    if (cursor) {
-      const data = cursor.value;
-
-      if (data?.showInDays == 0) {
-        const row = appendData(data, idNumber);
-        tbody.appendChild(row);
-        idNumber++;
-      }
-      cursor.continue();
-    }
-  };
+  renderView("current");
 }
 
 function updateIsFavFlag(id, isFav) {
@@ -586,16 +469,7 @@ function getSelectedOptionText() {
 }
 
 function loadUpdatedTable() {
-  // const option = getSelectedOptionText();
-
-  // console.log(typeof option);
-  // console.log(option);
-
   if (myParam == "1") {
-    const dataTable = document.getElementById("dataTable");
-    const tbody = dataTable.querySelector("tbody");
-    tbody.innerHTML = "";
-
     displayData();
   } else if (myParam == "2") {
     displayFavData();
@@ -603,6 +477,8 @@ function loadUpdatedTable() {
     displaySkipData();
   }else if (myParam == "4") {
     displayCurrentData();
+  }else if (myParam == "5") {
+    displayAudioData();
   }
 }
 
@@ -693,6 +569,9 @@ function appendData(data, idNumber) {
 
   const row = document.createElement("tr");
 
+  // Check if item is marked for deletion
+  const isMarkedForDelete = deleteData.some(item => item.id === data.id);
+
   row.innerHTML = `
     <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">${idNumber}</td>
     <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">
@@ -701,7 +580,7 @@ function appendData(data, idNumber) {
     <td><input data-id="${data.id}" type="number" style="width: 60px;" class="showInDays" value="${data.showInDays}" /></td>                    
     <td><input type="checkbox" data-id="${data.id}" class="favorite" ${data.isFav ? "checked" : ""} /></td>
     <td><input type="checkbox" data-id="${data.id}" class="skip" ${data.isSkip ? "checked" : ""} /></td>
-    <td><input type="checkbox" data-id="${data.id}" class="delete"/></td>
+    <td><input type="checkbox" data-id="${data.id}" class="delete" ${isMarkedForDelete ? "checked" : ""}/></td>
 `;
 
 
@@ -842,17 +721,21 @@ function appendData(data, idNumber) {
 
     value = parseInt(e.target.value);
 
+    // Get original value from currentViewData (before pending changes)
+    const originalItem = currentViewData.find(item => item.id === id);
+    const originalValue = originalItem ? originalItem.showInDays : data.showInDays;
+
     showInDaysDataState.forEach((item, index) => {
       if (item.id == id) {
         isExist = true
       }
     });
 
-    if (!isExist && data.showInDays != value) {
+    if (!isExist && originalValue != value) {
       const show = { id: id, value: value || 0 };
       showInDaysDataState.push(show);
     } else {
-      if(value == data.showInDays){
+      if(value == originalValue){
         showInDaysDataState = showInDaysDataState.filter((day) => day.id != id);        
       }else{
         showInDaysDataState = showInDaysDataState.filter((day) => day.id != id);        
@@ -866,6 +749,30 @@ function appendData(data, idNumber) {
   });
 
   return row;
+}
+
+function handleSearchInput(event) {
+  const term = event.target.value.trim();
+  
+  // Apply pending changes to currentViewData before filtering
+  const dataWithChanges = applyPendingChanges(currentViewData);
+  
+  if (!term) {
+    renderRows(dataWithChanges);
+    return;
+  }
+
+  const regex = new RegExp(term, "i");
+  const filtered = dataWithChanges.filter(
+    (item) => regex.test(item.source) || regex.test(item.target)
+  );
+
+  renderRows(filtered);
+}
+
+const searchInputEl = document.getElementById("recordSearchInput");
+if (searchInputEl) {
+  searchInputEl.addEventListener("input", handleSearchInput);
 }
 
 function changeUpdateOption() {
