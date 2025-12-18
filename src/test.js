@@ -14,7 +14,6 @@ var targetSubjectId = parseInt(
 var delay1 = localStorage.getItem("delay1");
 var delay2 = localStorage.getItem("delay2");
 
-
 if (topic == 0) {
   dbName = "user";
   dbVersion = 1;
@@ -84,11 +83,11 @@ ttsCheckbox.addEventListener("click", function (event) {
     }
   }
 
-  if (ttsCheckbox.checked) {
-    randomCheckbox.disabled = false;
-  } else {
-    randomCheckbox.disabled = true;
-  }
+  // if (ttsCheckbox.checked) {
+  //   randomCheckbox.disabled = false;
+  // } else {
+  //   randomCheckbox.disabled = true;
+  // }
 });
 
 delayInput1.addEventListener("input", function (e) {
@@ -649,13 +648,12 @@ function resetEditUserDefineValueMode() {
 }
 
 function toggleQuestionType() {
-
-  if(continuous_playback.checked){
+  if (continuous_playback.checked) {
     return;
   }
 
   const q = localStorage.getItem("toggle_question");
-  toggleQuestion = q == "true" ? "false" : "true";  
+  toggleQuestion = toggleQuestion == "true" ? "false" : "true";
   localStorage.setItem("toggle_question", toggleQuestion);
 
   if (toggleQuestion == "true") {
@@ -670,7 +668,8 @@ function toggleQuestionType() {
 
   resetEditUserDefineValueMode();
 
-  getData();
+  // getData();
+  showData();
 }
 
 function toggleSkipValue(event) {
@@ -690,29 +689,53 @@ function toggleSkipValue(event) {
 
   const request = objectStore.get(data.id);
   request.onsuccess = (event) => {
-    const data = event.target.result;
-    if (data) {
+    const updatedRecord = event.target.result;
+    if (updatedRecord) {
       if (isChecked) {
         allData--;
+        if (updatedRecord.isFav) {
+          totalFavData--;
+        }
+      } else {
+        allData++;
+        if (updatedRecord.isFav) {
+          totalFavData++;
+        }
       }
-      if (data.isFav) {
-        totalFavData--;
-      }
-      data.isSkip = isChecked;
 
-      const updateRequest = objectStore.put(data);
+      updatedRecord.isSkip = isChecked;
+
+      const updateRequest = objectStore.put(updatedRecord);
       updateRequest.onsuccess = () => {
+        // IMPORTANT: keep global `data` in sync, because `showData()` reads global `data`
+        data = updatedRecord;
+
         totalData.forEach((item, index) => {
-          if (item.id == data.id) {
+          if (item.id == updatedRecord.id) {
             totalData.splice(index, 1);
           }
         });
 
         favData.forEach((item, index) => {
-          if (item.id == data.id) {
+          if (item.id == updatedRecord.id) {
             favData.splice(index, 1);
           }
         });
+
+        if (!isChecked) {
+          totalData.push(updatedRecord);
+          if (updatedRecord.isFav) {
+            favData.push(updatedRecord);
+          }
+        }
+
+        totalData = shuffle(totalData);
+        favData = shuffle(favData);
+
+        document.getElementById("total_question").innerHTML =
+          document.getElementById("show_fav_only").checked
+            ? favData?.length
+            : ttsLoopData?.length;
       };
       updateRequest.onerror = () => {
         showToast("Error while updating data !!");
@@ -818,8 +841,6 @@ function showData() {
     showInDays.value = data.showInDays;
     lastShown.innerHTML = data.lastShown;
 
-    console.log(data);
-
     if (topic == 0) {
       document.getElementById("valueID").innerText = data?.questionId || "-";
     } else {
@@ -890,6 +911,20 @@ async function nextValue() {
   }
   shwoBlankData();
   resetEditUserDefineValueMode();
+
+  if (randomCheckbox.checked) {
+    const bin = Math.round(Math.random());
+    toggleQuestion = bin == 1 ? "true" : "false";
+    if (toggleQuestion == "true") {
+      const toggle = (document.getElementById(
+        "toggleQuestionValue"
+      ).style.backgroundColor = "darkgray");
+    } else {
+      const toggle = (document.getElementById(
+        "toggleQuestionValue"
+      ).style.backgroundColor = null);
+    }
+  }
 
   await countData();
 
@@ -1770,6 +1805,12 @@ function disabledControl() {
       .querySelectorAll("button")
       .forEach((button) => (button.disabled = true));
     // startStopButton.disabled = false;
+
+    if (ttsCheckbox.checked) {
+      document.getElementById("show_fav_only").disabled = false;
+      document.getElementById("toggle_fav").disabled = false;
+      document.getElementById("toggle_skip").disabled = false;
+    }
 
     document.getElementById("fileNameLink").disabled = true;
     document.getElementById("fileNameLink").style.cursor = "not-allowed";

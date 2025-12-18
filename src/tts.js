@@ -7,10 +7,10 @@ function loadVoices() {
     console.warn("No voices loaded. Trying again...");
     setTimeout(loadVoices, 100);
   } else {
-    console.log(
-      "Loaded voices:",
-      voices.map((v) => `${v.name} (${v.lang})`)
-    );
+    // console.log(
+    //   "Loaded voices:",
+    //   voices.map((v) => `${v.name} (${v.lang})`)
+    // );
   }
 }
 

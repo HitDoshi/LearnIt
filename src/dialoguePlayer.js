@@ -41,8 +41,29 @@ async function getData() {
     console.log(responseData);
 
     if (responseData.success) {
+      let dialogueTopic = {};
+      try {
+        const dialogueTopicStr = localStorage.getItem("dialogue-topic");
+        if (dialogueTopicStr && dialogueTopicStr !== "undefined" && dialogueTopicStr !== "null") {
+          dialogueTopic = JSON.parse(dialogueTopicStr);
+        }
+      } catch (error) {
+        console.error("Error parsing dialogue-topic from localStorage:", error);
+        dialogueTopic = {};
+      }
+      const { levelID, topicID } = dialogueTopic;
+      console.log(levelID, topicID);
       dialogueData = responseData.data;
+      dialogueData = dialogueData.filter(
+        (item) => item.level_id == levelID && item.topic_id == topicID
+      );
 
+      if (!dialogueData.length) {
+        showToast("No dialogues found.");
+        $("#modal-loading").modal("hide");
+        isShowLoading = false;
+        return;
+      }
       customSubjectRenderSelectOptions();
 
       getSentences();
@@ -161,9 +182,7 @@ async function getSentences() {
         };
       });
       renderSentences(sentences);
-    }else[
-      showToast(responseData.message)
-    ]
+    } else [showToast(responseData.message)];
 
     $("#modal-loading").modal("hide");
     isShowLoading = false;
@@ -271,5 +290,5 @@ function toggleLang(index) {
 }
 
 backButton.onclick = function () {
-  window.location.href = "ai.html";
+  window.location.href = "levelTopicSelection.html";
 };
