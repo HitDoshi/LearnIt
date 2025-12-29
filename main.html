@@ -928,7 +928,7 @@
     function showDownloadDataModal(){
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user?.userType == '1' || user?.userType == '2') {
-        $('#downloadModal').modal('show');        
+        $('#exampleModalCenter').modal('show');        
       } else {
         $('#exampleModalCenter').modal('show');
       }
@@ -951,10 +951,10 @@
       let loadFrom = 'initialData'; // this is key
 
       if(user?.userType == '1' || user?.userType == '2'){
-        const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
-        if (selectedValue === 'userData') {
-          loadFrom = 'userData'; // this is key
-        }
+        // const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
+        // if (selectedValue === 'userData') {
+        //   loadFrom = 'userData'; // this is key
+        loadFrom = 'userData'; // this is key
       }
       
       const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
@@ -1043,10 +1043,11 @@
       let loadFrom = 'initialData'; // this is key
 
       if(user?.userType == '1' || user?.userType == '2'){
-        const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
-        if (selectedValue === 'userData') {
+        // const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
+        // if (selectedValue === 'userData') {
+          //   loadFrom = 'userData'; // this is key
+          // }
           loadFrom = 'userData'; // this is key
-        }
       }
 
       userDB = await openDatabase(dbName, dbVersion, storeName);
