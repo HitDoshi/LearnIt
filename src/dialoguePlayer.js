@@ -7,6 +7,32 @@ const sourceLang = JSON.parse(localStorage.getItem("source-language") || "{}");
 const targetLang = JSON.parse(localStorage.getItem("target-language") || "{}");
 const ttsCheckbox = document.getElementById("toggle_tts");
 const backButton = document.getElementById("backButton");
+const delayInput1 = document.getElementById("delay_input1");
+const delayInput2 = document.getElementById("delay_input2");
+var delay1 = 1;
+var delay2 = 1;
+
+// Loop TTS variables
+var isPlaying = false;
+var playNextTTSIntervalId;
+var currentSentenceIndex = 0; // Position in fixed array (0-5)
+var currentTTSIndex = 1; // 1 for source, 2 for target
+var loopEnabledSentences = [null, null, null, null, null, null]; // Fixed array: index = sentence position, value = sentence index or null
+var currentlyPlayingSentenceIdx = null; // Track which actual sentence index is currently being spoken
+
+document.addEventListener("DOMContentLoaded", function () {
+  delayInput1.value = delay1;
+  delayInput2.value = delay2;
+
+  // Add TTS checkbox event listener
+  ttsCheckbox.addEventListener("change", function () {
+    updateLoopCheckboxesState();
+    if (!ttsCheckbox.checked) {
+      stopDialogueTTSIfRunning();
+      disabledDialogueControls();
+    }
+  });
+});
 
 function replaceStateWithHistory(page) {
   const topicNumber = localStorage.getItem("topic");
@@ -44,7 +70,11 @@ async function getData() {
       let dialogueTopic = {};
       try {
         const dialogueTopicStr = localStorage.getItem("dialogue-topic");
-        if (dialogueTopicStr && dialogueTopicStr !== "undefined" && dialogueTopicStr !== "null") {
+        if (
+          dialogueTopicStr &&
+          dialogueTopicStr !== "undefined" &&
+          dialogueTopicStr !== "null"
+        ) {
           dialogueTopic = JSON.parse(dialogueTopicStr);
         }
       } catch (error) {
@@ -120,6 +150,8 @@ const customSubjectRenderSelectOptions = () => {
 };
 
 const handleSelectSubjectChange = (event) => {
+  stopDialogueTTSIfRunning();
+
   const selectedValue = event.target.value;
   const selectedOption = event.target.options[event.target.selectedIndex].text;
 
@@ -195,8 +227,11 @@ async function getSentences() {
 }
 
 function renderSentences(dialogueData) {
+  stopDialogueTTSIfRunning();
   stopSpeech();
   sentences = dialogueData;
+  loopEnabledSentences = [null, null, null, null, null, null]; // Reset to default
+  currentlyPlayingSentenceIdx = null;
 
   const container = document.getElementById("sentencesContainer");
   container.innerHTML = "";
@@ -212,6 +247,7 @@ function renderSentences(dialogueData) {
           "&quot;"
         )
       : "";
+    const isTTSActive = isActive && ttsCheckbox.checked;
     box.innerHTML = `
             <div class="sentence-content-wrapper">
               <textarea
@@ -221,13 +257,24 @@ function renderSentences(dialogueData) {
                 disabled
                 readonly
               >${textValue}</textarea>
-              <button 
-                class="toggle-lang-btn"
-                onclick="toggleLang(${i})"
-                ${isActive ? "" : "disabled"}
-              >
-                ${sourceLang?.name} &#8644; ${targetLang?.name}
-              </button>
+
+              <div style="display: flex; align-items: center;gap: 20px;">
+                <button 
+                  class="toggle-lang-btn"
+                  id="toggleLangBtn${i}"
+                  onclick="toggleLang(${i})"
+                  ${isActive ? "" : "disabled"}
+                >
+                  ${sourceLang?.name} &#8644; ${targetLang?.name}
+                </button>
+
+                <div>
+                  <input type="checkbox" id="continuousPlayback${i}" ${
+      !isTTSActive ? "disabled" : ""
+    }/>
+                  <label for="continuousPlayback${i}" class="prevent-select">Loop</label>
+                </div>
+              </div>
             </div>
         `;
 
@@ -240,10 +287,136 @@ function renderSentences(dialogueData) {
         textarea.style.height = textarea.scrollHeight + "px";
       }
     }
+
+    // Add event listener for loop checkbox
+    if (isActive) {
+      const loopCheckbox = document.getElementById(`continuousPlayback${i}`);
+      if (loopCheckbox) {
+        loopCheckbox.addEventListener("change", function () {
+          handleLoopCheckboxChange(i, this.checked);
+        });
+      }
+    }
+  }
+
+  disabledDialogueControls();
+}
+
+function updateLoopCheckboxesState() {
+  for (let i = 0; i < 6; i++) {
+    const s = sentences[i];
+    const isActive = s !== undefined;
+    const loopCheckbox = document.getElementById(`continuousPlayback${i}`);
+    if (loopCheckbox) {
+      if (isActive && ttsCheckbox.checked) {
+        loopCheckbox.disabled = false;
+      } else {
+        loopCheckbox.disabled = true;
+        loopCheckbox.checked = false;
+        // Reset to null when disabled
+        loopEnabledSentences[i] = null;
+      }
+    }
+  }
+  // Update loop enabled sentences array based on checkbox states
+  for (let i = 0; i < 6; i++) {
+    const loopCheckbox = document.getElementById(`continuousPlayback${i}`);
+    if (loopCheckbox && loopCheckbox.checked && sentences[i]) {
+      loopEnabledSentences[i] = i;
+    } else {
+      loopEnabledSentences[i] = null;
+    }
+  }
+}
+
+function handleLoopCheckboxChange(index, checked) {
+  if (checked) {
+    // Set the value at this position to the sentence index
+    loopEnabledSentences[index] = index;
+
+    // If currently playing, DO NOT interrupt - just update the array silently
+    // The new sentence will be picked up naturally in the playback sequence
+    if (isPlaying) {
+      // Do nothing - let current playback continue
+      return;
+    }
+
+    // If this is the first loop checkbox enabled and not playing, start playing
+    const enabledCount = loopEnabledSentences.filter((s) => s !== null).length;
+    if (enabledCount === 1 && !isPlaying) {
+      playLoopDialogueTTS();
+    }
+  } else {
+    // Check if this is the currently playing sentence (by actual sentence index)
+    const isCurrentlyPlaying =
+      currentlyPlayingSentenceIdx === index;
+
+    // Set to null at this position
+    loopEnabledSentences[index] = null;
+
+    // If it's the currently playing sentence, stop and move to next
+    if (isCurrentlyPlaying) {
+      stopSpeech();
+      clearInterval(playNextTTSIntervalId);
+
+      // Find next non-null sentence from current position onwards
+      let nextIndex = -1;
+      for (let i = currentSentenceIndex + 1; i < 6; i++) {
+        if (loopEnabledSentences[i] !== null) {
+          nextIndex = i;
+          break;
+        }
+      }
+
+      // If no next sentence found, check from start
+      if (nextIndex === -1) {
+        for (let i = 0; i < loopEnabledSentences.length; i++) {
+          if (loopEnabledSentences[i] !== null) {
+            nextIndex = i;
+            break;
+          }
+        }
+      }
+
+      // If no more sentences, stop completely
+      if (nextIndex === -1) {
+        stopDialogueTTSIfRunning();
+        disabledDialogueControls();
+        currentlyPlayingSentenceIdx = null;
+        return;
+      }
+
+      // Move to next sentence
+      currentSentenceIndex = nextIndex;
+      currentTTSIndex = 1;
+      currentlyPlayingSentenceIdx = null;
+
+      // Continue with next sentence
+      playNextDialogueTTS();
+      return;
+    }
+
+    // If unchecking OTHER sentences during playback, DO NOT interrupt
+    // Just update the array silently - current playback continues normally
+    if (isPlaying) {
+      // Do nothing - let current playback continue
+      return;
+    }
+
+    // If no more loop checkboxes are enabled and not playing, stop
+    const enabledCount = loopEnabledSentences.filter((s) => s !== null).length;
+    if (enabledCount === 0) {
+      stopDialogueTTSIfRunning();
+      disabledDialogueControls();
+    }
   }
 }
 
 function toggleLang(index) {
+  if (isPlaying) {
+    return; // Don't allow toggling while playing
+  }
+
   stopSpeech();
   if (!sentences[index]) return;
 
@@ -266,8 +439,8 @@ function toggleLang(index) {
       }
       return item;
     });
-    if (ttsCheckbox.checked) {
-      speakText(s?.[target], targetLang?.code, box.value);
+    if (ttsCheckbox.checked && !isPlaying) {
+      speakText(s?.[target], targetLang?.code);
     }
   } else {
     box.value = s?.[source] || "";
@@ -283,8 +456,8 @@ function toggleLang(index) {
       return item;
     });
 
-    if (ttsCheckbox.checked) {
-      speakText(s?.[source], sourceLang?.code, box.value);
+    if (ttsCheckbox.checked && !isPlaying) {
+      speakText(s?.[source], sourceLang?.code);
     }
   }
 }
@@ -292,3 +465,312 @@ function toggleLang(index) {
 backButton.onclick = function () {
   window.location.href = "levelTopicSelection.html";
 };
+
+delayInput1.addEventListener("input", function (e) {
+  const value = parseInt(delayInput1.value || 0);
+
+  if (value <= 0) {
+    delayInput1.value = 0;
+  } else if (value > 99) {
+    delayInput1.value = 99;
+  } else {
+    delayInput1.value = value;
+  }
+
+  delay1 = delayInput1.value;
+});
+
+delayInput2.addEventListener("input", function (e) {
+  const value = parseInt(delayInput2.value || 0);
+
+  if (value <= 0) {
+    delayInput2.value = 0;
+  } else if (value > 99) {
+    delayInput2.value = 99;
+  } else {
+    delayInput2.value = value;
+  }
+
+  delay2 = delayInput2.value;
+});
+
+// Loop TTS Functions
+function playLoopDialogueTTS() {
+  if (!ttsCheckbox.checked) {
+    return;
+  }
+  currentTTSIndex = 1;
+  currentSentenceIndex = 0;
+  currentlyPlayingSentenceIdx = null;
+  clearInterval(playNextTTSIntervalId);
+  disabledDialogueControls();
+  playNextDialogueTTS();
+}
+
+function updateSentenceBoxDisplay(sentenceIdx, textToShow) {
+  // Remove highlighting from all sentence boxes
+  for (let i = 0; i < 6; i++) {
+    const box = document.getElementById(`sentenceBox${i}`);
+    const sentenceBox = document
+      .querySelector(`#sentenceBox${i}`)
+      ?.closest(".sentence_box");
+    if (box) {
+      box.classList.remove("playing-active");
+    }
+    if (sentenceBox) {
+      sentenceBox.classList.remove("sentence-playing");
+    }
+  }
+
+  // Highlight current sentence box and update textarea
+  const currentBox = document.getElementById(`sentenceBox${sentenceIdx}`);
+  const currentSentenceBox = document
+    .querySelector(`#sentenceBox${sentenceIdx}`)
+    ?.closest(".sentence_box");
+
+  if (currentBox) {
+    // Update textarea content with the text being played
+    currentBox.value = textToShow || "";
+    currentBox.style.height = "auto";
+    currentBox.style.height = currentBox.scrollHeight + "px";
+    currentBox.classList.add("playing-active");
+
+    // Scroll into view if needed
+    currentBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  if (currentSentenceBox) {
+    currentSentenceBox.classList.add("sentence-playing");
+  }
+}
+
+function playNextDialogueTTS() {
+
+  if (isPlaying) {
+    return;
+  }
+
+
+  clearInterval(playNextTTSIntervalId);
+  stopSpeech();
+
+  // Get current sentence index from loopEnabledSentences at current position
+  const sentenceIdx = loopEnabledSentences[currentSentenceIndex];
+
+  // If current position is null, find next non-null
+  if (sentenceIdx === null) {
+    let nextIndex = -1;
+    // Look from current position onwards
+    for (let i = currentSentenceIndex + 1; i < 6; i++) {
+      if (loopEnabledSentences[i] !== null) {
+        nextIndex = i;
+        break;
+      }
+    }
+    // If not found, wrap around from start
+    if (nextIndex === -1) {
+      for (let i = 0; i < loopEnabledSentences.length; i++) {
+        if (loopEnabledSentences[i] !== null) {
+          nextIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (nextIndex === -1) {
+      // No more sentences enabled
+      stopDialogueTTSIfRunning();
+      return;
+    }
+
+    currentSentenceIndex = nextIndex;
+    currentTTSIndex = 1;
+    return playNextDialogueTTS(); // Recursively call with new position
+  }
+
+  if (currentTTSIndex == 3) {
+    let nextIndex = -1;
+    // Look from current position onwards
+    for (let i = currentSentenceIndex + 1; i < 6; i++) {
+      if (loopEnabledSentences[i] !== null) {
+        nextIndex = i;
+        break;
+      }
+    }
+    // If not found, wrap around from start
+    if (nextIndex === -1) {
+      for (let i = 0; i < loopEnabledSentences.length; i++) {
+        if (loopEnabledSentences[i] !== null) {
+          nextIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (nextIndex === -1) {
+      // No more sentences enabled
+      stopDialogueTTSIfRunning();
+      return;
+    }
+
+    currentSentenceIndex = nextIndex;
+    currentTTSIndex = 1;
+    return playNextDialogueTTS();
+  }
+
+  const s = sentences[sentenceIdx];
+
+  if (!s) {
+    stopDialogueTTSIfRunning();
+    currentlyPlayingSentenceIdx = null;
+    return;
+  }
+
+  // Track which sentence is currently being played
+  currentlyPlayingSentenceIdx = sentenceIdx;
+
+  const source = sourceLang?.description + "_" + "text";
+  const target = targetLang?.description + "_" + "text";
+
+  let textToSpeak = "";
+  let language = "";
+  let delayBTWTTS = 0;
+  let textToShow = "";
+
+  if (currentTTSIndex === 1) {
+    // Play source text
+    textToSpeak = s[source] || "";
+    textToShow = textToSpeak;
+    language = sourceLang?.code || "en-US";
+    delayBTWTTS = parseInt(delay1 || 0);
+    currentTTSIndex = 2;
+  } else {
+    // Play target text
+    textToSpeak = s[target] || "";
+    textToShow = textToSpeak;
+    language = targetLang?.code || "en-US";
+    delayBTWTTS = parseInt(delay2 || 0);
+    currentTTSIndex = 3;
+  }
+
+  // Update sentence box display before speaking
+  updateSentenceBoxDisplay(sentenceIdx, textToShow);
+
+  if (textToSpeak) {
+    isPlaying = true;
+    clearInterval(playNextTTSIntervalId);
+    speechSynthesis.cancel();
+    
+    isPlaying = true;
+    speakText(textToSpeak, language || "en-US");
+
+    utterance.onend = () => {
+      if (ttsCheckbox.checked) {
+        isPlaying = false;
+        playNextTTSIntervalId = setTimeout(() => {
+          playNextDialogueTTS();
+        }, parseInt(delayBTWTTS || 0) * 1000);
+      } else {
+        isPlaying = false;
+        clearInterval(playNextTTSIntervalId);
+      }
+    };
+
+    utterance.onerror = () => {
+      isPlaying = false;
+      clearInterval(playNextTTSIntervalId);
+      if (ttsCheckbox.checked) {
+        playNextDialogueTTS();
+      }
+    };
+  } else {
+    playNextDialogueTTS();
+  }
+}
+
+function resetSentenceBoxDisplay() {
+  // Remove highlighting from all sentence boxes
+  for (let i = 0; i < 6; i++) {
+    const box = document.getElementById(`sentenceBox${i}`);
+    const sentenceBox = document
+      .querySelector(`#sentenceBox${i}`)
+      ?.closest(".sentence_box");
+    if (box) {
+      box.classList.remove("playing-active");
+      // Restore original text based on sentence language
+      const s = sentences[i];
+      if (s) {
+        const source = sourceLang?.description + "_" + "text";
+        const target = targetLang?.description + "_" + "text";
+        const textToShow =
+          s.language === sourceLang?.description
+            ? s[source] || ""
+            : s[target] || "";
+        box.value = textToShow;
+        box.style.height = "auto";
+        box.style.height = box.scrollHeight + "px";
+      }
+    }
+    if (sentenceBox) {
+      sentenceBox.classList.remove("sentence-playing");
+    }
+  }
+}
+
+function stopDialogueTTSIfRunning() {
+  try {
+    isPlaying = false;
+    clearInterval(playNextTTSIntervalId);
+    stopSpeech();
+    resetSentenceBoxDisplay();
+    currentlyPlayingSentenceIdx = null;
+    disabledDialogueControls();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function disabledDialogueControls() {
+  const hasEnabledSentences = loopEnabledSentences.some((s) => s !== null);
+  if (isPlaying && hasEnabledSentences) {
+    // Disable all buttons except loop checkboxes
+    document.querySelectorAll("button").forEach((button) => {
+      if (!button.id.startsWith("continuousPlayback")) {
+        button.disabled = true;
+      }
+    });
+
+    // Disable delay inputs
+    delayInput1.disabled = true;
+    delayInput2.disabled = true;
+
+    // Disable dropdown
+    customSubjectDropdownSelect.disabled = true;
+
+    // Keep loop checkboxes enabled
+    for (let i = 0; i < 6; i++) {
+      const loopCheckbox = document.getElementById(`continuousPlayback${i}`);
+      if (loopCheckbox && ttsCheckbox.checked) {
+        loopCheckbox.disabled = false;
+      }
+    }
+
+    // Keep TTS checkbox enabled
+    ttsCheckbox.disabled = false;
+  } else {
+    // Enable all controls
+    document.querySelectorAll("button").forEach((button) => {
+      button.disabled = false;
+    });
+
+    // Enable delay inputs
+    delayInput1.disabled = false;
+    delayInput2.disabled = false;
+
+    // Enable dropdown
+    customSubjectDropdownSelect.disabled = false;
+
+    // Disable loop checkboxes if TTS is not checked
+    updateLoopCheckboxesState();
+  }
+}

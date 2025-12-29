@@ -55,7 +55,6 @@
 
     <script src="./constant.js"></script>
     <script src="./src/tts.js"></script>
-
   </head>
 
   <body onload="getData();">
@@ -110,18 +109,82 @@
 
       <br />
 
-      <div style="">
-        <input type="checkbox" id="toggle_tts" />
-        <label for="toggle_tts" class="prevent-select">TTS</label>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 10px;
+          justify-content: space-between;
+          max-width: 34rem;
+          width: 85%;
+        "
+      >
+        <div style="">
+          <input type="checkbox" id="toggle_tts" />
+          <label for="toggle_tts" class="prevent-select">TTS</label>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            min-height: 30px;
+            flex-direction: column;
+          "
+          id="delay_container"
+        >
+          <label
+            for="delay1"
+            class="prevent-select"
+            style="margin-right: 5px; margin-top: 2.5px"
+            >Int., sec:
+          </label>
+          <input
+            type="number"
+            id="delay_input1"
+            autocomplete="off"
+            min="0"
+            max="99"
+            placeholder="Delay"
+            style="width: 65px"
+            pattern="[0-9]"
+          />
+        </div>
+
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            min-height: 30px;
+            justify-content: flex-end;
+            flex-direction: column;
+          "
+          id="delay_container"
+        >
+          <label
+            for="delay2"
+            class="prevent-select"
+            style="margin-right: 5px; margin-top: 2.5px"
+            >Ext., sec:
+          </label>
+          <input
+            type="number"
+            id="delay_input2"
+            autocomplete="off"
+            min="0"
+            max="99"
+            placeholder="Delay"
+            style="width: 65px"
+            pattern="[0-9]"
+          />
+        </div>
       </div>
 
       <br />
 
       <div id="sentencesContainer" class="sentences-container"></div>
-
     </div>
-
-
 
     <div class="toast-container" id="toastContainer"></div>
     <div id="snackbar"></div>
@@ -154,6 +217,6 @@
     <script src="./src/displayToast.js"></script>
     <script src="./src/dialoguePlayer.js"></script>
     <script src="./src/api.js"></script>
-
+    <script src="./src/tts.js"></script>
   </body>
 </html>

@@ -459,6 +459,23 @@ li.custom-dropdown-list-item {
   border-color: #d0d7de;
 }
 
+.text_container.playing-active {
+  background-color: #e3f2fd;
+  border-color: #00569d;
+  border-width: 3px;
+  box-shadow: 0 0 0 3px rgba(0, 86, 157, 0.2);
+}
+
+.sentence_box.sentence-playing {
+  background-color: #f0f7ff;
+  box-shadow: 0 4px 12px rgba(0, 86, 157, 0.3);
+}
+
+.sentence_box.sentence-playing .sentence-content-wrapper {
+  background-color: #e8f4fd;
+  box-shadow: 0 2px 8px rgba(0, 86, 157, 0.25);
+}
+
 .toggle-lang-btn {
   align-self: flex-start;
   padding: 10px 20px;
