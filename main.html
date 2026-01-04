@@ -990,7 +990,7 @@
               // Store data from data.json into IndexedDB
               jsonData.data.forEach((item) => {                
                 item.isFav = item?.isFav == "Y" ? true : false;
-                item.isSkip = item?.isSkip == "Y" ? true : false;
+                item.isSkip = item?.isSkip == "Y" ? true : (loadFrom == 'initialData' || jsonData?.isFromInitialTable) ? true : false;
                 item.showInDays = parseInt(item?.showInDays || 0);
                 item.lastShown = parseInt(item?.lastShown || 0);                
                 objectStore.add(item);
@@ -1006,7 +1006,7 @@
                 // Store data from data.json into IndexedDB
                 jsonData.data.forEach((item) => {
                 item.isFav = item?.isFav == "Y" ? true : false;
-                item.isSkip = item?.isSkip == "Y" ? true : false;
+                item.isSkip = item?.isSkip == "Y" ? true : (loadFrom == 'initialData' || jsonData?.isFromInitialTable) ? true : false;
                 item.showInDays = parseInt(item?.showInDays || 0);
                 item.lastShown = parseInt(item?.lastShown || 0);
                 
