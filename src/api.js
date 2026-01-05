@@ -428,9 +428,10 @@ async function uploadUserDataFunction(showLogs = true) {
           const currentLoadedSubjectId = localStorage.getItem(
             "currentLoadedSubjectId"
           );
+          const currentLoadedTargetSubjectId = localStorage.getItem(
+            "currentLoadedTargetSubjectId"
+          );
           
-          const currentLoadedTargetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id);
-
           const topicId = localStorage.getItem("topic");
 
           // Continue with the fetch request inside the .then block
@@ -503,7 +504,9 @@ async function uploadDailyUserDataFunction() {
           const currentLoadedSubjectId = localStorage.getItem(
             "currentLoadedSubjectId"
           );        
-          const currentLoadedTargetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
+          const currentLoadedTargetSubjectId = localStorage.getItem(
+            "currentLoadedTargetSubjectId"
+          );        
 
           const topicId = localStorage.getItem("topic");
 

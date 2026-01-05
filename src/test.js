@@ -755,7 +755,7 @@ async function changeShowInDaysValue() {
     return;
   }
 
-  const showInDaysValue = document.getElementById("showInDays").value;
+  const showInDaysValue = parseInt(document.getElementById("showInDays").value || 0);
 
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
@@ -773,9 +773,11 @@ async function changeShowInDaysValue() {
       data.showInDays = parseInt(showInDaysValue);
       data.lastShown = parseInt(showInDaysValue);
 
+      data.showInDaysStat = String(data?.showInDaysStat || "");
+
       const showInDaysStatData = data?.showInDaysStat?.split("|") || [];
 
-      if (showInDaysStatData?.length == 0) {
+      if (showInDaysStatData?.length == 0 || !showInDaysStatData?.[0]) {
         data.showInDaysStat = showInDaysValue;
       } else if (showInDaysStatData?.length < 15) {
         data.showInDaysStat =
@@ -784,6 +786,8 @@ async function changeShowInDaysValue() {
         data.showInDaysStat =
           showInDaysStatData.slice(1).join("|") + "|" + showInDaysValue;
       }
+
+      data.showInDaysStat = String(data.showInDaysStat);
 
       const updateRequest = objectStore.put(data);
       updateRequest.onsuccess = () => {

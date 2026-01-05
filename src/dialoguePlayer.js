@@ -132,6 +132,7 @@ const customSubjectRenderSelectOptions = () => {
 
   if (!selectedDialogue) {
     selectedDialogue = dialogueData[0];
+    document.getElementById("dialogIDText").innerHTML = 'Dialogue ID: ' + (selectedDialogue?.dialogue_id || '-');
   }
 
   const options = dialogueData
@@ -159,6 +160,8 @@ const handleSelectSubjectChange = (event) => {
   console.log(`Selected Option: ${selectedOption}`);
 
   selectedDialogue = dialogueData?.find((item) => item?.id == selectedValue);
+
+  document.getElementById("dialogIDText").innerHTML = 'Dialogue ID: ' + (selectedDialogue?.dialogue_id || '-');
 
   getSentences();
 };

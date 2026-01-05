@@ -791,6 +791,7 @@
   </div>
 
   <script>
+    let totalUserData = 0;
     const loginIcon = document.getElementById("loginIcon");
     // const signOutIcon = document.getElementById("signOutIcon");
     // const deleteIcon = document.getElementById("deleteIcon");
@@ -982,8 +983,8 @@
           objectStore.count().onsuccess = (event) => {
             const count = event.target.result;
 
-            console.log("---->SubjectData", jsonData);
             localStorage.setItem("currentLoadedSubjectId", SubjectID);
+            localStorage.setItem("currentLoadedTargetSubjectId", targetSubjectId);
 
             if(jsonData?.success){
               if (count == 0) {
@@ -996,7 +997,7 @@
                 objectStore.add(item);
               });
               $("#modal-loading").modal("hide");
-              showToast(`Total ${jsonData.data.length} records downloaded successfully !!`);
+              showToast(`Total ${jsonData.data.length + totalUserData} records downloaded successfully !!`);
             } else {
               // User confirmed, proceed with data reloading
               // Delete all records from IndexedDB
@@ -1013,7 +1014,7 @@
                   objectStore.add(item);
                 });
                 $("#modal-loading").modal("hide");
-                showToast(`Total ${jsonData.data.length} records downloaded successfully !!`);
+                showToast(`Total ${jsonData.data.length + totalUserData} records downloaded successfully !!`);
               };
 
               clearRequest.onerror = (event) => {
@@ -1061,6 +1062,8 @@
         .then(async (jsonData) => {
           const transaction = userDB.transaction(storeName, "readwrite");
           const objectStore = transaction.objectStore(storeName);
+
+          totalUserData = jsonData?.data?.length || 0;
 
           // Check if data.json records already exist in IndexedDB
           objectStore.count().onsuccess = (event) => {
