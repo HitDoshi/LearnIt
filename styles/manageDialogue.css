@@ -1,0 +1,102 @@
+.menu-container {
+    display: inline-block;
+    position: relative;
+}
+
+.menu-icon {
+    cursor: pointer;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #000;
+    border-radius: 50%;
+    margin: 2px 0;
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-dropdown li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.menu-icon.active+.menu-dropdown,
+.menu-dropdown:hover {
+    display: block;
+}
+
+#mobile-navbar {
+    display: none;
+}
+
+#window-navbar {
+    display: flex;
+}
+
+a {
+    cursor: pointer;
+}
+
+table {
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table-container {
+    width: 80%;
+    overflow-x: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+    word-break: break-word;
+    white-space: normal;
+}
+
+#mobile-navbar {
+    display: flex;
+    background-color: #f8f9fa;
+}
+
+#window-navbar {
+    display: none;
+}
+
+#dataTable {
+    width: 95%;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+#dataTable tbody tr.active-row {
+    background-color: #e6f2ff;
+}
+
+
+@media (max-width: 970px) {
+    .table-container {
+        width: 95%;
+        overflow-x: auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

@@ -9,6 +9,14 @@ backButton.onclick = function() {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (user?.userType == "1") {
+    document.getElementById("manageDialogue").style.display = "";
+  }else{
+    document.getElementById("manageDialogue").style.display = "none";
+  }
+
   const askButton = document.getElementById("ask-button");
   const promptInput = document.getElementById("prompt");
   const outputDiv = document.getElementById("output");
