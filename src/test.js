@@ -5,10 +5,10 @@ var keyIndex = "subjectTopicIndex";
 
 var topic = parseInt(localStorage.getItem("topic"));
 var subject = parseInt(
-  JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1
+  JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1,
 );
 var targetSubjectId = parseInt(
-  JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1
+  JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1,
 );
 
 var delay1 = localStorage.getItem("delay1");
@@ -65,12 +65,13 @@ const randomCheckbox = document.getElementById("random_checkbox");
 const continuous_playback = document.getElementById("continuous_playback");
 const audio = document.getElementById("errorSound");
 const showInDaysInput = document.getElementById("showInDays");
+const toggle_ns = document.getElementById("toggle_ns");
 
 ttsCheckbox.addEventListener("click", function (event) {
   const token = localStorage.getItem("token");
   if (!token) {
     showToast(
-      "Access to this section requires a login.\nPlease login first !!"
+      "Access to this section requires a login.\nPlease login first !!",
     );
     event.preventDefault();
   }
@@ -93,10 +94,10 @@ ttsCheckbox.addEventListener("click", function (event) {
 delayInput1.addEventListener("input", function (e) {
   const value = parseInt(delayInput1.value || 0);
 
-  if (value <= 0) {
-    delayInput1.value = 0;
-  } else if (value > 99) {
-    delayInput1.value = 99;
+  if (value <= 2) {
+    delayInput1.value = 2;
+  } else if (value > 10) {
+    delayInput1.value = 10;
   } else {
     delayInput1.value = value;
   }
@@ -108,10 +109,10 @@ delayInput1.addEventListener("input", function (e) {
 delayInput2.addEventListener("input", function (e) {
   const value = parseInt(delayInput2.value || 0);
 
-  if (value <= 0) {
-    delayInput2.value = 0;
-  } else if (value > 99) {
-    delayInput2.value = 99;
+  if (value <= 2) {
+    delayInput2.value = 2;
+  } else if (value > 10) {
+    delayInput2.value = 10;
   } else {
     delayInput2.value = value;
   }
@@ -187,7 +188,7 @@ window.addEventListener("load", function () {
       .addEventListener("click", () => {
         if (!token) {
           showToast(
-            "Access to this section requires a login.\nPlease login first !!"
+            "Access to this section requires a login.\nPlease login first !!",
           );
         } else {
           showToast("This functionality is disabled for your account !!");
@@ -197,7 +198,7 @@ window.addEventListener("load", function () {
     document.getElementById("delay_container").addEventListener("click", () => {
       if (!token) {
         showToast(
-          "Access to this section requires a login.\nPlease login first !!"
+          "Access to this section requires a login.\nPlease login first !!",
         );
       } else {
         showToast("This functionality is disabled for your account !!");
@@ -299,8 +300,10 @@ openRequest.onsuccess = async function (event) {
     const isSkipChange = document.getElementById("toggle_skip");
     isSkipChange.addEventListener("change", toggleSkipValue);
 
+    toggle_ns.addEventListener("change", toggleNSValue);
+
     const toggleQuestionCheckbox = document.getElementById(
-      "toggle_question_type"
+      "toggle_question_type",
     );
     toggleQuestionCheckbox.addEventListener("change", toggleQuestionType);
 
@@ -401,7 +404,7 @@ async function countData() {
       if (cursor) {
         const data = cursor.value;
 
-        if (data.isSkip || data.showInDays != 0) {
+        if (data.isSkip || data.showInDays != 0 || data.isNS) {
           totalSkipData++;
         } else {
           if (data.isFav) {
@@ -514,7 +517,7 @@ function getTotalSkipData() {
     if (cursor) {
       const data = cursor.value;
 
-      if (data.isSkip) {
+      if (data.isSkip || data?.isNS) {
         totalSkipData++;
       }
 
@@ -658,11 +661,11 @@ function toggleQuestionType() {
 
   if (toggleQuestion == "true") {
     const toggle = (document.getElementById(
-      "toggleQuestionValue"
+      "toggleQuestionValue",
     ).style.backgroundColor = "darkgray");
   } else {
     const toggle = (document.getElementById(
-      "toggleQuestionValue"
+      "toggleQuestionValue",
     ).style.backgroundColor = null);
   }
 
@@ -735,7 +738,80 @@ function toggleSkipValue(event) {
         document.getElementById("total_question").innerHTML =
           document.getElementById("show_fav_only").checked
             ? favData?.length
-            : ttsLoopData?.length;
+            : totalData?.length;
+      };
+      updateRequest.onerror = () => {
+        showToast("Error while updating data !!");
+      };
+    }
+  };
+  // setTimer();
+}
+
+function toggleNSValue(event) {
+  if (!db) {
+    console.error("Database is not open yet.");
+    return;
+  }
+
+  if (!data) {
+    return;
+  }
+
+  const isChecked = event.target.checked;
+
+  const transaction = db.transaction(storeName, "readwrite");
+  const objectStore = transaction.objectStore(storeName);
+
+  const request = objectStore.get(data.id);
+  request.onsuccess = (event) => {
+    const updatedRecord = event.target.result;
+    if (updatedRecord) {
+      if (isChecked) {
+        allData--;
+        if (updatedRecord.isFav) {
+          totalFavData--;
+        }
+      } else {
+        allData++;
+        if (updatedRecord.isFav) {
+          totalFavData++;
+        }
+      }
+
+      updatedRecord.isNS = isChecked;
+
+      const updateRequest = objectStore.put(updatedRecord);
+      updateRequest.onsuccess = () => {
+        // IMPORTANT: keep global `data` in sync, because `showData()` reads global `data`
+        data = updatedRecord;
+
+        totalData.forEach((item, index) => {
+          if (item.id == updatedRecord.id) {
+            totalData.splice(index, 1);
+          }
+        });
+
+        favData.forEach((item, index) => {
+          if (item.id == updatedRecord.id) {
+            favData.splice(index, 1);
+          }
+        });
+
+        if (!isChecked) {
+          totalData.push(updatedRecord);
+          if (updatedRecord.isFav) {
+            favData.push(updatedRecord);
+          }
+        }
+
+        totalData = shuffle(totalData);
+        favData = shuffle(favData);
+
+        document.getElementById("total_question").innerHTML =
+          document.getElementById("show_fav_only").checked
+            ? favData?.length
+            : totalData?.length;
       };
       updateRequest.onerror = () => {
         showToast("Error while updating data !!");
@@ -755,7 +831,9 @@ async function changeShowInDaysValue() {
     return;
   }
 
-  const showInDaysValue = parseInt(document.getElementById("showInDays").value || 0);
+  const showInDaysValue = parseInt(
+    document.getElementById("showInDays").value || 0,
+  );
 
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
@@ -791,7 +869,7 @@ async function changeShowInDaysValue() {
 
       const updateRequest = objectStore.put(data);
       updateRequest.onsuccess = () => {
-        if (!data.isSkip && showInDaysValue != 0) {
+        if (!data.isSkip && showInDaysValue != 0 && !data?.isNS) {
           totalData.forEach((item, index) => {
             if (item.id == data.id) {
               totalData.splice(index, 1);
@@ -842,6 +920,7 @@ function showData() {
 
     isFav.checked = data.isFav;
     isSkip.checked = data.isSkip;
+    toggle_ns.checked = data?.isNS;
     showInDays.value = data.showInDays;
     lastShown.innerHTML = data.lastShown;
 
@@ -865,7 +944,7 @@ function showData() {
       document.getElementById("empty-state").style.display = "none";
       document.getElementById("file-display").style.display = "flex";
       audioPlayer = new Audio(
-        encodeURI(`${API_URL}/assets/audio/${data.fileName}`)
+        encodeURI(`${API_URL}/assets/audio/${data.fileName}`),
       );
 
       audioPlayer.addEventListener("ended", function () {
@@ -921,11 +1000,11 @@ async function nextValue() {
     toggleQuestion = bin == 1 ? "true" : "false";
     if (toggleQuestion == "true") {
       const toggle = (document.getElementById(
-        "toggleQuestionValue"
+        "toggleQuestionValue",
       ).style.backgroundColor = "darkgray");
     } else {
       const toggle = (document.getElementById(
-        "toggleQuestionValue"
+        "toggleQuestionValue",
       ).style.backgroundColor = null);
     }
   }
@@ -941,6 +1020,7 @@ function shwoBlankData() {
   document.getElementById("show_targetNote").value = "";
   const isFav = (document.getElementById("toggle_fav").checked = false);
   const isSkip = (document.getElementById("toggle_skip").checked = false);
+  toggle_ns.checked = false;
   const enter_ans = document.getElementById("enter_ans");
   enter_ans.style.backgroundColor = "white";
   enter_ans.style.color = "black";
@@ -953,6 +1033,33 @@ function shwoBlankData() {
   document.getElementById("show_secondary_language").value = "";
   document.getElementById("show_SecondaryNote").value = "";
   // setTimer();
+}
+
+async function resetNSData() {
+  try {
+    const transaction = db.transaction([storeName], "readwrite");
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.openCursor();
+    request.onsuccess = function (event) {
+      const cursor = event.target.result;
+      if (!cursor) {
+        return;
+      };
+      let updateData = cursor.value;
+      updateData.isNS = false;
+      const updateRequest = cursor.update(updateData);
+      updateRequest.onsuccess = function () {
+        cursor.continue();
+      };
+    };
+
+    await countData();
+    document.getElementById("total_question").innerHTML =
+      isFavOnly == "true" ? favData.length : totalData.length;
+      console.log("resetNSData");
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function getCurrentFormattedDate() {
@@ -978,6 +1085,7 @@ async function checkAnswer() {
     localStorage.setItem("timestamp", Date.now());
     setTimer();
     timerFunction();
+    resetNSData();
   }
 
   const date = localStorage.getItem("date");
@@ -1654,7 +1762,7 @@ const playNextAudio = () => {
 
   if (continuous_playback.checked) {
     const randomIndex = Math.floor(
-      Math.random() * attachedAudioDataOnly.length
+      Math.random() * attachedAudioDataOnly.length,
     );
     index = randomIndex;
     const audioData = attachedAudioDataOnly[index];
@@ -1666,10 +1774,13 @@ const playNextAudio = () => {
 
   audioPlayer.onended = () => {
     if (continuous_playback.checked) {
-      playNextAudioIntervalId = setTimeout(() => {
-        playNextAudio();
-        console.log("---");
-      }, parseInt(delay2 || 0) * 1000);
+      playNextAudioIntervalId = setTimeout(
+        () => {
+          playNextAudio();
+          console.log("---");
+        },
+        parseInt(delay2 || 0) * 1000,
+      );
     } else {
       isPlaying = false;
       audioPlayer.currentTime = 0;
@@ -1682,9 +1793,12 @@ const playNextAudio = () => {
     showToast("Failed to play audio !!");
     isPlaying = false;
     if (continuous_playback.checked) {
-      playNextAudioIntervalId = setTimeout(() => {
-        playNextAudio();
-      }, parseInt(delay2 || 0) * 1000);
+      playNextAudioIntervalId = setTimeout(
+        () => {
+          playNextAudio();
+        },
+        parseInt(delay2 || 0) * 1000,
+      );
     } else {
       isPlaying = false;
       audioPlayer.currentTime = 0;
@@ -1749,7 +1863,7 @@ continuous_playback.addEventListener("change", function () {
             localStorage.setItem("delay2", delay2);
 
             const randomIndex = Math.floor(
-              Math.random() * attachedAudioDataOnly.length
+              Math.random() * attachedAudioDataOnly.length,
             );
             index = randomIndex;
             const audioData = attachedAudioDataOnly[index];
@@ -1777,11 +1891,11 @@ continuous_playback.addEventListener("change", function () {
       toggleQuestion = localStorage.getItem("toggle_question");
       if (toggleQuestion == "true") {
         const toggle = (document.getElementById(
-          "toggleQuestionValue"
+          "toggleQuestionValue",
         ).style.backgroundColor = "darkgray");
       } else {
         const toggle = (document.getElementById(
-          "toggleQuestionValue"
+          "toggleQuestionValue",
         ).style.backgroundColor = null);
       }
       if (toggleQuestion == "true") {
@@ -1814,6 +1928,7 @@ function disabledControl() {
       document.getElementById("show_fav_only").disabled = false;
       document.getElementById("toggle_fav").disabled = false;
       document.getElementById("toggle_skip").disabled = false;
+      document.getElementById("toggle_ns").disabled = false;
     }
 
     document.getElementById("fileNameLink").disabled = true;
@@ -1934,11 +2049,11 @@ function playLoopTTS() {
           toggleQuestion = bin == 1 ? "true" : "false";
           if (toggleQuestion == "true") {
             const toggle = (document.getElementById(
-              "toggleQuestionValue"
+              "toggleQuestionValue",
             ).style.backgroundColor = "darkgray");
           } else {
             const toggle = (document.getElementById(
-              "toggleQuestionValue"
+              "toggleQuestionValue",
             ).style.backgroundColor = null);
           }
         }
@@ -1994,9 +2109,12 @@ const playNextTTS = (speakText, delayBTWTTS, language) => {
 
     utterance.onend = () => {
       if (continuous_playback.checked && isPlaying) {
-        playNextTTSIntervalId = setTimeout(() => {
-          playLoopTTS();
-        }, parseInt(delayBTWTTS || 0) * 1000);
+        playNextTTSIntervalId = setTimeout(
+          () => {
+            playLoopTTS();
+          },
+          parseInt(delayBTWTTS || 0) * 1000,
+        );
       } else {
         isPlaying = false;
         clearInterval(playNextTTSIntervalId);
@@ -2051,7 +2169,7 @@ async function showSecondaryLanguage() {
 
   try {
     const secondaryLanguage = JSON.parse(
-      localStorage.getItem("secondary-language") || "{}"
+      localStorage.getItem("secondary-language") || "{}",
     );
     const languagePhrase = secondaryLanguage?.code || "en-US";
     const secondLanguage = secondaryLanguage?.name;
@@ -2066,7 +2184,7 @@ async function showSecondaryLanguage() {
     btnText.classList.add("d-none");
 
     const response = await fetch(
-      `${API_URL}/api/get_language_data.php?sourceSubjectId=${data?.sourceSubjectId}&source=${data?.source}`
+      `${API_URL}/api/get_language_data.php?sourceSubjectId=${data?.sourceSubjectId}&source=${data?.source}`,
     );
     const result = await response.json();
 

@@ -1,50 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LearntIt - Test</title>
 
-    <!-- Add your stylesheet -->
-    <link rel="stylesheet" href="./styles/navBar.style.css" />
-    <link rel="stylesheet" href="./styles/toast.style.css" />
-    <link rel="stylesheet" href="./styles/test.style.css" />
-    <link rel="stylesheet" href="./styles/loader.style.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearntIt - Test</title>
 
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
-    <script src="./constant.js"></script>
-    <script src="./src/tts.js"></script>
+  <!-- Add your stylesheet -->
+  <link rel="stylesheet" href="./styles/navBar.style.css" />
+  <link rel="stylesheet" href="./styles/toast.style.css" />
+  <link rel="stylesheet" href="./styles/test.style.css" />
+  <link rel="stylesheet" href="./styles/loader.style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <style></style>
-  </head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
 
-  <body style="margin:0; height:100vh; display:flex; flex-direction:column;">
-    <!-- <nav
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script src="./constant.js"></script>
+  <script src="./src/tts.js"></script>
+
+  <style></style>
+</head>
+
+<body style="margin:0; height:100vh; display:flex; flex-direction:column;">
+  <!-- <nav
       class="navbar navbar-expand-lg fixed-top"
       id="myNavbar"
     >
@@ -107,27 +95,21 @@
       </div>
     </nav> -->
 
-    <nav class="navbar navbar-expand-lg fixed-top" id="myNavbar">
-      <div
-        style="
+  <nav class="navbar navbar-expand-lg fixed-top" id="myNavbar">
+    <div style="
           display: flex;
           flex: 1;
           padding-left: 10px;
           padding-right: 10px;
           flex-direction: row;
-        "
-      >
-        <a
-          class="navbar-brand"
-          style="color: white; align-self: center; font-size: 20px"
-          >LearnIt</a
-        >
-      </div>
+        ">
+      <a class="navbar-brand" style="color: white; align-self: center; font-size: 20px">LearnIt</a>
+    </div>
 
-      <!-- <a class="navbar-brand" style="color: white; flex: 1; padding-left: 10px"
+    <!-- <a class="navbar-brand" style="color: white; flex: 1; padding-left: 10px"
         >LearnIt</a
       > -->
-      <!-- <button
+    <!-- <button
         class="navbar-toggler"
         type="button"
         data-toggle="collapse"
@@ -139,35 +121,23 @@
         <span class="navbar-toggler-icon"></span>
       </button> -->
 
-      <!-- <a
+    <!-- <a
               class="nav-link"
               onclick="replaceStateWithHistory('main.html');"           
               >Main</a
             > -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-house-fill"
-        viewBox="0 0 16 16"
-        class="nav-link"
-        onclick="replaceStateWithHistory('main.html');"
-        style="
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill"
+      viewBox="0 0 16 16" class="nav-link" onclick="replaceStateWithHistory('main.html');" style="
           align-self: center;
           margin-right: 14px;
           color: white;
           cursor: pointer;
-        "
-      >
-        <path
-          d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"
-        />
-        <path
-          d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"
-        />
-      </svg>
-      <!-- <li class="nav-item active">
+        ">
+      <path
+        d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z" />
+      <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z" />
+    </svg>
+    <!-- <li class="nav-item active">
             <a
               class="nav-link"
               href="test.html"
@@ -176,48 +146,29 @@
               >Practice</a
             >
           </li> -->
-      <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        onclick="toggleQuestionType()"
-        style="
+    <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onclick="toggleQuestionType()"
+      style="
           align-self: center;
           margin-right: 14px;
           color: white;
           cursor: pointer;
-        "
-        id="toggleQuestionValue"
-      >
-        <path
-          fill="#FFFFFF"
-          d="M16,17.01V10h-2v7.01h-3L15,21l4,-3.99h-3zM9,3L5,6.99h3V14h2V6.99h3L9,3z"
-        />
-      </svg>
+        " id="toggleQuestionValue">
+      <path fill="#FFFFFF" d="M16,17.01V10h-2v7.01h-3L15,21l4,-3.99h-3zM9,3L5,6.99h3V14h2V6.99h3L9,3z" />
+    </svg>
 
-      <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        onclick="window.location.href = 'matchPair.html'"
-        style="
+    <!-- <a class="nav-link" href="matchPair.html">Match Pairs</a> -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+      onclick="window.location.href = 'matchPair.html'" style="
           align-self: center;
           margin-right: 14px;
           color: white;
           cursor: pointer;
-        "
-      >
-        <path
-          fill="#FFFFFF"
-          d="M9.01,14H2v2h7.01v3L13,15l-3.99,-4V14zM14.99,13v-3H22V8h-7.01V5L11,9L14.99,13z"
-        />
-      </svg>
+        ">
+      <path fill="#FFFFFF" d="M9.01,14H2v2h7.01v3L13,15l-3.99,-4V14zM14.99,13v-3H22V8h-7.01V5L11,9L14.99,13z" />
+    </svg>
 
-      <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
+    <!-- <div class="icon update-icon" onclick="updateData();">✓</div>
           <div
             class="icon update-icon"
             style="margin-right: 20px"
@@ -226,27 +177,18 @@
             ↺
           </div> -->
 
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-pencil-fill"
-        viewBox="0 0 16 16"
-        class="nav-link"
-        onclick="window.location.href = 'manageRecord.html?id=1'"
-        style="align-self: center; color: white; cursor: pointer"
-      >
-        <path
-          d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"
-        />
-      </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill"
+      viewBox="0 0 16 16" class="nav-link" onclick="window.location.href = 'manageRecord.html?id=1'"
+      style="align-self: center; color: white; cursor: pointer">
+      <path
+        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+    </svg>
 
-      <!-- <li class="nav-item" onclick="window.close();">            
+    <!-- <li class="nav-item" onclick="window.close();">            
             <p class="" style="color: white;height: 100%; justify-content: center;cursor: pointer;
             align-items: center;display: flex;">EXIT</p>
           </li> -->
-      <!-- <li class="nav-item dropdown">
+    <!-- <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
               id="navbarDropdownMenuLink"
@@ -268,99 +210,77 @@
               >
             </div>
           </li> -->
-    </nav>
+  </nav>
 
-    <div
-      class="container"
-      style="max-width: 500px; margin: auto; margin-top: 50px; padding: 20px"
-    >
-      <div class="options" id="toggle-question-window-container">
-        <input type="checkbox" id="toggle_question_type" />
-        <label for="toggle_question_type" class="prevent-select"
-          >Based on Value-2</label
-        >
+  <div class="container" style="max-width: 500px; margin: auto; margin-top: 50px; padding: 20px">
+    <div class="options" id="toggle-question-window-container">
+      <input type="checkbox" id="toggle_question_type" />
+      <label for="toggle_question_type" class="prevent-select">Based on Value-2</label>
+    </div>
+
+    <div style="display: flex; flex-direction: row">
+      <div class="options" style="">
+        <input type="checkbox" id="show_fav_only" />
+        <label for="show_fav_only" class="prevent-select">Favs Only</label>
       </div>
 
-      <div style="display: flex; flex-direction: row">
-        <div class="options" style="">
-          <input type="checkbox" id="show_fav_only" />
-          <label for="show_fav_only" class="prevent-select">Favs Only</label>
-        </div>
-
-        <div
-          style="
+      <div style="
             display: flex;
             align-items: center;
             justify-content: flex-end;
             flex: 1;
             min-height: 30px;
-          "
-        >
-          <label
-            for="show_in_days"
-            class="prevent-select"
-            style="margin-right: 5px;margin-top: 2.5px;"
-            >Show in, days:
-          </label>
-          <input
-            type="number"
-            id="showInDays"
-            autocomplete="off"
-            style="width: 60px"
-            min="0"
-            max="99"
-            pattern="[0-9]"
-          />
-        </div>
+          ">
+        <label for="show_in_days" class="prevent-select" style="margin-right: 5px;margin-top: 2.5px;">Show in, days:
+        </label>
+        <input type="number" id="showInDays" autocomplete="off" style="width: 60px" min="0" max="99" pattern="[0-9]" />
       </div>
+    </div>
 
-      <div
-        style="
+    <div style="
           display: flex;
           flex-direction: row;
           flex: 1;
           gap: 30px;
           margin-top: 5px;
           margin-bottom: 5px;          
-        "
-      >
-        <div>
-          <input type="checkbox" id="toggle_fav" />
-          <label for="toggle_fav" class="prevent-select">My Fav</label>
-        </div>
+        ">
+      <div>
+        <input type="checkbox" id="toggle_fav" />
+        <label for="toggle_fav" class="prevent-select">My Fav</label>
+      </div>
 
-        <div>
-          <input type="checkbox" id="toggle_skip" />
-          <label for="toggle_skip" class="prevent-select">Skip</label>
-        </div>
+      <div>
+        <input type="checkbox" id="toggle_skip" />
+        <label for="toggle_skip" class="prevent-select">Skip</label>
+      </div>
 
-        <div style="margin-right: 5px">
-          <input type="checkbox" id="toggle_tts" />
-          <label for="toggle_tts" class="prevent-select">TTS</label>
-        </div>
+      <div>
+        <input type="checkbox" id="toggle_ns" />
+        <label for="toggle_ns" class="prevent-select">NS</label>
+      </div>
 
-        <div
-          class="status-info"
-          style="
+
+
+      <div class="status-info" style="
             display: flex;
             flex-direction: row;
             flex: 1;
             justify-content: flex-end;
             margin-top: 5px;            
-          "
-        >
-          <h6 id="total_question"></h6>
-          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
-          <h6 id="total_right_attempt" style="color: green"></h6>
-          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
-          <h6 id="total_right_by_full_days" style="color: #00569d"></h6>
-          <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
-          <h6 id="last_shown" style="color: brown;"></h6>
-        </div>
-      </div>      
-    
-      <div class="data-display">
-        <!-- <h6
+          ">
+        <h6 id="total_question"></h6>
+        <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
+        <h6 id="total_right_attempt" style="color: green"></h6>
+        <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
+        <h6 id="total_right_by_full_days" style="color: #00569d"></h6>
+        <h6 style="margin-left: 2px; margin-right: 2px">/</h6>
+        <h6 id="last_shown" style="color: brown;"></h6>
+      </div>
+    </div>
+
+    <div class="data-display">
+      <!-- <h6
           id="value_1"
           class="text_container prevent-select"
           style="
@@ -373,11 +293,7 @@
           "
         ></h6> -->
 
-          <input
-            type="text"
-            id="value_1"
-            class="text_container prevent-select"
-            style="
+      <input type="text" id="value_1" class="text_container prevent-select" style="
               flex: 1;
               white-space: normal;
               word-wrap: break-word;
@@ -387,26 +303,15 @@
               color: black;              
               margin-right: 10px;
               margin-bottom: 10px;
-            "
-            autocomplete="off"
-            disabled
-          />
-        <button
-          onclick="nextValue()"
-          id="next_button"
-          type="button"
-          class="btn btn-secondary"
-          style="outline: none; box-shadow: none; width: 80px"
-        >
-          Next
-        </button>
-      </div>
+            " autocomplete="off" disabled />
+      <button onclick="nextValue()" id="next_button" type="button" class="btn btn-secondary"
+        style="outline: none; box-shadow: none; width: 80px">
+        Next
+      </button>
+    </div>
 
-      <div class="data-entry">
-        <input
-          type="text"
-          id="enter_ans"
-          style="
+    <div class="data-entry">
+      <input type="text" id="enter_ans" style="
             flex: 1;
             max-width: 380px;
             white-space: normal;
@@ -414,23 +319,15 @@
             min-height: 40px;
             min-width: 0%;
             margin-right: 10px;
-          "
-          autocomplete="new-password"
-          spellcheck="false"
-        />
-        <button
-          onclick="checkAnswer()"
-          id="check_button"
-          type="button"
-          class="btn btn-secondary"
-          style="outline: none; box-shadow: none; width: 80px"
-        >
-          Check
-        </button>
-      </div>
+          " autocomplete="new-password" spellcheck="false" />
+      <button onclick="checkAnswer()" id="check_button" type="button" class="btn btn-secondary"
+        style="outline: none; box-shadow: none; width: 80px">
+        Check
+      </button>
+    </div>
 
-      <div class="data-display" style="margin-top: 10px">
-        <!-- <h6
+    <div class="data-display" style="margin-top: 10px">
+      <!-- <h6
           id="show_ans"
           class="text_container"
           style="
@@ -443,16 +340,12 @@
           "
         ></h6> -->
 
-          <!-- <h6
+      <!-- <h6
             id="show_targetNote"
             class="text_container"
             style="flex: 1;white-space: normal; word-wrap: break-word;min-height: 40px;"
           ></h6>         -->
-          <input
-            type="text"
-            id="show_ans"
-            class="text_container"
-            style="
+      <input type="text" id="show_ans" class="text_container" style="
               flex: 1;
               white-space: normal;
               word-wrap: break-word;
@@ -462,28 +355,16 @@
               color: black;
               margin-right: 10px;
               margin-bottom: 10px;
-            "
-            autocomplete="off"
-            disabled
-          />
+            " autocomplete="off" disabled />
 
-        <button
-          onclick="showAnswer()"
-          id="show_button"
-          type="button"
-          class="btn btn-secondary"
-          style="outline: none; box-shadow: none; width: 80px"
-        >
-          Show
-        </button>
-      </div>
+      <button onclick="showAnswer()" id="show_button" type="button" class="btn btn-secondary"
+        style="outline: none; box-shadow: none; width: 80px">
+        Show
+      </button>
+    </div>
 
-      <div class="data-display">        
-        <input
-          type="text"
-          id="show_targetNote"
-          class="text_container"
-          style="
+    <div class="data-display">
+      <input type="text" id="show_targetNote" class="text_container" style="
             flex: 1;
             white-space: normal;
             word-wrap: break-word;
@@ -491,33 +372,60 @@
             border-width: 0px;
             background-color: lightblue;
             color: black;
-          "
-          autocomplete="off"
-          disabled
-        />
-      </div>
+          " autocomplete="off" disabled />
+    </div>
 
-       <div
-      style="
+    <div class="data-display" style="display: flex; align-items: center; width: 100%;margin-top: 10px;">
+      <label for="daily_counter" class="prevent-select">Stats:&nbsp;</label>
+      <h6 id="show_in_days_stats">-</h6>
+    </div>
+
+    <div style="
         display: flex;
         flex-direction: row;
-        gap: 15px;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        gap: 20px;
         align-items: center;
-        justify-content: space-between;
-      "
-      id="continuous_playback_container"
-    >
+      " id="continuous_playback_container">
 
-      <div style="flex-direction: column;display: flex;align-items: center;">
-        <input type="checkbox" id="random_checkbox"/>
-        <label for="random_checkbox" class="prevent-select">Random</label>
+      <div style="
+      flex-direction: column;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  ">
+        <input type="checkbox" id="toggle_tts" />
+        <label for="toggle_tts" class="prevent-select" style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">
+          TTS
+        </label>
       </div>
 
-      <div style="flex-direction: column;display: flex;align-items: center;">
+
+      <div style=" display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;">
+        <input type="checkbox" id="random_checkbox" />
+        <label for="toggle_tts" class="prevent-select" style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">Alt</label>
+      </div>
+
+      <div style=" display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;">
         <input type="checkbox" id="continuous_playback" />
-        <label for="continuous_playback" class="prevent-select">Loop</label>
+        <label for="continuous_playback" class="prevent-select" style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">Auto</label>
       </div>
 
       <div
@@ -529,12 +437,6 @@
           "
           id="delay_container"
         >
-          <label
-            for="delay1"
-            class="prevent-select"
-            style="margin-right: 5px;margin-top: 2.5px;"
-            >Int., sec:
-          </label>        
           <input
             type="number"
             id="delay_input1"
@@ -545,6 +447,13 @@
             style="width: 65px"
             pattern="[0-9]"
           />
+          <label
+            for="delay1"
+            class="prevent-select"
+            style="margin-right: 5px;margin-top: 2.5px;"
+            >Int., sec:
+          </label>        
+          
         </div>
       
         <div
@@ -556,13 +465,7 @@
             flex-direction: column;
           "
           id="delay_container"
-        >
-          <label
-            for="delay2"
-            class="prevent-select"
-            style="margin-right: 5px;margin-top: 2.5px;"
-            >Ext., sec:
-          </label>        
+        >            
           <input
             type="number"
             id="delay_input2"
@@ -573,23 +476,20 @@
             style="width: 65px"
             pattern="[0-9]"
           />
+          <label
+            for="delay2"
+            class="prevent-select"
+            style="margin-right: 5px;margin-top: 2.5px;"
+            >Ext., sec:
+          </label>      
         </div>
 
-      </div>
+    </div>
 
-      <div class="data-display" style="display: flex; align-items: center; width: 100%;margin-bottom: -10px;">
-        <label for="daily_counter" class="prevent-select">Stats:&nbsp;</label>
-        <h6 id="show_in_days_stats">-</h6>
-      </div>
-
-       <div id="show_secondary_language_container" style="display: none;">
-        <hr style="border: 1px dotted black;">
-          <div class="data-display">        
-            <input
-              type="text"
-              id="show_secondary_language"
-              class="form-control"
-              style="
+    <div id="show_secondary_language_container" style="display: none;">
+      <hr style="border: 1px dotted black;">
+      <div class="data-display">
+        <input type="text" id="show_secondary_language" class="form-control" style="
                   flex: 1;
                   white-space: normal;
                   word-wrap: break-word;
@@ -599,29 +499,19 @@
                   color: black;
                   margin-right: 10px;
                   margin-bottom: 10px;
-              "
-              autocomplete="off"
-              disabled
-            />
+              " autocomplete="off" disabled />
 
-            <button
-              onclick="showSecondaryLanguage()"
-              id="show_secondary_language_button"
-              type="button"
-              class="btn btn-secondary d-flex align-items-center justify-content-center"
-              style="outline: none; box-shadow: none; width: 80px; min-height: 40px;"
-            >
-              <span id="new-spinner" class="spinner-border spinner-border-sm text-white d-none" role="status" aria-hidden="true"></span>
-              <span id="show_text">Show</span>
-            </button>
-          </div>
+        <button onclick="showSecondaryLanguage()" id="show_secondary_language_button" type="button"
+          class="btn btn-secondary d-flex align-items-center justify-content-center"
+          style="outline: none; box-shadow: none; width: 80px; min-height: 40px;">
+          <span id="new-spinner" class="spinner-border spinner-border-sm text-white d-none" role="status"
+            aria-hidden="true"></span>
+          <span id="show_text">Show</span>
+        </button>
+      </div>
 
-          <div class="data-display">        
-              <input
-                type="text"
-                id="show_SecondaryNote"
-                class="text_container"
-                style="
+      <div class="data-display">
+        <input type="text" id="show_SecondaryNote" class="text_container" style="
                   flex: 1;
                   white-space: normal;
                   word-wrap: break-word;
@@ -629,263 +519,238 @@
                   border-width: 0px;
                   background-color: lightblue;
                   color: black;
-                "
-                autocomplete="off"
-                disabled
-              />
-          </div>
+                " autocomplete="off" disabled />
       </div>
+    </div>
 
-     
-      
-      <div class="upload-container" style="margin-top: 10px;">
-        <div id="file-info">
-          <!-- Initial empty state -->
-          <div
-            id="empty-state"
-            style="display: flex; justify-content: space-between"
-            class="audio-pick"
-          >
-            <input type="file" id="fileInput" accept=".wav,.mp3,.m4a" onclick="triggerFileInput(event)" required />
-            <button
-              onclick="uploadFile()"
-              id="uploadButton"
-              type="button"
-              class="btn btn-secondary"
-              style="outline: none; box-shadow: none; width: 80px"
-            >
-              Upload
-            </button>
-          </div>
+    <div class="upload-container" style="margin-top: 10px;">
+      <div id="file-info">
+        <!-- Initial empty state -->
+        <div id="empty-state" style="display: flex; justify-content: space-between" class="audio-pick">
+          <input type="file" id="fileInput" accept=".wav,.mp3,.m4a" onclick="triggerFileInput(event)" required />
+          <button onclick="uploadFile()" id="uploadButton" type="button" class="btn btn-secondary"
+            style="outline: none; box-shadow: none; width: 80px">
+            Upload
+          </button>
+        </div>
 
-          <!-- Display when a file is uploaded -->
-          <div id="file-display" style="display: none;justify-content: space-between;align-items: center;">
-            <a href="#" id="fileNameLink" onclick="triggerFileInput(event)" style="white-space: nowrap;
+        <!-- Display when a file is uploaded -->
+        <div id="file-display" style="display: none;justify-content: space-between;align-items: center;">
+          <a href="#" id="fileNameLink" onclick="triggerFileInput(event)" style="white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             margin-right: 10px;
-            "
-            ></a>
+            "></a>
 
-            <div style="display: flex; align-items: center;gap: 20px;">  
-              
-              
-                <button
-                  id="playPauseButton"
-                  class="btn btn-primary btn-play"
-                  style="min-width: 80px;"
-                >
-                  <span class="icon-play">&#9654;</span>
-                  <span class="icon-stop d-none">&#10074;&#10074;</span>
-                  <span class="text">Play</span>
-                </button>
+          <div style="display: flex; align-items: center;gap: 20px;">
 
-                <!-- <button
+
+            <button id="playPauseButton" class="btn btn-primary btn-play" style="min-width: 80px;">
+              <span class="icon-play">&#9654;</span>
+              <span class="icon-stop d-none">&#10074;&#10074;</span>
+              <span class="text">Play</span>
+            </button>
+
+            <!-- <button
                 id="startStopButton"
                 class="btn btn-primary btn-play"
                 style="min-width: 80px;display: none;"
               >                
                 <span class="text">Stop</span>
               </button> -->
-              
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="red" class="bi bi-trash3-fill" viewBox="0 0 16 16" style="cursor: pointer;display: none" id="deleteAudioButton" onclick="openDeleteAudioDialog()">
-                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
-              </svg>
 
-              </button>
-              <button
-                onclick="uploadFile()"
-                id="uploadButton"
-                type="button"
-                class="btn btn-secondary uploadButton"
-                style="outline: none; box-shadow: none; width: 80px;"
-              >
-                Upload
-              </button>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="red" class="bi bi-trash3-fill"
+              viewBox="0 0 16 16" style="cursor: pointer;display: none" id="deleteAudioButton"
+              onclick="openDeleteAudioDialog()">
+              <path
+                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+            </svg>
+
+            </button>
+            <button onclick="uploadFile()" id="uploadButton" type="button" class="btn btn-secondary uploadButton"
+              style="outline: none; box-shadow: none; width: 80px;">
+              Upload
+            </button>
           </div>
         </div>
+      </div>
 
-        <div class="modal fade" id="modal-loading" data-backdrop="static">
-          <div
-            class="modal-dialog modal-sm modal-dialog-centered"
-            style="max-width: 180px; margin: 0 auto"
-          >
-            <div class="modal-content">
-              <div
-                class="modal-body text-center"
-                style="
+      <div class="modal fade" id="modal-loading" data-backdrop="static">
+        <div class="modal-dialog modal-sm modal-dialog-centered" style="max-width: 180px; margin: 0 auto">
+          <div class="modal-content">
+            <div class="modal-body text-center" style="
                   display: flex;
                   flex-direction: row;
                   align-items: center;
                   justify-content: center;
                   gap: 12px;
-                "
-              >
-                <div class="loading-spinner"></div>
-                <div>Uploading...</div>
-              </div>
+                ">
+              <div class="loading-spinner"></div>
+              <div>Uploading...</div>
             </div>
           </div>
         </div>
       </div>
-
-      
-                  
     </div>
 
-    <div style="margin-top:auto; text-align:center; width:100%; padding:0px 0px;align-self: center;" class="counter-container">      
-      <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
-        <label for="session_counter" class="prevent-select">Session counter will reset in:&nbsp;</label>
-        <h6 id="session_counter"></h6>
-      </div>
-    
-      <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
-        <label for="daily_counter" class="prevent-select">Daily counter will reset in:&nbsp;</label>
-        <h6 id="daily_counter"></h6>
-      </div>
 
-      <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
-        <label for="daily_counter" class="prevent-select">Date :&nbsp;</label>
-        <h6 id="date"></h6>
-        <label for="daily_counter" class="prevent-select">;&nbsp;maxUD :&nbsp;</label>
-        <h6 id="maxUD"></h6>
-        <label for="daily_counter" class="prevent-select">;&nbsp;ID :&nbsp;</label>
-        <h6 id="valueID"></h6>
-      </div>
+
+  </div>
+
+  <div style="margin-top:auto; text-align:center; width:100%; padding:0px 0px;align-self: center;"
+    class="counter-container">
+    <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+      <label for="session_counter" class="prevent-select">Session counter will reset in:&nbsp;</label>
+      <h6 id="session_counter"></h6>
     </div>
-    <!-- Delete audio confirmation -->
+
+    <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+      <label for="daily_counter" class="prevent-select">Daily counter will reset in:&nbsp;</label>
+      <h6 id="daily_counter"></h6>
+    </div>
+
+    <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+      <label for="daily_counter" class="prevent-select">Date :&nbsp;</label>
+      <h6 id="date"></h6>
+      <label for="daily_counter" class="prevent-select">;&nbsp;maxUD :&nbsp;</label>
+      <h6 id="maxUD"></h6>
+      <label for="daily_counter" class="prevent-select">;&nbsp;ID :&nbsp;</label>
+      <h6 id="valueID"></h6>
+    </div>
+  </div>
+  <!-- Delete audio confirmation -->
 
   <div class="modal fade" id="deleteAudioModal" tabindex="-1" role="dialog" aria-labelledby="deleteAudioModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteAudioModalLongTitle">
-          Delete audio confirmation
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3" style="display: flex">
-          Are you sure you want to delete audio?
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          Cancel
-        </button>
-        <div>
-          <button class="btn btn-primary" type="button" onclick="deleteAudio()" id="deleteAudio"
-            style="background-color: #dc3545; border-width: 0">
-            <span id="deleteAudioButtonText">Delete</span>
-            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
-              id="spinner"></span>
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteAudioModalLongTitle">
+            Delete audio confirmation
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
           </button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3" style="display: flex">
+            Are you sure you want to delete audio?
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancel
+          </button>
+          <div>
+            <button class="btn btn-primary" type="button" onclick="deleteAudio()" id="deleteAudio"
+              style="background-color: #dc3545; border-width: 0">
+              <span id="deleteAudioButtonText">Delete</span>
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
+                id="spinner"></span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
 
-    <div class="toast-container" id="toastContainer"></div>
-    <div id="snackbar"></div>
-    <audio id="errorSound" src="error.mp3" preload="auto"></audio>
+  <div class="toast-container" id="toastContainer"></div>
+  <div id="snackbar"></div>
+  <audio id="errorSound" src="error.mp3" preload="auto"></audio>
 
-    <script src="./src/test.js"></script>
-    <script src="./src/displayToast.js"></script>
-    <script src="./src/api.js"></script>
+  <script src="./src/test.js"></script>
+  <script src="./src/displayToast.js"></script>
+  <script src="./src/api.js"></script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        var input = document.getElementById("enter_ans");
-        // input.addEventListener("input", function () {
-        //   const cursorPosition = this.selectionStart;
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var input = document.getElementById("enter_ans");
+      // input.addEventListener("input", function () {
+      //   const cursorPosition = this.selectionStart;
 
-        //   this.value = this.value.toLowerCase();
-        //   this.setSelectionRange(cursorPosition, cursorPosition);
-        // });
-        
-        input.addEventListener("input", function () {
-          if (this.value.length > 1) {
-            const cursorPosition = this.selectionStart;
-            this.value = this.value.toLowerCase();
-            this.setSelectionRange(cursorPosition, cursorPosition);
-          }
-        });
+      //   this.value = this.value.toLowerCase();
+      //   this.setSelectionRange(cursorPosition, cursorPosition);
+      // });
 
-        const date = localStorage.getItem("date");
-        document.getElementById("date").innerText = `${date}`;
-      });
-
-      document
-        .getElementById("showInDays")
-        .addEventListener("input", function (e) {
-          let value = parseInt(e.target.value);
-          if (value < 0) {
-            e.target.value = 0;
-          } else if (value > 99) {
-            e.target.value = 99;
-          }
-        });
-
-      var input = document.getElementById("showInDays");
-      input.onkeydown = function (e) {
-        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
-        if (
-          !(
-            (48 <= e.which && e.which <= 57) ||
-            (96 <= e.which && e.which <= 105)
-          )
-        ) {
-          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
-          if (e.key.length === 1) {
-            e.preventDefault(); // Prevent the default action (typing)
-          }
-        }
-      };
-
-      var input = document.getElementById("delay_input2");
-      input.onkeydown = function (e) {
-        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
-        if (
-          !(
-            (48 <= e.which && e.which <= 57) ||
-            (96 <= e.which && e.which <= 105)
-          )
-        ) {
-          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
-          if (e.key.length === 1) {
-            e.preventDefault(); // Prevent the default action (typing)
-          }
-        }
-      };
-
-      var input = document.getElementById("delay_input2");
-      input.onkeydown = function (e) {
-        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
-        if (
-          !(
-            (48 <= e.which && e.which <= 57) ||
-            (96 <= e.which && e.which <= 105)
-          )
-        ) {
-          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
-          if (e.key.length === 1) {
-            e.preventDefault(); // Prevent the default action (typing)
-          }
-        }
-      };
-
-      document.getElementById('deleteAudioModal').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-          // Trigger the delete button click
-          document.getElementById('deleteAudio').click();
+      input.addEventListener("input", function () {
+        if (this.value.length > 1) {
+          const cursorPosition = this.selectionStart;
+          this.value = this.value.toLowerCase();
+          this.setSelectionRange(cursorPosition, cursorPosition);
         }
       });
-    </script>
-  </body>
+
+      const date = localStorage.getItem("date");
+      document.getElementById("date").innerText = `${date}`;
+    });
+
+    document
+      .getElementById("showInDays")
+      .addEventListener("input", function (e) {
+        let value = parseInt(e.target.value);
+        if (value < 0) {
+          e.target.value = 0;
+        } else if (value > 99) {
+          e.target.value = 99;
+        }
+      });
+
+    var input = document.getElementById("showInDays");
+    input.onkeydown = function (e) {
+      // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+      if (
+        !(
+          (48 <= e.which && e.which <= 57) ||
+          (96 <= e.which && e.which <= 105)
+        )
+      ) {
+        // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+        if (e.key.length === 1) {
+          e.preventDefault(); // Prevent the default action (typing)
+        }
+      }
+    };
+
+    var input = document.getElementById("delay_input2");
+    input.onkeydown = function (e) {
+      // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+      if (
+        !(
+          (48 <= e.which && e.which <= 57) ||
+          (96 <= e.which && e.which <= 105)
+        )
+      ) {
+        // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+        if (e.key.length === 1) {
+          e.preventDefault(); // Prevent the default action (typing)
+        }
+      }
+    };
+
+    var input = document.getElementById("delay_input2");
+    input.onkeydown = function (e) {
+      // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+      if (
+        !(
+          (48 <= e.which && e.which <= 57) ||
+          (96 <= e.which && e.which <= 105)
+        )
+      ) {
+        // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+        if (e.key.length === 1) {
+          e.preventDefault(); // Prevent the default action (typing)
+        }
+      }
+    };
+
+    document.getElementById('deleteAudioModal').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        // Trigger the delete button click
+        document.getElementById('deleteAudio').click();
+      }
+    });
+  </script>
+</body>
+
 </html>
