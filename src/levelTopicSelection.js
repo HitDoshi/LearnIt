@@ -83,11 +83,13 @@ const customTopicRenderSelectOptions = () => {
     localStorage.setItem("dialogue-topic", JSON.stringify(selectedTopic));
   }
 
+  
   const options = filterTopicData
-    .map((item, index) => {
+  .map((item, index) => {
+      const topicID = item?.topicID?.split(".")?.pop() || '';
       const isSelected = selectedTopic === parseInt(item.id);
       return customTopicOptionTemplate(
-        item.topic_desc,
+        topicID + ' - ' + item.topic_desc,
         100 * index,
         item.id,
         isSelected
@@ -138,7 +140,7 @@ const customLevelRenderSelectOptions = () => {
     .map((item, index) => {
       const isSelected = selectedLevel === parseInt(item.id);
       return customLevelOptionTemplate(
-        item.level_desc,
+        item.levelID + ' - ' + item.level_desc,
         100 * index,
         item.id,
         isSelected

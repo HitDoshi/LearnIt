@@ -153,8 +153,8 @@ const QuestionText = document.getElementById("value_1");
 
 window.addEventListener("load", function () {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const maxUD = parseInt(user?.maxUD || 0);
-  document.getElementById("maxUD").innerText = `${maxUD}`;
+  // const maxUD = parseInt(user?.maxUD || 0);
+  // document.getElementById("maxUD").innerText = `${maxUD}`;
 
   if (user?.secondaryEnable?.toUpperCase() == "Y") {
     document.getElementById("show_secondary_language_container").style.display =
@@ -924,11 +924,11 @@ function showData() {
     showInDays.value = data.showInDays;
     lastShown.innerHTML = data.lastShown;
 
-    if (topic == 0) {
-      document.getElementById("valueID").innerText = data?.questionId || "-";
-    } else {
-      document.getElementById("valueID").innerText = data?.id || "-";
-    }
+    // if (topic == 0) {
+    //   document.getElementById("valueID").innerText = data?.questionId || "-";
+    // } else {
+    //   document.getElementById("valueID").innerText = data?.id || "-";
+    // }
 
     document.getElementById("show_in_days_stats").innerText =
       data?.showInDaysStat || "-";
@@ -1028,7 +1028,7 @@ function shwoBlankData() {
   document.getElementById("enter_ans").value = "";
   document.getElementById("showInDays").value = 0;
   document.getElementById("last_shown").innerHTML = 0;
-  document.getElementById("valueID").innerText = "-";
+  // document.getElementById("valueID").innerText = "-";
   document.getElementById("show_in_days_stats").innerText = "-";
   document.getElementById("show_secondary_language").value = "";
   document.getElementById("show_SecondaryNote").value = "";
@@ -1089,7 +1089,7 @@ async function checkAnswer() {
   }
 
   const date = localStorage.getItem("date");
-  document.getElementById("date").innerText = `${date}`;
+  // document.getElementById("date").innerText = `${date}`;
 
   if (date) {
     if (ans == answer.toLowerCase().trim().toString()) {
@@ -1134,7 +1134,7 @@ async function checkAnswer() {
         uploadUserActivity();
         const formattedDate = getCurrentFormattedDate();
         localStorage.setItem("date", formattedDate);
-        document.getElementById("date").innerText = `${formattedDate}`;
+        // document.getElementById("date").innerText = `${formattedDate}`;
 
         const user = JSON.parse(localStorage.getItem("user") || "{}");
 
