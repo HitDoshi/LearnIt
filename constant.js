@@ -12,3 +12,5 @@ let languageList = [
     { id: 7, name: "Russian", value: "ru-RU" },
     { id: 8, name: "Italian", value: "it-IT" },
 ];
+
+let latestVersionReleasedOn = "260228"

@@ -94,6 +94,9 @@
         </div>
       </div>
     </div>
+
+    <script src="./constant.js"></script>
+
     <script>
       const backButton = document.getElementById("backButton");
       backButton.onclick = function () {
@@ -117,9 +120,7 @@
         const formattedDate = `${yyyy}${mm}${dd}`;
         document.getElementById("currentDate").innerText = formattedDate;
 
-        // Version in YYMMDD
-        const yy = String(yyyy).slice(-2);
-        const version = `${yy}${mm}${dd}`;
+        const version = latestVersionReleasedOn;
         document.getElementById("version").innerText = version;
       } else {
         console.log("User not found in localStorage");
