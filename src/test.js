@@ -380,7 +380,9 @@ async function countData() {
 
     totalData = [];
     favData = [];
-
+    allData = 0;
+    totalSkipData = 0;
+    totalFavData = 0;
     // Access the object store
     const transaction = db.transaction(storeName, "readwrite");
     const objectStore = transaction.objectStore(storeName);
@@ -1036,30 +1038,49 @@ function shwoBlankData() {
 }
 
 async function resetNSData() {
-  try {
-    const transaction = db.transaction([storeName], "readwrite");
-    const objectStore = transaction.objectStore(storeName);
-    const request = objectStore.openCursor();
-    request.onsuccess = function (event) {
-      const cursor = event.target.result;
-      if (!cursor) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!db) {
+        console.error("Database is not open yet.");
+        resolve(); // Or reject, but resolve to avoid blocking caller if DB is missing
         return;
-      };
-      let updateData = cursor.value;
-      updateData.isNS = false;
-      const updateRequest = cursor.update(updateData);
-      updateRequest.onsuccess = function () {
+      }
+
+      const transaction = db.transaction([storeName], "readwrite");
+      const objectStore = transaction.objectStore(storeName);
+      const request = objectStore.openCursor();
+
+      request.onsuccess = function (event) {
+        const cursor = event.target.result;
+        if (!cursor) {
+          return;
+        }
+        let updateData = cursor.value;
+        if (updateData.isNS) {
+          updateData.isNS = false;
+          cursor.update(updateData);
+        }
         cursor.continue();
       };
-    };
 
-    await countData();
-    document.getElementById("total_question").innerHTML =
-      isFavOnly == "true" ? favData.length : totalData.length;
-      console.log("resetNSData");
-  } catch (error) {
-    console.log(error);
-  }
+      transaction.oncomplete = async function () {
+        console.log("resetNSData transaction complete");
+        await countData();
+        document.getElementById("total_question").innerHTML =
+          isFavOnly == "true" ? favData.length : totalData.length;
+        console.log("resetNSData finished syncing");
+        resolve();
+      };
+
+      transaction.onerror = function (event) {
+        console.error("resetNSData transaction error:", event.target.error);
+        reject(event.target.error);
+      };
+    } catch (error) {
+      console.error("Exception in resetNSData:", error);
+      reject(error);
+    }
+  });
 }
 
 function getCurrentFormattedDate() {
@@ -1085,7 +1106,7 @@ async function checkAnswer() {
     localStorage.setItem("timestamp", Date.now());
     setTimer();
     timerFunction();
-    resetNSData();
+    await resetNSData();
   }
 
   const date = localStorage.getItem("date");
