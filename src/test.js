@@ -1038,44 +1038,69 @@ function shwoBlankData() {
 }
 
 async function resetNSData() {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      if (!db) {
-        console.error("Database is not open yet.");
-        resolve(); // Or reject, but resolve to avoid blocking caller if DB is missing
-        return;
-      }
+      await Promise.all([
+        new Promise((innerResolve) => {
+          var myIndexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+          const openRequest = myIndexedDB.open("test", 1);
+          openRequest.onsuccess = function (event) {
+            const tempDB = event.target.result;
+            if (!tempDB.objectStoreNames.contains("data")) {
+              return innerResolve();
+            }
+            const transaction = tempDB.transaction(["data"], "readwrite");
+            const objectStore = transaction.objectStore("data");
+            const request = objectStore.openCursor();
+            request.onsuccess = function (e) {
+              const cursor = e.target.result;
+              if (!cursor) return;
+              if (cursor.value.isNS) {
+                let updateData = cursor.value;
+                updateData.isNS = false;
+                cursor.update(updateData);
+              }
+              cursor.continue();
+            };
+            transaction.oncomplete = function () { innerResolve(); };
+            transaction.onerror = function () { innerResolve(); };
+          };
+          openRequest.onerror = function () { innerResolve(); };
+        }),
+        new Promise((innerResolve) => {
+          var myIndexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+          const openRequest = myIndexedDB.open("user", 1);
+          openRequest.onsuccess = function (event) {
+            const tempDB = event.target.result;
+            if (!tempDB.objectStoreNames.contains("userData")) {
+              return innerResolve();
+            }
+            const transaction = tempDB.transaction(["userData"], "readwrite");
+            const objectStore = transaction.objectStore("userData");
+            const request = objectStore.openCursor();
+            request.onsuccess = function (e) {
+              const cursor = e.target.result;
+              if (!cursor) return;
+              if (cursor.value.isNS) {
+                let updateData = cursor.value;
+                updateData.isNS = false;
+                cursor.update(updateData);
+              }
+              cursor.continue();
+            };
+            transaction.oncomplete = function () { innerResolve(); };
+            transaction.onerror = function () { innerResolve(); };
+          };
+          openRequest.onerror = function () { innerResolve(); };
+        })
+      ]);
 
-      const transaction = db.transaction([storeName], "readwrite");
-      const objectStore = transaction.objectStore(storeName);
-      const request = objectStore.openCursor();
-
-      request.onsuccess = function (event) {
-        const cursor = event.target.result;
-        if (!cursor) {
-          return;
-        }
-        let updateData = cursor.value;
-        if (updateData.isNS) {
-          updateData.isNS = false;
-          cursor.update(updateData);
-        }
-        cursor.continue();
-      };
-
-      transaction.oncomplete = async function () {
-        console.log("resetNSData transaction complete");
-        await countData();
-        document.getElementById("total_question").innerHTML =
-          isFavOnly == "true" ? favData.length : totalData.length;
-        console.log("resetNSData finished syncing");
-        resolve();
-      };
-
-      transaction.onerror = function (event) {
-        console.error("resetNSData transaction error:", event.target.error);
-        reject(event.target.error);
-      };
+      console.log("resetNSData transaction complete");
+      await countData();
+      document.getElementById("total_question").innerHTML =
+        isFavOnly == "true" ? favData.length : totalData.length;
+      console.log("resetNSData finished syncing");
+      resolve();
     } catch (error) {
       console.error("Exception in resetNSData:", error);
       reject(error);
