@@ -441,8 +441,8 @@
             type="number"
             id="delay_input1"
             autocomplete="off"
-            min="0"
-            max="99"
+            min="2"
+            max="10"
             placeholder="Delay"        
             style="width: 65px"
             pattern="[0-9]"
@@ -470,8 +470,8 @@
             type="number"
             id="delay_input2"
             autocomplete="off"
-            min="0"
-            max="99"
+            min="2"
+            max="10"
             placeholder="Delay"        
             style="width: 65px"
             pattern="[0-9]"
@@ -712,7 +712,7 @@
       }
     };
 
-    var input = document.getElementById("delay_input2");
+    var input = document.getElementById("delay_input1");
     input.onkeydown = function (e) {
       // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
       if (

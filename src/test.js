@@ -92,33 +92,59 @@ ttsCheckbox.addEventListener("click", function (event) {
 });
 
 delayInput1.addEventListener("input", function (e) {
-  const value = parseInt(delayInput1.value || 0);
-
-  if (value <= 2) {
-    delayInput1.value = 2;
-  } else if (value > 10) {
-    delayInput1.value = 10;
-  } else {
-    delayInput1.value = value;
+  if (delayInput1.value === "") {
+    localStorage.setItem("delay1", 2);
+    delay1 = 2;
+    return;
   }
+  let value = parseInt(delayInput1.value);
+  if (value > 10) delayInput1.value = 10;
+  
+  value = parseInt(delayInput1.value);
+  if (value >= 2 && value <= 10) {
+    localStorage.setItem("delay1", value);
+    delay1 = value;
+  } else {
+    localStorage.setItem("delay1", 2);
+    delay1 = 2;
+  }
+});
 
-  localStorage.setItem("delay1", delayInput1.value);
-  delay1 = delayInput1.value;
+delayInput1.addEventListener("blur", function (e) {
+  const value = parseInt(delayInput1.value || 0);
+  if (value < 2) {
+    delayInput1.value = 2;
+    localStorage.setItem("delay1", 2);
+    delay1 = 2;
+  }
 });
 
 delayInput2.addEventListener("input", function (e) {
-  const value = parseInt(delayInput2.value || 0);
-
-  if (value <= 2) {
-    delayInput2.value = 2;
-  } else if (value > 10) {
-    delayInput2.value = 10;
-  } else {
-    delayInput2.value = value;
+  if (delayInput2.value === "") {
+    localStorage.setItem("delay2", 2);
+    delay2 = 2;
+    return;
   }
+  let value = parseInt(delayInput2.value);
+  if (value > 10) delayInput2.value = 10;
+  
+  value = parseInt(delayInput2.value);
+  if (value >= 2 && value <= 10) {
+    localStorage.setItem("delay2", value);
+    delay2 = value;
+  } else {
+    localStorage.setItem("delay2", 2);
+    delay2 = 2;
+  }
+});
 
-  localStorage.setItem("delay2", delayInput2.value);
-  delay2 = delayInput2.value;
+delayInput2.addEventListener("blur", function (e) {
+  const value = parseInt(delayInput2.value || 0);
+  if (value < 2) {
+    delayInput2.value = 2;
+    localStorage.setItem("delay2", 2);
+    delay2 = 2;
+  }
 });
 
 showInDaysInput.addEventListener("input", function (e) {
@@ -446,6 +472,9 @@ function getData() {
     (totalData.length == 0 && isFavOnly == "false")
   ) {
     console.log("No data in the object store.");
+    document.getElementById("showInDays").value = 0;
+    document.getElementById("last_shown").innerHTML = 0;
+    document.getElementById("show_in_days_stats").innerText = "-";
     return;
   }
 
@@ -1028,10 +1057,6 @@ function shwoBlankData() {
   enter_ans.style.color = "black";
 
   document.getElementById("enter_ans").value = "";
-  document.getElementById("showInDays").value = 0;
-  document.getElementById("last_shown").innerHTML = 0;
-  // document.getElementById("valueID").innerText = "-";
-  document.getElementById("show_in_days_stats").innerText = "-";
   document.getElementById("show_secondary_language").value = "";
   document.getElementById("show_SecondaryNote").value = "";
   // setTimer();

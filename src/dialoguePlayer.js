@@ -137,9 +137,8 @@ const customSubjectRenderSelectOptions = () => {
 
   const options = dialogueData
     .map((item, index) => {
-      let dilogueID = item?.dialogue_id?.split(".")?.pop()?.toString() || '';
-      
-      dilogueID = dilogueID ? dilogueID + index : '';
+      let parts = item?.dialogue_id?.split(".") || [];
+      let dilogueID = parts.length > 2 ? parts[2] : (parts.pop() || '');
 
       const isSelected = selectedDialogue === parseInt(item.id);
       return customSubjectOptionTemplate(
