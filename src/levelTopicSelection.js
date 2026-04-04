@@ -189,3 +189,62 @@ $(document).ready(function () {
 backButton.onclick = function () {
   window.location.href = "ai.html";
 };
+
+let allSentences = null;
+const dialogueSearchInput = document.getElementById("dialogueSearchInput");
+const searchResults = document.getElementById("searchResults");
+
+if (dialogueSearchInput) {
+  dialogueSearchInput.addEventListener("input", handleSearchInput);
+}
+
+async function handleSearchInput(e) {
+  const searchTerm = e.target.value.trim().toLowerCase();
+  
+  if (!searchTerm) {
+    searchResults.innerHTML = "";
+    return;
+  }
+
+  if (!allSentences) {
+    try {
+      const url = `${API_URL}/api/get_all_sentences.php`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Request failed with status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        allSentences = responseData.data;
+      } else {
+        showToast(responseData.message);
+        return;
+      }
+    } catch (error) {
+      console.error("Failed to fetch all sentences", error);
+      showToast(error.message);
+      return;
+    }
+  }
+
+  const sourceKey = (sourceLang?.description || "") + "_" + "text";
+  const targetKey = (targetLang?.description || "") + "_" + "text";
+
+  const matches = allSentences.filter(s => {
+    const sourceText = (s[sourceKey] || "").toLowerCase();
+    const targetText = (s[targetKey] || "").toLowerCase();
+    return sourceText.includes(searchTerm) || targetText.includes(searchTerm);
+  });
+
+  if (matches.length > 0) {
+    searchResults.innerHTML = matches.map(s => {
+      return `<div style="padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; text-align: center; font-weight: 500; font-size: 16px; color: #333;">
+        ${s.sentence_id}
+      </div>`;
+    }).join('');
+  } else {
+    searchResults.innerHTML = `<div style="padding: 10px; color: #6c757d; text-align: center; font-style: italic;">No matching sentence IDs found.</div>`;
+  }
+}
