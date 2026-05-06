@@ -67,7 +67,7 @@ window.openEditSentencesModal = function openEditSentencesModal(dialogue) {
 
   selectedDialogue = dialogue;
   pendingChanges = {};
-  
+
   if (selectedDialogueLabel) {
     selectedDialogueLabel.textContent = `Dialogue ${dialogue?.dialogue_id || "-"}`;
   }
@@ -100,8 +100,11 @@ async function fetchSentencesForDialogue(dialogue) {
   toggleSentencesLoading(true);
   clearSentencesTable();
 
+  const token = localStorage.getItem("token") || "";
+
+
   try {
-    const url = `${API_URL}/api/get_dialogue_sentences.php?dialogue_id=${dialogue.dialogue_id}`;
+    const url = `${API_URL}/api/get_dialogue_sentences.php?dialogue_id=${dialogue.dialogue_id}&token=${token}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Request failed with status: ${response.status}`);
@@ -302,6 +305,7 @@ async function saveSentenceChanges() {
   toggleSentencesLoading(true);
 
   try {
+    const isUserDialogue = selectedDialogue.dialogue_id.startsWith("A0.00.");
     const payload = {
       dialogue_id: selectedDialogue.dialogue_id,
       sentences: Object.values(pendingChanges).map((item) => {
@@ -310,8 +314,10 @@ async function saveSentenceChanges() {
         Object.keys(item.updates).forEach((key) => {
           updates[key] = String(item.updates[key] || "").trim();
         });
+        const originalSentence = sentencesData.find((s) => String(s?.id) === String(item.id));
         return {
           id: item.id,
+          sentence_id: originalSentence ? originalSentence.sentence_id : undefined,
           ...updates,
         };
       }),
@@ -319,8 +325,12 @@ async function saveSentenceChanges() {
 
     const token = localStorage.getItem("token");
 
+    const endpoint = isUserDialogue
+      ? "/api/update_user_dialogue_sentences.php"
+      : "/api/update_dialogue_sentences.php";
+
     const response = await fetch(
-      `${API_URL}/api/update_dialogue_sentences.php?token=${token}`,
+      `${API_URL}${endpoint}?token=${token}`,
       {
         method: "POST",
         body: JSON.stringify(payload),

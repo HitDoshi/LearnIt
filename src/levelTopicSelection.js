@@ -74,6 +74,19 @@ const customTopicOptionTemplate = (
 };
 
 const customTopicRenderSelectOptions = () => {
+  if (selectedLevel?.id == -1 || selectedLevel === -1) {
+    selectedTopic = { id: -1, topicID: "00", topic_desc: "User Dialogues", levelID: "A0" };
+    localStorage.setItem("dialogue-topic", JSON.stringify(selectedTopic));
+    
+    customTopicDropdownSelect.innerHTML = customTopicOptionTemplate(
+      "00 - User Dialogues",
+      0,
+      -1,
+      true
+    );
+    return;
+  }
+
   filterTopicData = topicData.filter((item) => item.levelID == selectedLevel?.levelID);
   filterTopicData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
   selectedTopic = null;
@@ -107,7 +120,11 @@ const handleSelectTopicChange = (event) => {
   console.log(`Selected Value: ${selectedValue}`);
   console.log(`Selected Option: ${selectedOption}`);
 
-  selectedTopic = topicData?.find((item) => item?.id == selectedValue);
+  if (selectedValue == "-1") {
+    selectedTopic = { id: -1, topicID: "00", topic_desc: "User Dialogues", levelID: "A0" };
+  } else {
+    selectedTopic = topicData?.find((item) => item?.id == selectedValue);
+  }
   localStorage.setItem("dialogue-topic", JSON.stringify(selectedTopic));
 };
 
@@ -132,13 +149,18 @@ const customLevelRenderSelectOptions = () => {
   levelData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
   if (!selectedLevel) {
-    selectedLevel = levelData[0];
-    localStorage.setItem("dialogue-level", JSON.stringify(selectedLevel));
+    const savedLevel = localStorage.getItem("dialogue-level");
+    if (savedLevel && savedLevel !== "undefined" && savedLevel !== "null") {
+        selectedLevel = JSON.parse(savedLevel);
+    } else {
+        selectedLevel = levelData[0];
+        localStorage.setItem("dialogue-level", JSON.stringify(selectedLevel));
+    }
   }
 
-  const options = levelData
+  let options = levelData
     .map((item, index) => {
-      const isSelected = selectedLevel === parseInt(item.id);
+      const isSelected = selectedLevel === parseInt(item.id) || selectedLevel?.id == parseInt(item.id);
       return customLevelOptionTemplate(
         item.levelID + ' - ' + item.level_desc,
         100 * index,
@@ -147,6 +169,14 @@ const customLevelRenderSelectOptions = () => {
       );
     })
     .join("");
+
+  const isA0Selected = selectedLevel === -1 || selectedLevel?.id == -1;
+  options += customLevelOptionTemplate(
+    "A0 - User Data",
+    100 * levelData.length,
+    -1,
+    isA0Selected
+  );
 
   customLevelDropdownSelect.innerHTML = options;
 
@@ -157,7 +187,11 @@ const handleSelectLevelChange = (event) => {
   const selectedValue = event.target.value;
   const selectedOption = event.target.options[event.target.selectedIndex].text;
 
-  selectedLevel = levelData?.find((item) => item?.id == selectedValue);
+  if (selectedValue == "-1") {
+    selectedLevel = { id: -1, levelID: "A0", level_desc: "User Data" };
+  } else {
+    selectedLevel = levelData?.find((item) => item?.id == selectedValue);
+  }
   localStorage.setItem("dialogue-level", JSON.stringify(selectedLevel));
 
   customTopicRenderSelectOptions();
@@ -208,7 +242,8 @@ async function handleSearchInput(e) {
 
   if (!allSentences) {
     try {
-      const url = `${API_URL}/api/get_all_sentences.php`;
+      const token = localStorage.getItem("token") || "";
+      const url = `${API_URL}/api/get_all_sentences.php?token=${token}`;
       const response = await fetch(url);
       
       if (!response.ok) {

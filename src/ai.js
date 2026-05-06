@@ -156,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const source = sourceLang.name;
-    const target = targetLang.name;
+    const source = sourceLang.description;
+    const target = targetLang.description;
 
     const unitsText = units.join('; ');
     const fullPrompt = `${unitsText}`;
@@ -210,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
     saveBtn.textContent = 'Saving…';
 
     try {
-      const source = sourceLang?.name;
-      const target = targetLang?.name;
+      const source = sourceLang?.description;
+      const target = targetLang?.description;
       const data = await saveDialogue(currentPairs, source, target);
 
       if (data?.success) {

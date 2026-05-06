@@ -56,12 +56,9 @@ async function getData() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   try {
-    const url = `${API_URL}/api/get_dialogue_data.php`;
+    const token = localStorage.getItem("token") || "";
+    const url = `${API_URL}/api/get_dialogue_data.php?token=${token}`;
     const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Request failed with status: ${response.status}`);
-    }
 
     const responseData = await response.json();
     console.log(responseData);
@@ -122,9 +119,8 @@ const customSubjectOptionTemplate = (
   index,
   selected = false
 ) => {
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${
-    selected ? "selected" : ""
-  }>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? "selected" : ""
+    }>${text}</option>`;
 };
 
 const customSubjectRenderSelectOptions = () => {
@@ -202,7 +198,8 @@ async function getSentences() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   try {
-    const url = `${API_URL}/api/get_dialogue_sentences.php?dialogue_id=${selectedDialogue?.dialogue_id}`;
+    const token = localStorage.getItem("token") || "";
+    const url = `${API_URL}/api/get_dialogue_sentences.php?dialogue_id=${selectedDialogue?.dialogue_id}&token=${token}`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -220,7 +217,7 @@ async function getSentences() {
         };
       });
       renderSentences(sentences);
-    } else [showToast(responseData.message)];
+    } else[showToast(responseData.message)];
 
     $("#modal-loading").modal("hide");
     isShowLoading = false;
@@ -249,9 +246,9 @@ function renderSentences(dialogueData) {
     box.className = "sentence_box";
     const textValue = s
       ? (s[sourceLang?.description + "_" + "text"] || "").replace(
-          /"/g,
-          "&quot;"
-        )
+        /"/g,
+        "&quot;"
+      )
       : "";
     const isTTSActive = isActive && ttsCheckbox.checked;
     box.innerHTML = `
@@ -275,9 +272,8 @@ function renderSentences(dialogueData) {
                 </button>
 
                 <div>
-                  <input type="checkbox" id="continuousPlayback${i}" ${
-      !isTTSActive ? "disabled" : ""
-    }/>
+                  <input type="checkbox" id="continuousPlayback${i}" ${!isTTSActive ? "disabled" : ""
+      }/>
                   <label for="continuousPlayback${i}" class="prevent-select">Loop</label>
                 </div>
               </div>
@@ -666,7 +662,7 @@ function playNextDialogueTTS() {
     isPlaying = true;
     clearInterval(playNextTTSIntervalId);
     speechSynthesis.cancel();
-    
+
     isPlaying = true;
     speakText(textToSpeak, language || "en-US");
 
