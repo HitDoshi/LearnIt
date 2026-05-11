@@ -268,9 +268,9 @@ async function getData() {
           subjectData =
             subjectData?.length > 0
               ? subjectData?.map((item) => ({
-                  ...item,
-                  name: item?.name?.trim() || "",
-                }))
+                ...item,
+                name: item?.name?.trim() || "",
+              }))
               : [];
 
           customSubjectRenderSelectOptions();
@@ -336,9 +336,8 @@ const customSubjectOptionTemplate = (
   index,
   selected = false
 ) => {
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${
-    selected ? "selected" : ""
-  }>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? "selected" : ""
+    }>${text}</option>`;
 };
 
 const customSubjectRenderSelectOptions = () => {
@@ -351,11 +350,11 @@ const customSubjectRenderSelectOptions = () => {
 
   subjectData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-    subjectData = subjectData?.map((item) => ({
-      ...item,
-      name: item.name?.trim() || "",
-    }));
-    
+  subjectData = subjectData?.map((item) => ({
+    ...item,
+    name: item.name?.trim() || "",
+  }));
+
   const options = subjectData
     .map((item, index) => {
       const isSelected = selectedSubject === parseInt(item.id);
@@ -363,29 +362,29 @@ const customSubjectRenderSelectOptions = () => {
     })
     .join("");
 
-    customSubjectDropdownSelect.innerHTML = options;
+  customSubjectDropdownSelect.innerHTML = options;
 
-    if (subjectData?.length > 0) {
+  if (subjectData?.length > 0) {
 
-      const source = JSON.parse(localStorage.getItem("source-language") || "{}");
-      const target = JSON.parse(localStorage.getItem("target-language") || "{}");
-      const secondary = JSON.parse(localStorage.getItem("secondary-language") || "{}");
+    const source = JSON.parse(localStorage.getItem("source-language") || "{}");
+    const target = JSON.parse(localStorage.getItem("target-language") || "{}");
+    const secondary = JSON.parse(localStorage.getItem("secondary-language") || "{}");
 
-      if (!source?.id) {
-        localStorage.setItem("source-language", JSON.stringify(subjectData?.[0]));
-      }
-
-      if (!target?.id) {
-        localStorage.setItem("target-language", JSON.stringify(subjectData?.[0]));
-      }
-
-      if (!secondary?.id) {
-        localStorage.setItem(
-          "secondary-language",
-          JSON.stringify(subjectData?.[0])
-        );
-      }
+    if (!source?.id) {
+      localStorage.setItem("source-language", JSON.stringify(subjectData?.[0]));
     }
+
+    if (!target?.id) {
+      localStorage.setItem("target-language", JSON.stringify(subjectData?.[0]));
+    }
+
+    if (!secondary?.id) {
+      localStorage.setItem(
+        "secondary-language",
+        JSON.stringify(subjectData?.[0])
+      );
+    }
+  }
 };
 
 const handleSelectSubjectChange = (event) => {
@@ -432,9 +431,8 @@ const customOptionTemplate = (
     index = 0;
   }
 
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${
-    selected ? "selected" : ""
-  }>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? "selected" : ""
+    }>${text}</option>`;
 };
 
 const customRenderSelectOptions = () => {
@@ -483,7 +481,7 @@ const setTopicData = () => {
 
       topicData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-      if(localStorage.getItem("topic") == null && topicData?.length > 0){        
+      if (localStorage.getItem("topic") == null && topicData?.length > 0) {
         localStorage.setItem("topic", topicData?.[0]?.id);
       }
 
@@ -522,9 +520,8 @@ const customTargetSubjectOptionTemplate = (
   index,
   selected = false
 ) => {
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${
-    selected ? "selected" : ""
-  }>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? "selected" : ""
+    }>${text}</option>`;
 };
 
 const customTargetSubjectRenderSelectOptions = () => {
@@ -564,7 +561,7 @@ const handleSelectTargetSubjectChange = (event) => {
 
 customTargetSubjectDropdownSelect.addEventListener(
   "mousedown",
-  function (event) {}
+  function (event) { }
 );
 
 customTargetSubjectDropdownSelect.addEventListener(
@@ -582,9 +579,8 @@ const customSecondaryLanguageOptionTemplate = (
   index,
   selected = false
 ) => {
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${
-    selected ? "selected" : ""
-  }>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? "selected" : ""
+    }>${text}</option>`;
 };
 
 const customSecondaryLanguageRenderSelectOptions = () => {
@@ -625,7 +621,7 @@ const handleSelectSecondaryLanguageChange = (event) => {
 
 customSecondaryLanguageDropdownSelect.addEventListener(
   "mousedown",
-  function (event) {}
+  function (event) { }
 );
 
 customSecondaryLanguageDropdownSelect.addEventListener(
@@ -651,14 +647,14 @@ $(document).ready(function () {
 const redirectionToAI = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  if(user?.userType != "1"){
+  if (user?.userType != "1") {
     showToast('Coming soon...');
     return;
   }
 
-  if(user?.AI_Enable == 'Y'){
-    window.location.href = 'ai.html';
-  }else{
+  if (user?.AI_Enable == 'Y') {
+    window.location.href = 'levelTopicSelection.html';
+  } else {
     showToast('This feature is not available for your account.');
   }
 };

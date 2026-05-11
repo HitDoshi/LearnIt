@@ -5,8 +5,11 @@ const dialogueTableBody = document.querySelector("#dataTable tbody");
 
 window.addEventListener("load", loadDialogueList);
 
-function loadDialogueList() {
+async function loadDialogueList() {
   try {
+    $("#modal-loading").modal("show");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     fetch(`${API_URL}/api/get_dialogue_data.php`, {
       method: "GET",
     })
@@ -18,12 +21,15 @@ function loadDialogueList() {
         } else {
           showToast(data?.message || "Unable to load dialogues");
         }
+        $("#modal-loading").modal("hide");
       })
       .catch((error) => {
         showToast("Error: " + error?.message);
+        $("#modal-loading").modal("hide");
       });
   } catch (error) {
     showToast("Error: " + error?.message);
+    $("#modal-loading").modal("hide");
   }
 }
 

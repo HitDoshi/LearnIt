@@ -184,3 +184,17 @@ async function updateData() {
 backButton.onclick = function () {
   window.location.href = "dialoguePlayer.html";
 };
+
+function replaceStateWithHistory(page) {
+  const topicNumber = localStorage.getItem("topic");
+  const token = localStorage.getItem("token");
+  if (topicNumber == 0 && !token) {
+    showToast(
+      "Access to this section requires a login.\nPlease login first !!"
+    );
+  } else {
+    history.replaceState(null, "", page);
+    // window.location.reload();
+    window.location.href = page;
+  }
+}
