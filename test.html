@@ -428,61 +428,31 @@
     ">Auto</label>
       </div>
 
-      <div
-          style="
+      <div style="
             display: flex;
             align-items: center;
             min-height: 30px;
             flex-direction: column;
-          "
-          id="delay_container"
-        >
-          <input
-            type="number"
-            id="delay_input1"
-            autocomplete="off"
-            min="2"
-            max="10"
-            placeholder="Delay"        
-            style="width: 65px"
-            pattern="[0-9]"
-          />
-          <label
-            for="delay1"
-            class="prevent-select"
-            style="margin-right: 5px;margin-top: 2.5px;"
-            >Int., sec:
-          </label>        
-          
-        </div>
-      
-        <div
-          style="
+          " id="delay_container">
+        <input type="number" id="delay_input1" autocomplete="off" min="2" max="10" placeholder="Delay"
+          style="width: 65px" pattern="[0-9]" />
+        <label for="delay1" class="prevent-select" style="margin-right: 5px;margin-top: 2.5px;">Int., sec:
+        </label>
+
+      </div>
+
+      <div style="
             display: flex;
             align-items: center;
             min-height: 30px;
             justify-content: flex-end;
             flex-direction: column;
-          "
-          id="delay_container"
-        >            
-          <input
-            type="number"
-            id="delay_input2"
-            autocomplete="off"
-            min="2"
-            max="10"
-            placeholder="Delay"        
-            style="width: 65px"
-            pattern="[0-9]"
-          />
-          <label
-            for="delay2"
-            class="prevent-select"
-            style="margin-right: 5px;margin-top: 2.5px;"
-            >Ext., sec:
-          </label>      
-        </div>
+          " id="delay_container">
+        <input type="number" id="delay_input2" autocomplete="off" min="2" max="10" placeholder="Delay"
+          style="width: 65px" pattern="[0-9]" />
+        <label for="delay2" class="prevent-select" style="margin-right: 5px;margin-top: 2.5px;">Ext., sec:
+        </label>
+      </div>
 
     </div>
 
@@ -591,25 +561,48 @@
           </div>
         </div>
       </div>
+      <!-- AI Sentence Generator Section -->
+      <div id="ai_generator_wrapper" style="max-width: 500px; margin: 0 auto; padding: 0 15px;">
+        <hr style="border: 1px dotted black; width: 100%; margin: 15px 0;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+          <label style="font-weight: bold; font-size: 14px;">AI Sentence Generator</label>
+        </div>
+        <div id="ai_sentence_output" style="
+      text-align: left; 
+      background: #e9ecef; 
+      padding: 10px; 
+      border-radius: 5px; 
+      min-height: 40px; 
+      margin-bottom: 10px; 
+      display: none;
+      font-size: 14px;
+      white-space: pre-line;
+      word-wrap: break-word;
+    ">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+          <button id="ai_create_btn" type="button" class="btn btn-secondary"
+            style="outline: none; box-shadow: none; width: 80px;">Create</button>
+          <button id="ai_save_btn" type="button" class="btn btn-primary"
+            style="outline: none; box-shadow: none; width: 80px; display: none;">Save</button>
+        </div>
+      </div>
+
     </div>
 
+    <div style="margin-top:auto; text-align:center; width:100%; padding:0px 0px;align-self: center;"
+      class="counter-container">
+      <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+        <label for="session_counter" class="prevent-select">Session timer will reset in:&nbsp;</label>
+        <h6 id="session_counter"></h6>
+      </div>
 
+      <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+        <label for="daily_counter" class="prevent-select">Daily timer will reset in:&nbsp;</label>
+        <h6 id="daily_counter"></h6>
+      </div>
 
-  </div>
-
-  <div style="margin-top:auto; text-align:center; width:100%; padding:0px 0px;align-self: center;"
-    class="counter-container">
-    <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
-      <label for="session_counter" class="prevent-select">Session timer will reset in:&nbsp;</label>
-      <h6 id="session_counter"></h6>
-    </div>
-
-    <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
-      <label for="daily_counter" class="prevent-select">Daily timer will reset in:&nbsp;</label>
-      <h6 id="daily_counter"></h6>
-    </div>
-
-    <!-- <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+      <!-- <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
       <label for="daily_counter" class="prevent-select">Date :&nbsp;</label>
       <h6 id="date"></h6>
       <label for="daily_counter" class="prevent-select">;&nbsp;maxUD :&nbsp;</label>
@@ -617,140 +610,140 @@
       <label for="daily_counter" class="prevent-select">;&nbsp;ID :&nbsp;</label>
       <h6 id="valueID"></h6>
     </div> -->
-  </div>
-  <!-- Delete audio confirmation -->
+    </div>
+    <!-- Delete audio confirmation -->
 
-  <div class="modal fade" id="deleteAudioModal" tabindex="-1" role="dialog" aria-labelledby="deleteAudioModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteAudioModalLongTitle">
-            Delete audio confirmation
-          </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3" style="display: flex">
-            Are you sure you want to delete audio?
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Cancel
-          </button>
-          <div>
-            <button class="btn btn-primary" type="button" onclick="deleteAudio()" id="deleteAudio"
-              style="background-color: #dc3545; border-width: 0">
-              <span id="deleteAudioButtonText">Delete</span>
-              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
-                id="spinner"></span>
+    <div class="modal fade" id="deleteAudioModal" tabindex="-1" role="dialog" aria-labelledby="deleteAudioModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteAudioModalLongTitle">
+              Delete audio confirmation
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
             </button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3" style="display: flex">
+              Are you sure you want to delete audio?
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              Cancel
+            </button>
+            <div>
+              <button class="btn btn-primary" type="button" onclick="deleteAudio()" id="deleteAudio"
+                style="background-color: #dc3545; border-width: 0">
+                <span id="deleteAudioButtonText">Delete</span>
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
+                  id="spinner"></span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
 
-  <div class="toast-container" id="toastContainer"></div>
-  <div id="snackbar"></div>
-  <audio id="errorSound" src="error.mp3" preload="auto"></audio>
+    <div class="toast-container" id="toastContainer"></div>
+    <div id="snackbar"></div>
+    <audio id="errorSound" src="error.mp3" preload="auto"></audio>
 
-  <script src="./src/test.js"></script>
-  <script src="./src/displayToast.js"></script>
-  <script src="./src/api.js"></script>
+    <script src="./src/test.js"></script>
+    <script src="./src/displayToast.js"></script>
+    <script src="./src/api.js"></script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var input = document.getElementById("enter_ans");
-      // input.addEventListener("input", function () {
-      //   const cursorPosition = this.selectionStart;
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("enter_ans");
+        // input.addEventListener("input", function () {
+        //   const cursorPosition = this.selectionStart;
 
-      //   this.value = this.value.toLowerCase();
-      //   this.setSelectionRange(cursorPosition, cursorPosition);
-      // });
+        //   this.value = this.value.toLowerCase();
+        //   this.setSelectionRange(cursorPosition, cursorPosition);
+        // });
 
-      input.addEventListener("input", function () {
-        if (this.value.length > 1) {
-          const cursorPosition = this.selectionStart;
-          this.value = this.value.toLowerCase();
-          this.setSelectionRange(cursorPosition, cursorPosition);
-        }
+        input.addEventListener("input", function () {
+          if (this.value.length > 1) {
+            const cursorPosition = this.selectionStart;
+            this.value = this.value.toLowerCase();
+            this.setSelectionRange(cursorPosition, cursorPosition);
+          }
+        });
+
+        const date = localStorage.getItem("date");
+        // document.getElementById("date").innerText = `${date}`;
       });
 
-      const date = localStorage.getItem("date");
-      // document.getElementById("date").innerText = `${date}`;
-    });
+      document
+        .getElementById("showInDays")
+        .addEventListener("input", function (e) {
+          let value = parseInt(e.target.value);
+          if (value < 0) {
+            e.target.value = 0;
+          } else if (value > 99) {
+            e.target.value = 99;
+          }
+        });
 
-    document
-      .getElementById("showInDays")
-      .addEventListener("input", function (e) {
-        let value = parseInt(e.target.value);
-        if (value < 0) {
-          e.target.value = 0;
-        } else if (value > 99) {
-          e.target.value = 99;
+      var input = document.getElementById("showInDays");
+      input.onkeydown = function (e) {
+        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+        if (
+          !(
+            (48 <= e.which && e.which <= 57) ||
+            (96 <= e.which && e.which <= 105)
+          )
+        ) {
+          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+          if (e.key.length === 1) {
+            e.preventDefault(); // Prevent the default action (typing)
+          }
+        }
+      };
+
+      var input = document.getElementById("delay_input1");
+      input.onkeydown = function (e) {
+        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+        if (
+          !(
+            (48 <= e.which && e.which <= 57) ||
+            (96 <= e.which && e.which <= 105)
+          )
+        ) {
+          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+          if (e.key.length === 1) {
+            e.preventDefault(); // Prevent the default action (typing)
+          }
+        }
+      };
+
+      var input = document.getElementById("delay_input2");
+      input.onkeydown = function (e) {
+        // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
+        if (
+          !(
+            (48 <= e.which && e.which <= 57) ||
+            (96 <= e.which && e.which <= 105)
+          )
+        ) {
+          // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
+          if (e.key.length === 1) {
+            e.preventDefault(); // Prevent the default action (typing)
+          }
+        }
+      };
+
+      document.getElementById('deleteAudioModal').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          // Trigger the delete button click
+          document.getElementById('deleteAudio').click();
         }
       });
-
-    var input = document.getElementById("showInDays");
-    input.onkeydown = function (e) {
-      // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
-      if (
-        !(
-          (48 <= e.which && e.which <= 57) ||
-          (96 <= e.which && e.which <= 105)
-        )
-      ) {
-        // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
-        if (e.key.length === 1) {
-          e.preventDefault(); // Prevent the default action (typing)
-        }
-      }
-    };
-
-    var input = document.getElementById("delay_input1");
-    input.onkeydown = function (e) {
-      // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
-      if (
-        !(
-          (48 <= e.which && e.which <= 57) ||
-          (96 <= e.which && e.which <= 105)
-        )
-      ) {
-        // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
-        if (e.key.length === 1) {
-          e.preventDefault(); // Prevent the default action (typing)
-        }
-      }
-    };
-
-    var input = document.getElementById("delay_input2");
-    input.onkeydown = function (e) {
-      // Check if the key pressed is a digit (0-9) or Num Lock keypad number (96-105)
-      if (
-        !(
-          (48 <= e.which && e.which <= 57) ||
-          (96 <= e.which && e.which <= 105)
-        )
-      ) {
-        // If not a digit or Num Lock keypad number and the key has a length of 1 (not control keys)
-        if (e.key.length === 1) {
-          e.preventDefault(); // Prevent the default action (typing)
-        }
-      }
-    };
-
-    document.getElementById('deleteAudioModal').addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') {
-        // Trigger the delete button click
-        document.getElementById('deleteAudio').click();
-      }
-    });
-  </script>
+    </script>
 </body>
 
 </html>

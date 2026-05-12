@@ -99,7 +99,7 @@ delayInput1.addEventListener("input", function (e) {
   }
   let value = parseInt(delayInput1.value);
   if (value > 10) delayInput1.value = 10;
-  
+
   value = parseInt(delayInput1.value);
   if (value >= 2 && value <= 10) {
     localStorage.setItem("delay1", value);
@@ -127,7 +127,7 @@ delayInput2.addEventListener("input", function (e) {
   }
   let value = parseInt(delayInput2.value);
   if (value > 10) delayInput2.value = 10;
-  
+
   value = parseInt(delayInput2.value);
   if (value >= 2 && value <= 10) {
     localStorage.setItem("delay2", value);
@@ -1043,6 +1043,7 @@ async function nextValue() {
   await countData();
 
   await getData();
+  resetAISentenceGenerator();
 }
 
 function shwoBlankData() {
@@ -1362,8 +1363,8 @@ function updateDailyCounter() {
   document.getElementById("daily_counter").innerText = `${hours
     .toString()
     .padStart(2, "0")} : ${minutes.toString().padStart(2, "0")} : ${seconds
-    .toString()
-    .padStart(2, "0")}`;
+      .toString()
+      .padStart(2, "0")}`;
 }
 
 async function updateUserShowInDaysValue() {
@@ -1920,11 +1921,11 @@ continuous_playback.addEventListener("change", function () {
 
           attachedAudioDataOnly = isFavOnly
             ? favData.filter((item) => {
-                return item.fileName;
-              })
+              return item.fileName;
+            })
             : totalData.filter((item) => {
-                return item.fileName;
-              });
+              return item.fileName;
+            });
 
           if (attachedAudioDataOnly.length === 0) {
             showToast("No audio attached data found !!");
@@ -2065,14 +2066,14 @@ function playErrorSound() {
   try {
     audio.currentTime = 0;
     audio.play();
-  } catch (error) {}
+  } catch (error) { }
 }
 
 function stopErrorSound() {
   try {
     audio.pause();
     audio.currentTime = 0;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 function playTTS({
@@ -2275,4 +2276,125 @@ async function showSecondaryLanguage() {
     spinner.classList.add("d-none");
     btnText.classList.remove("d-none");
   }
+}
+
+// AI Sentence Generator Logic
+const aiCreateBtn = document.getElementById("ai_create_btn");
+const aiSaveBtn = document.getElementById("ai_save_btn");
+const aiOutput = document.getElementById("ai_sentence_output");
+let generatedSentenceData = null;
+
+if (aiCreateBtn) {
+  aiCreateBtn.addEventListener("click", async () => {
+    if (!data) {
+      showToast("No data available to generate sentence.");
+      return;
+    }
+
+    const sourceLangObj = JSON.parse(localStorage.getItem('source-language') || '{}');
+    const targetLangObj = JSON.parse(localStorage.getItem('target-language') || '{}');
+    const sourceLang = sourceLangObj?.description || sourceLangObj?.name || 'English';
+    const targetLang = targetLangObj?.description || targetLangObj?.name || 'English';
+
+    const sourceText = data.source;
+    const targetWord = data.target;
+
+    aiCreateBtn.disabled = true;
+    aiCreateBtn.innerText = "Wait...";
+    aiSaveBtn.style.display = "none";
+    aiOutput.style.display = "block";
+    aiOutput.innerHTML = "Generating...";
+
+    try {
+      const response = await fetch(`${API_URL}/api/generate_sentence.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sourceLang,
+          targetLang,
+          sourceText,
+          targetWord
+        })
+      });
+      const resData = await response.json();
+      if (resData.success && resData.data) {
+        generatedSentenceData = {
+          source: resData?.data?.source,
+          target: resData?.data?.target
+        };
+        aiOutput.innerHTML = `<strong>S:</strong> ${resData.data.source}\n<strong>T:</strong> ${resData.data.target}`;
+        aiSaveBtn.style.display = "inline-block";
+      } else {
+        aiOutput.innerHTML = "Error: " + (resData.message || "Failed to generate.");
+      }
+    } catch (e) {
+      aiOutput.innerHTML = "Error: " + e.message;
+    }
+    aiCreateBtn.disabled = false;
+    aiCreateBtn.innerText = "Create";
+  });
+}
+
+if (aiSaveBtn) {
+  aiSaveBtn.addEventListener("click", () => {
+    if (!generatedSentenceData) return;
+
+    const userDBReq = indexedDB.open("user", 1);
+    userDBReq.onsuccess = (e) => {
+      const uDB = e.target.result;
+      const tx = uDB.transaction("userData", "readwrite");
+      const store = tx.objectStore("userData");
+
+      const countReq = store.openCursor(null, "prev");
+      countReq.onsuccess = (event) => {
+        const cursor = event.target.result;
+        let nextId = 1;
+        if (cursor) {
+          nextId = cursor.value.id + 1;
+        }
+
+        const newData = {
+          id: nextId,
+          subjectId: subject,
+          source: generatedSentenceData?.source,
+          target: generatedSentenceData?.target,
+          targetNote: "",
+          isFav: false,
+          isSkip: false,
+          showInDays: 0,
+          lastShown: 0,
+          targetSubjectId: targetSubjectId,
+          sourceSubjectId: subject,
+          topicId: 0
+        };
+
+        const addReq = store.add(newData);
+        addReq.onsuccess = () => {
+          showToast("Saved to UserData!");
+          aiSaveBtn.style.display = "none";
+          aiOutput.style.display = "none";
+          generatedSentenceData = null;
+        };
+        addReq.onerror = () => {
+          showToast("Error saving to UserData.");
+        };
+      };
+    };
+    userDBReq.onerror = () => {
+      showToast("Error opening UserData.");
+    };
+  });
+}
+
+function resetAISentenceGenerator() {
+  const aiOutput = document.getElementById("ai_sentence_output");
+  const aiSaveBtn = document.getElementById("ai_save_btn");
+  if (aiOutput) {
+    aiOutput.style.display = "none";
+    aiOutput.innerHTML = "";
+  }
+  if (aiSaveBtn) {
+    aiSaveBtn.style.display = "none";
+  }
+  generatedSentenceData = null;
 }
