@@ -246,7 +246,7 @@ window.addEventListener("load", function () {
       aiWrapper.addEventListener(
         "click",
         (e) => {
-          showToast("Please upgrade you account");
+          showToast("Please upgrade your account");
           e.stopPropagation();
           e.preventDefault();
         },
