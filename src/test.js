@@ -232,7 +232,7 @@ window.addEventListener("load", function () {
     });
   }
 
-  if (user?.userType == "3") {
+  if (user?.userType == 3 || !user?.userType) {
     const aiWrapper = document.getElementById("ai_generator_wrapper");
     if (aiWrapper) {
       aiWrapper.style.opacity = "0.5";
