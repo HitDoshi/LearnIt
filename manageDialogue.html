@@ -36,10 +36,9 @@
     crossorigin="anonymous"></script>
 
   <script src="./constant.js"></script>
-  <script src="./src/tts.js"></script>
 </head>
 
-<body onload="getData()">
+<body>
   <nav id="myNavbar" class="navbar navbar-expand-lg" style="background-color: #00569d">
     <div style="display: flex; flex: 1">
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short"
@@ -78,7 +77,8 @@
           <h5 class="modal-title" id="selectedDialogueLabel">
             Select a dialogue to edit sentences
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" data-dismiss="modal"
+            aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -120,7 +120,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="modal fade" id="modal-loading" data-backdrop="static">
     <div class="modal-dialog modal-sm modal-dialog-centered" style="max-width: 150px; margin: 0 auto">
       <div class="modal-content">
