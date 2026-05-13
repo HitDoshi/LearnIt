@@ -231,6 +231,29 @@ window.addEventListener("load", function () {
       }
     });
   }
+
+  if (user?.userType == "3") {
+    const aiWrapper = document.getElementById("ai_generator_wrapper");
+    if (aiWrapper) {
+      aiWrapper.style.opacity = "0.5";
+      aiWrapper.style.pointerEvents = "auto"; // Ensure it can still receive clicks for the toast
+
+      // Disable all controls inside
+      aiWrapper.querySelectorAll("button, input").forEach((el) => {
+        el.disabled = true;
+      });
+
+      aiWrapper.addEventListener(
+        "click",
+        (e) => {
+          showToast("Please upgrade you account");
+          e.stopPropagation();
+          e.preventDefault();
+        },
+        true,
+      );
+    }
+  }
 });
 
 const getTTSLanguge = (isLoopTTS) => {
