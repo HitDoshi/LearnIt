@@ -4,7 +4,7 @@ function replaceStateWithHistory(page) {
 }
 
 document.getElementById('backButton').onclick = function () {
-  window.location.href = 'main.html';
+  window.location.href = 'manageUserDialogue.html';
 };
 
 function validateInput(raw) {

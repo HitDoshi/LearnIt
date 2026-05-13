@@ -68,16 +68,15 @@ const customTopicOptionTemplate = (
   index,
   selected = false
 ) => {
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${
-    selected ? "selected" : ""
-  }>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? "selected" : ""
+    }>${text}</option>`;
 };
 
 const customTopicRenderSelectOptions = () => {
   if (selectedLevel?.id == -1 || selectedLevel === -1) {
     selectedTopic = { id: -1, topicID: "00", topic_desc: "User Dialogues", levelID: "A0" };
     localStorage.setItem("dialogue-topic", JSON.stringify(selectedTopic));
-    
+
     customTopicDropdownSelect.innerHTML = customTopicOptionTemplate(
       "00 - User Dialogues",
       0,
@@ -96,9 +95,9 @@ const customTopicRenderSelectOptions = () => {
     localStorage.setItem("dialogue-topic", JSON.stringify(selectedTopic));
   }
 
-  
+
   const options = filterTopicData
-  .map((item, index) => {
+    .map((item, index) => {
       const topicID = item?.topicID?.split(".")?.pop() || '';
       const isSelected = selectedTopic === parseInt(item.id);
       return customTopicOptionTemplate(
@@ -140,9 +139,8 @@ const customLevelOptionTemplate = (
   index,
   selected = false
 ) => {
-  return `<option value="${index}" data-translate-value="${translateValue}%" ${
-    selected ? "selected" : ""
-  }>${text}</option>`;
+  return `<option value="${index}" data-translate-value="${translateValue}%" ${selected ? "selected" : ""
+    }>${text}</option>`;
 };
 
 const customLevelRenderSelectOptions = () => {
@@ -151,10 +149,10 @@ const customLevelRenderSelectOptions = () => {
   if (!selectedLevel) {
     const savedLevel = localStorage.getItem("dialogue-level");
     if (savedLevel && savedLevel !== "undefined" && savedLevel !== "null") {
-        selectedLevel = JSON.parse(savedLevel);
+      selectedLevel = JSON.parse(savedLevel);
     } else {
-        selectedLevel = levelData[0];
-        localStorage.setItem("dialogue-level", JSON.stringify(selectedLevel));
+      selectedLevel = levelData[0];
+      localStorage.setItem("dialogue-level", JSON.stringify(selectedLevel));
     }
   }
 
@@ -221,7 +219,7 @@ $(document).ready(function () {
 });
 
 backButton.onclick = function () {
-  window.location.href = "ai.html";
+  window.location.href = "main.html";
 };
 
 let allSentences = null;
@@ -234,7 +232,7 @@ if (dialogueSearchInput) {
 
 async function handleSearchInput(e) {
   const searchTerm = e.target.value.trim().toLowerCase();
-  
+
   if (!searchTerm) {
     searchResults.innerHTML = "";
     return;
@@ -245,7 +243,7 @@ async function handleSearchInput(e) {
       const token = localStorage.getItem("token") || "";
       const url = `${API_URL}/api/get_all_sentences.php?token=${token}`;
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`Request failed with status: ${response.status}`);
       }
