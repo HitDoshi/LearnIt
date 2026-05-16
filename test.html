@@ -457,7 +457,7 @@
     </div>
 
     <div id="show_secondary_language_container" style="display: none;">
-      <hr style="border: 1px dotted black;">
+      <hr style="border: 1px dotted black; width: 100%; margin: 10px 0;">
       <div class="data-display">
         <input type="text" id="show_secondary_language" class="form-control" style="
                   flex: 1;
@@ -493,8 +493,8 @@
       </div>
     </div>
 
-    <div class="upload-container" style="margin-top: 10px;">
-      <div id="file-info">
+    <div class="upload-container">
+      <div id="file-info" style="display: none;">
         <!-- Initial empty state -->
         <div id="empty-state" style="display: flex; justify-content: space-between" class="audio-pick">
           <input type="file" id="fileInput" accept=".wav,.mp3,.m4a" onclick="triggerFileInput(event)" required />
@@ -562,8 +562,7 @@
         </div>
       </div>
       <!-- AI Sentence Generator Section -->
-      <div id="ai_generator_wrapper" style="max-width: 500px; margin: 0 auto; padding: 0 15px;">
-        <hr style="border: 1px dotted black; width: 100%; margin: 15px 0;">
+      <div id="ai_generator_wrapper" style="max-width: 500px; margin: 0 auto; padding: 10px 0px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
           <label style="font-weight: bold; font-size: 14px;">AI Sentence Generator</label>
         </div>
