@@ -89,6 +89,69 @@
     #saveUserContextBtn:hover:not(:disabled) {
       background-color: #004080;
     }
+
+    /* AI Settings card */
+    .ai-settings-card h5 {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .ai-option-label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      margin-top: 14px;
+      display: block;
+      color: #333;
+    }
+
+    .ai-option-label:first-of-type {
+      margin-top: 0;
+    }
+
+    .ai-option-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .ai-option-btn {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 8px;
+      border: 2px solid #dce3ec;
+      background: #f5f7fa;
+      color: #555;
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .ai-option-btn:hover {
+      border-color: #00569d;
+      color: #00569d;
+      background: #edf3fa;
+    }
+
+    .ai-option-btn.active {
+      border-color: #00569d;
+      background: #00569d;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .ai-model-hint {
+      margin-top: 14px;
+      font-size: 0.83rem;
+      color: #777;
+      background: #f0f4f8;
+      border-radius: 6px;
+      padding: 7px 12px;
+    }
+
+    .ai-model-hint strong {
+      color: #00569d;
+    }
   </style>
 </head>
 
@@ -134,10 +197,36 @@
 
       </div>
     </div>
+
+    <!-- AI Settings -->
+    <div class="container mt-4">
+      <div class="card p-3 shadow-sm ai-settings-card">
+        <h5>AI Settings</h5>
+        <hr />
+
+        <span class="ai-option-label">Provider</span>
+        <div class="ai-option-group" id="providerGroup">
+          <button class="ai-option-btn" data-value="gemini" id="btn-gemini" onclick="selectProvider(this)">🔷 Gemini</button>
+          <button class="ai-option-btn" data-value="openai" id="btn-openai" onclick="selectProvider(this)">🤖 ChatGPT</button>
+        </div>
+
+        <span class="ai-option-label">Tier</span>
+        <div class="ai-option-group" id="tierGroup">
+          <button class="ai-option-btn" data-value="free" id="btn-free" onclick="selectTier(this)">Free</button>
+          <button class="ai-option-btn" data-value="paid" id="btn-paid" onclick="selectTier(this)">Paid</button>
+        </div>
+
+        <div class="ai-model-hint" id="aiModelHint">
+          Model: <strong id="aiModelName">—</strong>
+        </div>
+      </div>
+    </div>
+
   </div>
   </div>
 
   <script src="./constant.js"></script>
+
 
   <script>
     const backButton = document.getElementById("backButton");
@@ -212,6 +301,47 @@
         btnText.textContent = "Save";
       }
     }
+
+    /* ── AI Settings ── */
+    const MODEL_MAP = {
+      gemini: { free: 'gemini-2.0-flash', paid: 'gemini-1.5-pro' },
+      openai: { free: 'gpt-4o-mini',     paid: 'gpt-4o'         },
+    };
+
+    function updateModelHint() {
+      const provider = localStorage.getItem('ai_provider') || 'gemini';
+      const tier     = localStorage.getItem('ai_tier')     || 'free';
+      const model    = MODEL_MAP[provider]?.[tier] || '—';
+      document.getElementById('aiModelName').textContent = model;
+    }
+
+    function selectProvider(btn) {
+      document.querySelectorAll('#providerGroup .ai-option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      localStorage.setItem('ai_provider', btn.dataset.value);
+      updateModelHint();
+    }
+
+    function selectTier(btn) {
+      document.querySelectorAll('#tierGroup .ai-option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      localStorage.setItem('ai_tier', btn.dataset.value);
+      updateModelHint();
+    }
+
+    // Restore saved AI settings on load
+    (function initAiSettings() {
+      const provider = localStorage.getItem('ai_provider') || 'gemini';
+      const tier     = localStorage.getItem('ai_tier')     || 'free';
+
+      const providerBtn = document.querySelector(`#providerGroup [data-value="${provider}"]`);
+      const tierBtn     = document.querySelector(`#tierGroup [data-value="${tier}"]`);
+
+      if (providerBtn) providerBtn.classList.add('active');
+      if (tierBtn)     tierBtn.classList.add('active');
+
+      updateModelHint();
+    })();
   </script>
 
   <div id="snackbar"></div>
