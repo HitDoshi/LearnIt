@@ -579,7 +579,8 @@
       word-wrap: break-word;
     ">
         </div>
-        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+        <div style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+          <div id="ai-model-selector-container"></div>
           <button id="ai_create_btn" type="button" class="btn btn-secondary"
             style="outline: none; box-shadow: none; width: 80px;">Create</button>
           <button id="ai_save_btn" type="button" class="btn btn-primary"
@@ -651,6 +652,7 @@
     <div id="snackbar"></div>
     <audio id="errorSound" src="error.mp3" preload="auto"></audio>
 
+    <script src="./src/modelSelector.js"></script>
     <script src="./src/test.js"></script>
     <script src="./src/displayToast.js"></script>
     <script src="./src/api.js"></script>

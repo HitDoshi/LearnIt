@@ -178,6 +178,9 @@ const showAns = document.getElementById("show_ans");
 const QuestionText = document.getElementById("value_1");
 
 window.addEventListener("load", function () {
+  // Init shared model selector dropdown
+  initModelSelector('ai-model-selector-container');
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   // const maxUD = parseInt(user?.maxUD || 0);
   // document.getElementById("maxUD").innerText = `${maxUD}`;
@@ -2329,6 +2332,13 @@ if (aiCreateBtn) {
     aiOutput.innerHTML = "Generating...";
 
     try {
+      // Read selected model from shared localStorage store
+      const selectedModel = getSelectedModel();
+
+      // Read user profile context from localStorage
+      const cachedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const userContext = cachedUser?.user_context || '';
+
       const response = await fetch(`${API_URL}/api/generate_sentence.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -2336,7 +2346,9 @@ if (aiCreateBtn) {
           sourceLang,
           targetLang,
           sourceText,
-          targetWord
+          targetWord,
+          model: selectedModel,
+          user_context: userContext
         })
       });
       const resData = await response.json();

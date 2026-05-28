@@ -77,13 +77,13 @@ function renderDialogue(pairs) {
   });
 }
 
-async function callAI(source, target, prompt) {
+async function callAI(source, target, prompt, model, userContext) {
   const url = `${API_URL}/api/generate_text.php`;
 
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, source, target }),
+    body: JSON.stringify({ prompt, source, target, model, user_context: userContext }),
   });
 
   const data = await response.json();
@@ -115,6 +115,9 @@ async function saveDialogue(dialogue, source, target) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // Init shared model selector
+  initModelSelector('ai-model-selector-container');
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   if (user?.userType === '1') {
@@ -162,6 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const unitsText = units.join('; ');
     const fullPrompt = `${unitsText}`;
 
+    // Read selected model from shared localStorage store
+    const selectedModel = getSelectedModel();
+
+    // Read user profile context from localStorage
+    const cachedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const userContext = cachedUser?.user_context || '';
+
     outputSection.style.display = 'block';
     outputDiv.innerHTML = '<div class="dialogue-loading">Generating dialogue…</div>';
     document.getElementById('action-buttons').style.display = 'none';
@@ -169,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentPairs = null;
 
     try {
-      const result = await callAI(source, target, fullPrompt);
+      const result = await callAI(source, target, fullPrompt, selectedModel, userContext);
 
       if (!result.success) {
         outputDiv.innerHTML = '<div class="dialogue-error">Invalid Output</div>';
