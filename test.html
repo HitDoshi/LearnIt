@@ -375,9 +375,23 @@
           " autocomplete="off" disabled />
     </div>
 
-    <div class="data-display" style="display: flex; align-items: center; width: 100%;margin-top: 10px;">
-      <label for="daily_counter" class="prevent-select">Stats:&nbsp;</label>
-      <h6 id="show_in_days_stats">-</h6>
+    <div style="margin-top: 10px; width: 100%;margin-bottom: 10px;">
+      <label class="prevent-select" style="font-weight: bold; font-size: 14px;">Stats</label>
+      <input type="text" id="show_in_days_stats" autocomplete="off" disabled value="" style="
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: #e9ecef;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 40px;
+        font-size: 14px;
+        white-space: pre-line;
+        word-wrap: break-word;
+        border-width: 0px;
+        color: black;
+        box-sizing: border-box;
+      " />
     </div>
 
     <div style="
@@ -579,7 +593,8 @@
       word-wrap: break-word;
     ">
         </div>
-        <div style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+        <div
+          style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
           <div id="ai-model-selector-container"></div>
           <button id="ai_create_btn" type="button" class="btn btn-secondary"
             style="outline: none; box-shadow: none; width: 80px;">Create</button>

@@ -79,8 +79,11 @@ function replaceStateWithHistory(page) {
       "Access to this section requires a login.\nPlease login first !!"
     );
   } else {
-    history.replaceState(null, "", page);
-    // window.location.reload();
+    try {
+      history.replaceState(null, "", page);
+    } catch (e) {
+      // SecurityError on file:// origin (Android WebView) — safe to ignore
+    }
     window.location.href = page;
   }
 }
@@ -572,16 +575,21 @@ function appendData(data, idNumber) {
   // Check if item is marked for deletion
   const isMarkedForDelete = deleteData.some(item => item.id === data.id);
 
+  const recordTitle = encodeURIComponent(value == 'true' ? (data.target || '') : (data.source || ''));
+
   row.innerHTML = `
     <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">${idNumber}</td>
     <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">
-      ${value == "true" ? data.target : data.source}
-    </td>                    
-    <td><input data-id="${data.id}" type="number" style="width: 60px;" class="showInDays" value="${data.showInDays}" /></td>                    
+      <a href="#" onclick="event.preventDefault(); window.location.href='recordDetail.html?id=${data.id}&title=${recordTitle}'" style="color: inherit; text-decoration: underline; cursor: pointer;">
+        ${value == "true" ? data.target : data.source}
+      </a>
+    </td>
+    <td><input data-id="${data.id}" type="number" style="width: 60px;" class="showInDays" value="${data.showInDays}" /></td>
     <td><input type="checkbox" data-id="${data.id}" class="favorite" ${data.isFav ? "checked" : ""} /></td>
     <td><input type="checkbox" data-id="${data.id}" class="skip" ${data.isSkip ? "checked" : ""} /></td>
     <td><input type="checkbox" data-id="${data.id}" class="delete" ${isMarkedForDelete ? "checked" : ""}/></td>
 `;
+
 
 
   // Add an event listener to the fav checkbox

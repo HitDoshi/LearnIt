@@ -159,6 +159,25 @@ showInDaysInput.addEventListener("input", function (e) {
   }
 });
 
+document.getElementById("show_in_days_stats").addEventListener("input", function () {
+  if (!isValidStatFormat(this.value)) {
+    this.style.outline = "2px solid red";
+    this.title = "Format: numbers separated by | e.g. 1|2|3|4";
+  } else {
+    this.style.outline = "";
+    this.title = "";
+  }
+});
+document.getElementById("show_in_days_stats").addEventListener("blur", function () {
+  if (!isValidStatFormat(this.value)) {
+    // Auto-revert to last saved value
+    this.value = data?.showInDaysStat || "";
+    this.style.outline = "";
+    this.title = "";
+    showToast("Invalid stats format – reverted. Use: 1|2|3|4");
+  }
+});
+
 let isEditModeOn = 0; // 0 means off, 1 means on edit , 2 means on save
 
 let db; // Reference to the IndexedDB database
@@ -422,6 +441,11 @@ function shuffle(array) {
   return array;
 }
 
+function isValidStatFormat(str) {
+  if (!str || str.trim() === "") return true;
+  return /^(\d{1,2})(\|\d{1,2})*$/.test(str.trim());
+}
+
 async function countData() {
   return new Promise((resolve, reject) => {
     if (!db) {
@@ -500,7 +524,7 @@ function getData() {
     console.log("No data in the object store.");
     document.getElementById("showInDays").value = 0;
     document.getElementById("last_shown").innerHTML = 0;
-    document.getElementById("show_in_days_stats").innerText = "-";
+    document.getElementById("show_in_days_stats").innerText = "";
     return;
   }
 
@@ -663,10 +687,15 @@ function saveUpdatedValue() {
       }
       answer = showAns.value?.toString() || "";
       const updatedTargetNote = targetNote.value || "";
+      const rawStats = document.getElementById("show_in_days_stats").value || "";
+      const updatedStatsStat = isValidStatFormat(rawStats)
+        ? rawStats.trim()
+        : (existingData.showInDaysStat || "");
 
       existingData.source = source;
       existingData.target = target;
       existingData.targetNote = updatedTargetNote;
+      existingData.showInDaysStat = updatedStatsStat;
 
       const updateRequest = objectStore.put(existingData);
       updateRequest.onsuccess = () => {
@@ -675,14 +704,14 @@ function saveUpdatedValue() {
             item.source = source;
             item.target = target;
             item.targetNote = updatedTargetNote;
-            // toggleQuestion == "true" ? item.UserDefined2 = updatedTargetNote : item.targetNote = updatedTargetNote;
+            item.showInDaysStat = updatedStatsStat;
           }
         });
 
         data.source = source;
         data.target = target;
         data.targetNote = updatedTargetNote;
-        // toggleQuestion == "true" ? data.UserDefined2 = updatedTargetNote : data.targetNote = updatedTargetNote;
+        data.showInDaysStat = updatedStatsStat;
       };
       updateRequest.onerror = () => {
         showToast("Error while updating data !!");
@@ -705,6 +734,13 @@ function resetEditUserDefineValueMode() {
   QuestionText.disabled = true;
   QuestionText.style.backgroundColor = "lightblue";
   QuestionText.style.borderWidth = "0px";
+
+  const statsInput = document.getElementById("show_in_days_stats");
+  statsInput.disabled = true;
+  statsInput.style.backgroundColor = "#e9ecef";
+  statsInput.style.borderWidth = "0px";
+  statsInput.style.outline = "";
+  statsInput.title = "";
 }
 
 function toggleQuestionType() {
@@ -987,8 +1023,8 @@ function showData() {
     //   document.getElementById("valueID").innerText = data?.id || "-";
     // }
 
-    document.getElementById("show_in_days_stats").innerText =
-      data?.showInDaysStat || "-";
+    document.getElementById("show_in_days_stats").value =
+      data?.showInDaysStat || "";
 
     if (data?.fileName) {
       if (audioPlayer) {
@@ -1307,6 +1343,11 @@ function showAnswer() {
     QuestionText.disabled = false;
     QuestionText.style.backgroundColor = "transparent";
     QuestionText.style.borderWidth = "1px";
+
+    const statsInput = document.getElementById("show_in_days_stats");
+    statsInput.disabled = false;
+    statsInput.style.backgroundColor = "transparent";
+    statsInput.style.borderWidth = "1px";
 
     return;
   }

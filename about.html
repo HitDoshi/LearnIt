@@ -176,6 +176,7 @@
         <p><strong>UserID:</strong> <span id="userId"></span></p>
         <p><strong>UserType:</strong> <span id="userType"></span></p>
         <p><strong>MaxUD:</strong> <span id="maxUD"></span></p>
+        <p><strong>MaxUD Dialogues:</strong> <span id="maxUDDialogue"></span></p>
         <p><strong>Date:</strong> <span id="currentDate"></span></p>
         <p><strong>Version:</strong> <span id="version"></span></p>
       </div>
@@ -197,31 +198,6 @@
 
       </div>
     </div>
-
-    <!-- AI Settings -->
-    <div class="container mt-4">
-      <div class="card p-3 shadow-sm ai-settings-card">
-        <h5>AI Settings</h5>
-        <hr />
-
-        <span class="ai-option-label">Provider</span>
-        <div class="ai-option-group" id="providerGroup">
-          <button class="ai-option-btn" data-value="gemini" id="btn-gemini" onclick="selectProvider(this)">🔷 Gemini</button>
-          <button class="ai-option-btn" data-value="openai" id="btn-openai" onclick="selectProvider(this)">🤖 ChatGPT</button>
-        </div>
-
-        <span class="ai-option-label">Tier</span>
-        <div class="ai-option-group" id="tierGroup">
-          <button class="ai-option-btn" data-value="free" id="btn-free" onclick="selectTier(this)">Free</button>
-          <button class="ai-option-btn" data-value="paid" id="btn-paid" onclick="selectTier(this)">Paid</button>
-        </div>
-
-        <div class="ai-model-hint" id="aiModelHint">
-          Model: <strong id="aiModelName">—</strong>
-        </div>
-      </div>
-    </div>
-
   </div>
   </div>
 
@@ -240,6 +216,7 @@
       document.getElementById("userId").innerText = userData?.id || "-";
       document.getElementById("userType").innerText = userData?.userType || "-";
       document.getElementById("maxUD").innerText = userData?.maxUD || "-";
+      document.getElementById("maxUDDialogue").innerText = userData?.maxUDDialogue || "-";
 
       const today = new Date();
       const yyyy = today.getFullYear();
@@ -302,46 +279,6 @@
       }
     }
 
-    /* ── AI Settings ── */
-    const MODEL_MAP = {
-      gemini: { free: 'gemini-2.0-flash', paid: 'gemini-1.5-pro' },
-      openai: { free: 'gpt-4o-mini',     paid: 'gpt-4o'         },
-    };
-
-    function updateModelHint() {
-      const provider = localStorage.getItem('ai_provider') || 'gemini';
-      const tier     = localStorage.getItem('ai_tier')     || 'free';
-      const model    = MODEL_MAP[provider]?.[tier] || '—';
-      document.getElementById('aiModelName').textContent = model;
-    }
-
-    function selectProvider(btn) {
-      document.querySelectorAll('#providerGroup .ai-option-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      localStorage.setItem('ai_provider', btn.dataset.value);
-      updateModelHint();
-    }
-
-    function selectTier(btn) {
-      document.querySelectorAll('#tierGroup .ai-option-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      localStorage.setItem('ai_tier', btn.dataset.value);
-      updateModelHint();
-    }
-
-    // Restore saved AI settings on load
-    (function initAiSettings() {
-      const provider = localStorage.getItem('ai_provider') || 'gemini';
-      const tier     = localStorage.getItem('ai_tier')     || 'free';
-
-      const providerBtn = document.querySelector(`#providerGroup [data-value="${provider}"]`);
-      const tierBtn     = document.querySelector(`#tierGroup [data-value="${tier}"]`);
-
-      if (providerBtn) providerBtn.classList.add('active');
-      if (tierBtn)     tierBtn.classList.add('active');
-
-      updateModelHint();
-    })();
   </script>
 
   <div id="snackbar"></div>
