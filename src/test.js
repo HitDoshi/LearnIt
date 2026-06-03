@@ -1188,6 +1188,10 @@ async function resetNSData() {
       document.getElementById("total_question").innerHTML =
         isFavOnly == "true" ? favData.length : totalData.length;
       console.log("resetNSData finished syncing");
+
+      // Trigger AI vocabulary evaluation in the background (new session start)
+      runVocabularyEvaluation(); // intentionally not awaited – runs silently
+
       resolve();
     } catch (error) {
       console.error("Exception in resetNSData:", error);
