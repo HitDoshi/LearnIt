@@ -116,9 +116,6 @@ async function saveDialogue(dialogue, source, target) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Init shared model selector
-  initModelSelector('ai-model-selector-container');
-
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   if (user?.userType === '1') {
     document.getElementById('manageDialogue').style.display = '';

@@ -24,15 +24,7 @@
     crossorigin="anonymous"></script>
   <script src="./constant.js"></script>
 
-  <style>
-    .model-select-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  </style>
+
 </head>
 
 <body>
@@ -104,12 +96,9 @@
     </div>
 
     <div class="btn-row">
-      <div class="model-select-wrap">
-        <div id="ai-model-selector-container"></div>
-        <button type="button" class="btn-generate" id="ask-button">
-          Generate Dialogue
-        </button>
-      </div>
+      <button type="button" class="btn-generate" id="ask-button">
+        Generate Dialogue
+      </button>
     </div>
 
     <div id="output-section" class="output-section" style="display:none;">
@@ -130,7 +119,7 @@
   <div class="toast-container" id="toastContainer"></div>
   <div id="snackbar"></div>
 
-  <script src="./src/modelSelector.js"></script>
+
   <script src="./src/displayToast.js"></script>
   <script src="./src/ai.js"></script>
 </body>

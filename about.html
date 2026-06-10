@@ -155,7 +155,7 @@
   </style>
 </head>
 
-<body style="display: flex; flex-direction: column; min-height: 100vh">
+<body style="display: flex; flex-direction: column; min-height: 100vh;margin-bottom: 50px;">
   <nav id="myNavbar" class="navbar navbar-expand-lg" style="background-color: #00569d">
     <div style="display: flex; flex: 1">
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short"
@@ -184,6 +184,20 @@
 
     <div class="container mt-4">
       <div class="card p-3 shadow-sm">
+        <h5>AI Settings</h5>
+        <hr />
+        <p style="font-size: 0.88rem; color: #555; margin-bottom: 12px;">
+          Select the AI model used across all AI features in the app (sentence generation, vocabulary evaluation, etc.).
+        </p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <label style="font-size: 0.9rem; font-weight: 600; color: #333; white-space: nowrap;">AI Model:</label>
+          <div id="ai-model-selector-container-about"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-4">
+      <div class="card p-3 shadow-sm">
 
         <p class="personalization-hint">
           Share a few interests, hobbies, or your profession. We'll customize your
@@ -198,10 +212,13 @@
 
       </div>
     </div>
+
+
   </div>
   </div>
 
   <script src="./constant.js"></script>
+  <script src="./src/modelSelector.js"></script>
 
 
   <script>
@@ -209,6 +226,8 @@
     backButton.onclick = function () {
       window.location.href = "main.html";
     };
+
+    initModelSelector('ai-model-selector-container-about');
 
     const userData = JSON.parse(localStorage.getItem("user") || "{}");
 

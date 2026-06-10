@@ -31,6 +31,9 @@ var favData = [];
 var totalData = [];
 var attachedAudioDataOnly = [];
 var ttsLoopData = [];
+
+var activeCards = [];
+var sessionTotalWeight = 0;
 var allData = 0;
 var totalSkipData = 0;
 var totalFavData = 0;
@@ -197,8 +200,6 @@ const showAns = document.getElementById("show_ans");
 const QuestionText = document.getElementById("value_1");
 
 window.addEventListener("load", function () {
-  // Init shared model selector dropdown
-  initModelSelector('ai-model-selector-container');
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   // const maxUD = parseInt(user?.maxUD || 0);
@@ -390,6 +391,8 @@ openRequest.onsuccess = async function (event) {
     totalData = shuffle(totalData);
     favData = shuffle(favData);
 
+    initSessionState(isFavOnly == "true" ? favData : totalData);
+
     console.log(totalData);
     console.log(favData);
 
@@ -439,6 +442,42 @@ function shuffle(array) {
   }
 
   return array;
+}
+
+function initSessionState(deck) {
+  // Each card needs a weight; fall back to 1.0 if probability not yet set.
+  activeCards = deck.map((card) => ({
+    ...card,
+    weight: parseFloat(card.probability) || 1.0,
+  }));
+  sessionTotalWeight = activeCards.reduce((sum, card) => sum + card.weight, 0);
+  console.log(
+    `[Session] Initialized ${activeCards.length} card(s), totalWeight=${sessionTotalWeight.toFixed(3)}`
+  );
+}
+
+function onIntervalAssigned(cardId) {
+  const idx = activeCards.findIndex((c) => c.id === cardId);
+  if (idx !== -1) {
+    sessionTotalWeight -= activeCards[idx].weight;
+    activeCards.splice(idx, 1);
+    console.log(
+      `[Session] Card id=${cardId} removed. Remaining=${activeCards.length}, totalWeight=${sessionTotalWeight.toFixed(3)}`
+    );
+  }
+}
+
+function getWeightedRandomCard() {
+  if (activeCards.length === 0) return null;
+
+  let randomRoll = Math.random() * sessionTotalWeight;
+
+  for (const card of activeCards) {
+    randomRoll -= card.weight;
+    if (randomRoll <= 0) return card;
+  }
+  // Floating-point guard: return the last card
+  return activeCards[activeCards.length - 1];
 }
 
 function isValidStatFormat(str) {
@@ -529,16 +568,12 @@ function getData() {
   }
 
   if (isFavOnly == "true") {
-    // Generate a random index within the range of available records
-    const randomIndex = Math.floor(Math.random() * favData.length);
-    data = favData[randomIndex];
-
+    data = getWeightedRandomCard() || favData[0];
     console.log(data);
     showData();
   } else {
-    // Generate a random index within the range of available records
-    const randomIndex = Math.floor(Math.random() * totalData.length);
-    data = totalData[randomIndex];
+    // Weighted-random pick (higher probability → appears more often)
+    data = getWeightedRandomCard() || totalData[0];
     console.log(data);
     showData();
   }
@@ -562,8 +597,8 @@ function getFavData() {
     console.log("No data in the object store.");
     return;
   }
-  const randomIndex = Math.floor(Math.random() * favData.length);
-  data = favData[randomIndex];
+  // Weighted-random pick from the active session pool
+  data = getWeightedRandomCard() || favData[0];
   console.log(data);
   showData();
 }
@@ -741,6 +776,9 @@ function resetEditUserDefineValueMode() {
   statsInput.style.borderWidth = "0px";
   statsInput.style.outline = "";
   statsInput.title = "";
+
+  const overlay = document.getElementById("stats_click_overlay");
+  if (overlay) overlay.style.display = "";
 }
 
 function toggleQuestionType() {
@@ -974,6 +1012,9 @@ async function changeShowInDaysValue() {
               favData.splice(index, 1);
             }
           });
+
+          // Atomically remove this card from the weighted session pool
+          onIntervalAssigned(data.id);
         }
       };
       updateRequest.onerror = () => {
@@ -1053,10 +1094,25 @@ function showData() {
       uploadButton[0].style.display = "";
     }
 
+    const statusLabel = document.getElementById("current_status_label");
+    if (statusLabel) {
+      const prob = (data?.probability != null) ? parseFloat(data.probability).toFixed(2) : '-';
+      const stat = data?.status || '-';
+      statusLabel.textContent = `${prob}/${stat}`;
+    }
+
     // setTimer();
   } catch (error) {
     console.log("Error:-->", error?.message);
   }
+}
+
+function openStatsRecordDetail() {
+  // Overlay is hidden in Save mode, so this only fires when the stats box is read-only.
+  if (!data) return;
+  const toggleQ = localStorage.getItem("toggle_question");
+  const title = encodeURIComponent(toggleQ === "true" ? (data.target || '') : (data.source || ''));
+  window.location.href = `recordDetail.html?id=${data.id}&title=${title}`;
 }
 
 function toggleIsShowFavOnly(event) {
@@ -1103,6 +1159,8 @@ async function nextValue() {
   }
 
   await countData();
+
+  initSessionState(isFavOnly == "true" ? favData : totalData);
 
   await getData();
   resetAISentenceGenerator();
@@ -1352,6 +1410,10 @@ function showAnswer() {
     statsInput.disabled = false;
     statsInput.style.backgroundColor = "transparent";
     statsInput.style.borderWidth = "1px";
+
+    // Hide overlay so the input receives real clicks for editing
+    const overlay = document.getElementById("stats_click_overlay");
+    if (overlay) overlay.style.display = "none";
 
     return;
   }

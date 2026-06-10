@@ -28,7 +28,10 @@
   <script src="./constant.js"></script>
   <script src="./src/tts.js"></script>
 
-  <style></style>
+  <style>
+    #vocab_api_status { font-size: 12px; color: #555; text-align: center; margin: 0; }
+    #vocab_api_status.err { color: #c0392b; }
+  </style>
 </head>
 
 <body style="margin:0; height:100vh; display:flex; flex-direction:column;">
@@ -375,23 +378,29 @@
           " autocomplete="off" disabled />
     </div>
 
-    <div style="margin-top: 10px; width: 100%;margin-bottom: 10px;">
-      <label class="prevent-select" style="font-weight: bold; font-size: 14px;">Stats</label>
-      <input type="text" id="show_in_days_stats" autocomplete="off" disabled value="" style="
-        display: block;
-        width: 100%;
-        text-align: left;
-        background: #e9ecef;
-        padding: 10px;
-        border-radius: 5px;
-        min-height: 40px;
-        font-size: 14px;
-        white-space: pre-line;
-        word-wrap: break-word;
-        border-width: 0px;
-        color: black;
-        box-sizing: border-box;
-      " />
+    <div
+      style="margin-top: 10px; width: 100%;margin-bottom: 10px; display: flex; flex-direction: row; align-items: center; gap: 8px;">
+      <label class="prevent-select"
+        style="font-weight: bold; font-size: 14px; white-space: nowrap; flex-shrink: 0;">Stats</label>
+      <div style="position: relative; flex: 1;">
+        <input type="text" id="show_in_days_stats" autocomplete="off" disabled value="" style="
+          width: 100%;
+          text-align: left;
+          background: #e9ecef;
+          padding: 6px 10px;
+          border-radius: 5px;
+          min-height: 36px;
+          font-size: 14px;
+          white-space: pre-line;
+          word-wrap: break-word;
+          border-width: 0px;
+          color: black;
+          box-sizing: border-box;
+        " />
+        <!-- Transparent overlay — captures clicks when input is disabled (non-edit mode) -->
+        <div id="stats_click_overlay" onclick="openStatsRecordDetail()" title="Click to view record detail"
+          style="position: absolute; inset: 0; cursor: pointer; border-radius: 5px;"></div>
+      </div>
     </div>
 
     <div style="
@@ -595,7 +604,6 @@
         </div>
         <div
           style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
-          <div id="ai-model-selector-container"></div>
           <button id="ai_create_btn" type="button" class="btn btn-secondary"
             style="outline: none; box-shadow: none; width: 80px;">Create</button>
           <button id="ai_save_btn" type="button" class="btn btn-primary"
@@ -615,6 +623,15 @@
       <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
         <label for="daily_counter" class="prevent-select">Daily timer will reset in:&nbsp;</label>
         <h6 id="daily_counter"></h6>
+      </div>
+
+      <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+        <label class="prevent-select">Status:&nbsp;</label>
+        <h6 id="current_status_label"></h6>
+      </div>
+
+      <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+        <p id="vocab_api_status"></p>
       </div>
 
       <!-- <div class="data-display" style="display: flex; align-items: center; justify-content: center; width: 100%;">
@@ -672,6 +689,48 @@
     <script src="./src/test.js"></script>
     <script src="./src/displayToast.js"></script>
     <script src="./src/api.js"></script>
+
+    <script>
+      /* api status patch — testing only */
+      (function () {
+        function setApiStatus(text, isErr) {
+          var el = document.getElementById('vocab_api_status');
+          if (!el) return;
+          el.textContent = text;
+          el.className = isErr ? 'err' : '';
+        }
+
+        window.addEventListener('load', function () {
+          var origRun = window.runVocabularyEvaluation;
+          if (typeof origRun !== 'function') return;
+
+          window.runVocabularyEvaluation = async function () {
+            setApiStatus('api: calling...');
+            try {
+              var origCall = window.callAIEvaluation;
+              if (typeof origCall === 'function') {
+                window.callAIEvaluation = async function (candidates) {
+                  var result = await origCall(candidates);
+                  if (result === null) {
+                    setApiStatus('api: error', true);
+                  } else {
+                    setApiStatus('api: success');
+                  }
+                  window.callAIEvaluation = origCall;
+                  return result;
+                };
+              }
+              await origRun();
+              /* if callAIEvaluation was never reached (0 candidates), show success */
+              var el = document.getElementById('vocab_api_status');
+              if (el && el.textContent === 'api: calling...') setApiStatus('api: success');
+            } catch (e) {
+              setApiStatus('api: error: ' + e.message, true);
+            }
+          };
+        });
+      })();
+    </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
