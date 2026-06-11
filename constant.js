@@ -1,5 +1,7 @@
 var API_URL = "https://learnit123.fun";
 
+var DEFAULT_PROBABILITY = 0.85;
+
 var GOOGLE_CLIENT_ID = "802732338274-s3ckhe3hup9f8hhnjqpf6jn5t1vnt69n.apps.googleusercontent.com";
 
 let languageList = [

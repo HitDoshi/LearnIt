@@ -40,7 +40,7 @@ var indexedDB =
 // var request = indexedDB.deleteDatabase("test");
 
 // Select the default option on page load
-window.addEventListener("load", function () {});
+window.addEventListener("load", function () { });
 
 // document.addEventListener('DOMContentLoaded', function() {
 //   // Get all the links within the navigation menu
@@ -101,9 +101,9 @@ if (myParam === "1") {
   document.getElementById("favOnlyRadio").checked = true;
 } else if (myParam === "3") {
   document.getElementById("skipOnlyRadio").checked = true;
-}else if(myParam === "4"){
+} else if (myParam === "4") {
   document.getElementById("showCurrentRadio").checked = true;
-}else if(myParam === "5"){
+} else if (myParam === "5") {
   document.getElementById("audioOnlyRadio").checked = true;
 }
 
@@ -130,8 +130,8 @@ document
         targetNote: targetNote,
         isFav: isFav,
         isSkip: isSkip,
-        showInDays : 0,
-        lastShown : 0,
+        showInDays: 0,
+        lastShown: 0,
         targetSubjectId: targetSubjectId,
         sourceSubjectId: subject,
         topicId: 0,
@@ -204,10 +204,10 @@ openRequest.onsuccess = (event) => {
   } else if (myParam == "3") {
     dropdownItems[2].style.color = "green";
     renderView("skip");
-  }else if(myParam == "4"){
+  } else if (myParam == "4") {
     dropdownItems[3].style.color = "green";
     renderView("current");
-  }else if(myParam == "5"){
+  } else if (myParam == "5") {
     dropdownItems[4].style.color = "green";
     renderView("audio");
   }
@@ -258,7 +258,7 @@ function countTotalUserData() {
 function applyPendingChanges(data) {
   // Create a deep copy of the data array
   const dataWithChanges = data.map(item => ({ ...item }));
-  
+
   // Apply favorite changes
   changeFavDataState.forEach(change => {
     const item = dataWithChanges.find(d => d.id === change.id);
@@ -266,7 +266,7 @@ function applyPendingChanges(data) {
       item.isFav = change.isFav;
     }
   });
-  
+
   // Apply skip changes
   changeSkipDataState.forEach(change => {
     const item = dataWithChanges.find(d => d.id === change.id);
@@ -274,7 +274,7 @@ function applyPendingChanges(data) {
       item.isSkip = change.isSkip;
     }
   });
-  
+
   // Apply showInDays changes
   showInDaysDataState.forEach(change => {
     const item = dataWithChanges.find(d => d.id === change.id);
@@ -282,7 +282,7 @@ function applyPendingChanges(data) {
       item.showInDays = change.value;
     }
   });
-  
+
   return dataWithChanges;
 }
 
@@ -435,9 +435,9 @@ function updateFavoritesTable(db) {
 
   // Create a range for the compound index
   if (topic == 0) {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
+    var range = IDBKeyRange.only([subjectId, targetSubjectId]);
   } else {
-    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
+    var range = IDBKeyRange.only([subjectId, targetSubjectId, topicId]);
   }
   // Use the compound index for the search
   var request = objectStore.index(index);
@@ -478,9 +478,9 @@ function loadUpdatedTable() {
     displayFavData();
   } else if (myParam == "3") {
     displaySkipData();
-  }else if (myParam == "4") {
+  } else if (myParam == "4") {
     displayCurrentData();
-  }else if (myParam == "5") {
+  } else if (myParam == "5") {
     displayAudioData();
   }
 }
@@ -568,6 +568,16 @@ function undoData() {
   // }
 }
 
+function getStatusTextColor(status) {
+  switch (String(status || '').toUpperCase().charAt(0)) {
+    case 'G': return '#1e7e34';
+    case 'Y': return '#b45309';
+    case 'R': return '#c0392b';
+    case 'N': return '#000000';
+    default: return null;
+  }
+}
+
 function appendData(data, idNumber) {
 
   const row = document.createElement("tr");
@@ -577,9 +587,14 @@ function appendData(data, idNumber) {
 
   const recordTitle = encodeURIComponent(value == 'true' ? (data.target || '') : (data.source || ''));
 
+  const statusColor = getStatusTextColor(data?.status);
+  const cellStyle = statusColor
+    ? `color:${statusColor};font-weight:500;`
+    : (data?.fileName ? 'color:#00569d;font-weight:500;' : '');
+
   row.innerHTML = `
-    <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">${idNumber}</td>
-    <td style="${data?.fileName ? 'color:#00569d;font-weight: 500;' : ''}">
+    <td style="${cellStyle}">${idNumber}</td>
+    <td style="${cellStyle}">
       <a href="#" onclick="event.preventDefault(); window.location.href='recordDetail.html?id=${data.id}&title=${recordTitle}'" style="color: inherit; text-decoration: underline; cursor: pointer;">
         ${value == "true" ? data.target : data.source}
       </a>
@@ -717,13 +732,13 @@ function appendData(data, idNumber) {
     const id = parseInt(e.target.getAttribute("data-id"));
     const newValue = e.target.value;
     let isExist = false;
-    
+
     let value = parseInt(e.target.value);
     if (value < 0) {
       e.target.value = 0;
     } else if (value > 99) {
-      e.target.value = 99;      
-    }else{
+      e.target.value = 99;
+    } else {
       e.target.value = value;
     }
 
@@ -743,10 +758,10 @@ function appendData(data, idNumber) {
       const show = { id: id, value: value || 0 };
       showInDaysDataState.push(show);
     } else {
-      if(value == originalValue){
-        showInDaysDataState = showInDaysDataState.filter((day) => day.id != id);        
-      }else{
-        showInDaysDataState = showInDaysDataState.filter((day) => day.id != id);        
+      if (value == originalValue) {
+        showInDaysDataState = showInDaysDataState.filter((day) => day.id != id);
+      } else {
+        showInDaysDataState = showInDaysDataState.filter((day) => day.id != id);
         const show = { id: id, value: value || 0 };
         showInDaysDataState.push(show);
       }
@@ -761,10 +776,10 @@ function appendData(data, idNumber) {
 
 function handleSearchInput(event) {
   const term = event.target.value.trim();
-  
+
   // Apply pending changes to currentViewData before filtering
   const dataWithChanges = applyPendingChanges(currentViewData);
-  
+
   if (!term) {
     renderRows(dataWithChanges);
     return;
@@ -787,7 +802,7 @@ function changeUpdateOption() {
   if (
     changeFavDataState.length > 0 ||
     changeSkipDataState.length > 0 ||
-    deleteData.length > 0 || 
+    deleteData.length > 0 ||
     showInDaysDataState.length > 0
   ) {
     displayUpdateOption();
@@ -881,9 +896,9 @@ async function getData() {
 
     // Create a range for the compound index
     if (topic == 0) {
-      var range = IDBKeyRange.only([subjectId,targetSubjectId]);
+      var range = IDBKeyRange.only([subjectId, targetSubjectId]);
     } else {
-      var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
+      var range = IDBKeyRange.only([subjectId, targetSubjectId, topicId]);
     }
     // Use the compound index for the search
     var request = objectStore.index(index);

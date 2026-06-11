@@ -387,9 +387,7 @@ openRequest.onsuccess = async function (event) {
         null;
     }
 
-    await countData();
-    totalData = shuffle(totalData);
-    favData = shuffle(favData);
+    await countData(); // deck arrays are already shuffled inside countData()
 
     initSessionState(isFavOnly == "true" ? favData : totalData);
 
@@ -485,6 +483,19 @@ function isValidStatFormat(str) {
   return /^(\d{1,2})(\|\d{1,2})*$/.test(str.trim());
 }
 
+/**
+ * Returns the background colour for the Stats box based on the vocabulary status.
+ * G → green  |  Y → yellow  |  R → red  |  default → gray
+ */
+function getStatsBgColor(status) {
+  switch (String(status || "").toUpperCase().charAt(0)) {
+    case "G": return "#c8f7c5"; // light green
+    case "Y": return "#fff3cd"; // light yellow
+    case "R": return "#f8d7da"; // light red
+    default: return "#e9ecef"; // default gray
+  }
+}
+
 async function countData() {
   return new Promise((resolve, reject) => {
     if (!db) {
@@ -534,8 +545,11 @@ async function countData() {
 
         cursor.continue();
       } else {
-        // Cursor has reached the end
-        resolve(); // Resolve the promise with the updated count
+        // Cursor has reached the end – randomize both arrays before resolving
+        // (equivalent to ORDER BY RANDOM() in SQL)
+        totalData = shuffle(totalData);
+        favData = shuffle(favData);
+        resolve();
       }
     };
   });
@@ -772,7 +786,9 @@ function resetEditUserDefineValueMode() {
 
   const statsInput = document.getElementById("show_in_days_stats");
   statsInput.disabled = true;
-  statsInput.style.backgroundColor = "#e9ecef";
+  // Restore dynamic colour based on current card's status (not always gray)
+  statsInput.style.background = getStatsBgColor(data?.status);
+  statsInput.style.backgroundColor = "";
   statsInput.style.borderWidth = "0px";
   statsInput.style.outline = "";
   statsInput.title = "";
@@ -1064,8 +1080,9 @@ function showData() {
     //   document.getElementById("valueID").innerText = data?.id || "-";
     // }
 
-    document.getElementById("show_in_days_stats").value =
-      data?.showInDaysStat || "";
+    const statsInputEl = document.getElementById("show_in_days_stats");
+    statsInputEl.value = data?.showInDaysStat || "";
+    statsInputEl.style.background = getStatsBgColor(data?.status);
 
     if (data?.fileName) {
       if (audioPlayer) {

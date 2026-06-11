@@ -251,17 +251,17 @@ async function applyDefaultProbability() {
         if (
           rec.showInDays === 0 &&
           !rec.isSkip &&
-          _statEntryCount(rec.showInDaysStat) < 5 &&
-          !rec.probability
+          _statEntryCount(rec.showInDaysStat) < 5
         ) {
-          rec.probability = 0.85;
+          rec.probability = DEFAULT_PROBABILITY;
+          rec.status = 'N';
           await _putRecord(idb, storeName, rec);
           updatedCount++;
         }
       }
 
       if (updatedCount > 0) {
-        console.log(`[VocabEval] ✓ Default probability=0.85 applied to ${updatedCount} record(s) in ${dbName}.${storeName}`);
+        console.log(`[VocabEval] ✓ Default probability=${DEFAULT_PROBABILITY} applied to ${updatedCount} record(s) in ${dbName}.${storeName}`);
       }
     } catch (err) {
       console.warn(`[VocabEval] applyDefaultProbability error in "${dbName}":`, err);
