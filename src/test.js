@@ -1129,7 +1129,7 @@ function openStatsRecordDetail() {
   if (!data) return;
   const toggleQ = localStorage.getItem("toggle_question");
   const title = encodeURIComponent(toggleQ === "true" ? (data.target || '') : (data.source || ''));
-  window.location.href = `recordDetail.html?id=${data.id}&title=${title}`;
+  window.location.href = `retentionHub.html?id=${data.id}&title=${title}`;
 }
 
 function toggleIsShowFavOnly(event) {

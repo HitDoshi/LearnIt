@@ -595,7 +595,7 @@ function appendData(data, idNumber) {
   row.innerHTML = `
     <td style="${cellStyle}">${idNumber}</td>
     <td style="${cellStyle}">
-      <a href="#" onclick="event.preventDefault(); window.location.href='recordDetail.html?id=${data.id}&title=${recordTitle}'" style="color: inherit; text-decoration: underline; cursor: pointer;">
+      <a href="#" onclick="event.preventDefault(); window.location.href='retentionHub.html?id=${data.id}&title=${recordTitle}'" style="color: inherit; text-decoration: underline; cursor: pointer;">
         ${value == "true" ? data.target : data.source}
       </a>
     </td>
