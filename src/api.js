@@ -431,10 +431,25 @@ async function uploadUserDataFunction(showLogs = true) {
           const currentLoadedTargetSubjectId = localStorage.getItem(
             "currentLoadedTargetSubjectId"
           );
-          
+
           const topicId = localStorage.getItem("topic");
 
-          // Continue with the fetch request inside the .then block
+          const mnemonicData = [];
+          const allRecords = [...(data || []), ...(subjectTestData || [])];
+          allRecords.forEach(function (rec) {
+            if (rec.mnemonic_text || rec.mnemonic_image) {
+              mnemonicData.push({
+                source: rec.source || '',
+                target: rec.target || '',
+                mnemonic_text: rec.mnemonic_text || '',
+                mnemonic_image: rec.mnemonic_image || '',
+                sourceSubjectId: rec.sourceSubjectId || null,
+                targetSubjectId: rec.targetSubjectId || null,
+                topicId: rec.topicId != null ? rec.topicId : 0,
+              });
+            }
+          });
+
           fetch(`${API_URL}/api/uploadUserData.php?token=${token}`, {
             method: "POST",
             body: JSON.stringify({
@@ -443,6 +458,7 @@ async function uploadUserDataFunction(showLogs = true) {
               currentLoadedSubjectId: currentLoadedSubjectId,
               targetSubjectId: currentLoadedTargetSubjectId,
               topicId: topicId,
+              mnemonicData: mnemonicData,
               // timestamp: new Date().toLocaleString()
             }),
           })
@@ -503,10 +519,10 @@ async function uploadDailyUserDataFunction() {
 
           const currentLoadedSubjectId = localStorage.getItem(
             "currentLoadedSubjectId"
-          );        
+          );
           const currentLoadedTargetSubjectId = localStorage.getItem(
             "currentLoadedTargetSubjectId"
-          );        
+          );
 
           const topicId = localStorage.getItem("topic");
 
@@ -516,7 +532,7 @@ async function uploadDailyUserDataFunction() {
               data: data, // Use the retrieved data directly
               subjectData: subjectTestData,
               currentLoadedSubjectId: currentLoadedSubjectId,
-              targetSubjectId: currentLoadedTargetSubjectId,  
+              targetSubjectId: currentLoadedTargetSubjectId,
               topicId: topicId
               // timestamp: new Date().toLocaleString()
             }),
@@ -551,9 +567,9 @@ function isTokenChange() {
     document.getElementById("userNameText").innerText = userNameText;
     document.getElementById("userEmailText").innerText = userEmailText;
 
-    if(user?.secondaryEnable?.toUpperCase() == "Y"){
+    if (user?.secondaryEnable?.toUpperCase() == "Y") {
       document.querySelector(".secondary-language-dropdown").style.display = "";
-    }else{
+    } else {
       document.querySelector(".secondary-language-dropdown").style.display = "none";
     }
   } else {
@@ -578,9 +594,9 @@ async function uploadUserActivity() {
 
     await fetch(`https://ipapi.co/json/`).then((response) => response.json()).then((data) => {
       console.log(data);
-      geoGraphicalData = data;      
+      geoGraphicalData = data;
     });
-    
+
     const { latitude = null, longitude = null, city = null, country_name = null, region = null } = geoGraphicalData || {};
 
     await fetch(`${API_URL}/api/uploadUserActivity.php?token=${token}`, {
