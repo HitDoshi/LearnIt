@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Dialogue</title>
+  <title>Create Dialogue</title>
 
   <link rel="stylesheet" href="./styles/navBar.style.css" />
   <link rel="stylesheet" href="./styles/ai.style.css" />
@@ -23,6 +23,7 @@
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
   <script src="./constant.js"></script>
+  <script src="./src/modelSelector.js"></script>
 
 
 </head>
@@ -36,7 +37,7 @@
           d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
       </svg>
 
-      <a class="navbar-brand" style="color: white; align-self: center; font-size: 20px">AI Dialogue</a>
+      <a class="navbar-brand" style="color: white; align-self: center; font-size: 20px">Create Dialogue</a>
     </div>
 
     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-filetype-json"
@@ -86,18 +87,22 @@
       </div>
     </div>
 
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+      <label style="font-size: 0.9rem; font-weight: 600; color: #333; white-space: nowrap;">Theme:</label>
+      <div id="ai-theme-selector-container"></div>
+    </div>
 
     <div class="input-section">
       <label for="units-input" class="input-label">
-        Enter 2–8 words/phrases separated by <code>;</code>
+        Enter examples like 'coffee with milk, store, friend, shopping'. If left blank, Red/Yellow words will be used instead.
       </label>
-      <textarea id="units-input" placeholder="e.g. coffee with milk;store;friend;shopping" rows="3"></textarea>
-      <div class="input-hint">No punctuation or special characters · Max 3 words per unit</div>
+      <textarea id="units-input" placeholder="e.g. coffee with milk; store; friend; shopping" rows="3"></textarea>
+      <div class="input-hint">Separate entries with <code>;</code> · Max 3 words per entry · Leave blank to use your stubborn words</div>
     </div>
 
     <div class="btn-row">
       <button type="button" class="btn-generate" id="ask-button">
-        Generate Dialogue
+        Create Dialogue
       </button>
     </div>
 
@@ -122,6 +127,11 @@
 
   <script src="./src/displayToast.js"></script>
   <script src="./src/ai.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      initThemeSelector('ai-theme-selector-container');
+    });
+  </script>
 </body>
 
 </html>

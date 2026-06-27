@@ -8,14 +8,14 @@ document.getElementById('backButton').onclick = function () {
 };
 
 function validateInput(raw) {
-  if (!raw || !raw.trim()) return { valid: false, units: [] };
+  if (!raw || !raw.trim()) return { valid: true, units: [] };
 
   const units = raw
     .split(';')
     .map((u) => u.trim())
     .filter((u) => u.length > 0);
 
-  if (units.length < 2 || units.length > 8) return { valid: false, units };
+  if (units.length < 1 || units.length > 8) return { valid: false, units };
 
   const wordPattern = /^[^\W\d_]+$/u; // Unicode letters only
 
@@ -77,13 +77,71 @@ function renderDialogue(pairs) {
   });
 }
 
-async function callAI(source, target, prompt, model, userContext) {
+function _openIDB(name, version) {
+  return new Promise((resolve, reject) => {
+    const req = (window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB).open(name, version);
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+    req.onupgradeneeded = () => { };
+  });
+}
+
+function _getAllRecords(idb, storeName) {
+  return new Promise((resolve, reject) => {
+    if (!idb.objectStoreNames.contains(storeName)) return resolve([]);
+    const tx = idb.transaction(storeName, 'readonly');
+    const store = tx.objectStore(storeName);
+    const req = store.getAll();
+    req.onsuccess = (e) => resolve(e.target.result || []);
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+// ─── Build stubborn array from Red/Yellow words in IndexedDB ───────────────────
+async function buildStubbornArray() {
+  const pairs = [];
+
+  const targets = [
+    { dbName: 'test', storeName: 'data' },
+    { dbName: 'user', storeName: 'userData' },
+  ];
+
+  for (const { dbName, storeName } of targets) {
+    try {
+      const idb = await _openIDB(dbName, 1);
+      const records = await _getAllRecords(idb, storeName);
+      idb.close();
+
+      for (const rec of records) {
+        const status = String(rec.status || '').toUpperCase().charAt(0);
+        if ((status === 'R' || status === 'Y') && rec.source && rec.target) {
+          pairs.push({ source: rec.source.trim(), target: rec.target.trim() });
+        }
+      }
+    } catch (err) {
+      console.warn(`[AI] Could not read '${dbName}' DB:`, err);
+    }
+  }
+
+  console.log(`[AI] ${pairs.length} Red/Yellow word pair(s) found for STUBBORN_ARRAY.`);
+  return pairs;
+}
+
+async function callAI(source, target, selectedTheme, units, stubbornArray, model, userProfile) {
   const url = `${API_URL}/api/generate_text.php`;
 
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, source, target, model, user_context: userContext }),
+    body: JSON.stringify({
+      source,
+      target,
+      selected_theme: selectedTheme,
+      units,           // semicolon-separated string, or empty string
+      stubborn_array: stubbornArray, // array of {source, target} objects
+      model,
+      user_context: userProfile,
+    }),
   });
 
   const data = await response.json();
@@ -147,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const { valid, units } = validateInput(raw);
 
     if (!valid) {
-      showToast('Invalid input');
+      showToast('Invalid input. Use letters only, max 3 words per entry, separated by ;');
       return;
     }
 
@@ -159,15 +217,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const source = sourceLang.description;
     const target = targetLang.description;
 
-    const unitsText = units.join('; ');
-    const fullPrompt = `${unitsText}`;
+    const selectedTheme = (typeof getSelectedTheme === 'function')
+      ? getSelectedTheme()
+      : 'RELIABLY HUMOROUS';
 
-    // Read selected model from shared localStorage store
+    const unitsText = units.join('; ');
+
+    // Build stubborn array (only needed when units is blank)
+    let stubbornArray = [];
+    if (!unitsText) {
+      stubbornArray = await buildStubbornArray();
+    }
+
+    // Selected model
     const selectedModel = getSelectedModel();
 
-    // Read user profile context from localStorage
+    // User profile context
     const cachedUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const userContext = cachedUser?.user_context || '';
+    const userProfile = cachedUser?.user_context || '';
 
     outputSection.style.display = 'block';
     outputDiv.innerHTML = '<div class="dialogue-loading">Generating dialogue…</div>';
@@ -176,7 +243,15 @@ document.addEventListener('DOMContentLoaded', () => {
     currentPairs = null;
 
     try {
-      const result = await callAI(source, target, fullPrompt, selectedModel, userContext);
+      const result = await callAI(
+        source,
+        target,
+        selectedTheme,
+        unitsText,
+        stubbornArray,
+        selectedModel,
+        userProfile
+      );
 
       if (!result.success) {
         outputDiv.innerHTML = '<div class="dialogue-error">Invalid Output</div>';
