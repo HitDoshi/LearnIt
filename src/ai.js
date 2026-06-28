@@ -175,11 +175,11 @@ async function saveDialogue(dialogue, source, target) {
 document.addEventListener('DOMContentLoaded', () => {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  if (user?.userType === '1') {
-    document.getElementById('manageDialogue').style.display = '';
-  } else {
-    document.getElementById('manageDialogue').style.display = 'none';
-  }
+  // if (user?.userType === '1') {
+  //   document.getElementById('manageDialogue').style.display = '';
+  // } else {
+  //   document.getElementById('manageDialogue').style.display = 'none';
+  // }
 
   const sourceLang = JSON.parse(localStorage.getItem('source-language') || 'null');
   const targetLang = JSON.parse(localStorage.getItem('target-language') || 'null');
@@ -211,6 +211,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!sourceLang || !targetLang) {
       showToast('Source or target language not set.');
+      return;
+    }
+
+    if (sourceLang?.description === targetLang?.description) {
+      showToast('Source and target language cannot be the same. Please select different languages.');
       return;
     }
 

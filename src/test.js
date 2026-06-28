@@ -225,6 +225,8 @@ window.addEventListener("load", function () {
   clearTimeout(timer); // Clear the previous timer if it exists
 
   if (EnableAudio != "Y") {
+    ttsCheckbox.disabled = true;
+    randomCheckbox.disabled = true;
     continuous_playback.disabled = true;
     delayInput1.disabled = true;
     delayInput2.disabled = true;
@@ -899,11 +901,14 @@ function toggleNSValue(event) {
   }
 
   const isChecked = event.target.checked;
+  // Capture the ID now — by the time the async DB callback fires, AUTO mode
+  // may have already moved `data` to the next card.
+  const recordId = data.id;
 
   const transaction = db.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
 
-  const request = objectStore.get(data.id);
+  const request = objectStore.get(recordId);
   request.onsuccess = (event) => {
     const updatedRecord = event.target.result;
     if (updatedRecord) {
@@ -923,8 +928,13 @@ function toggleNSValue(event) {
 
       const updateRequest = objectStore.put(updatedRecord);
       updateRequest.onsuccess = () => {
-        // IMPORTANT: keep global `data` in sync, because `showData()` reads global `data`
-        data = updatedRecord;
+        // Only sync global `data` if the card on screen is still the same one
+        // that was being edited. In AUTO mode the card may have advanced while
+        // the DB write was in-flight; overwriting `data` in that case would
+        // cause the NS checkbox (and other fields) to be out of sync.
+        if (data?.id === recordId) {
+          data = updatedRecord;
+        }
 
         totalData.forEach((item, index) => {
           if (item.id == updatedRecord.id) {

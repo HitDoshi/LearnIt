@@ -135,9 +135,22 @@ topicDataOpenRequest.onsuccess = (event) => {
   };
 };
 
+function isSameLanguageSelected() {
+  const source = JSON.parse(localStorage.getItem("source-language") || '{}');
+  const target = JSON.parse(localStorage.getItem("target-language") || '{}');
+  if (source?.id && target?.id && source?.id === target?.id) {
+    showToast('Source and target language cannot be the same.\nPlease select different languages.');
+    return true;
+  }
+  return false;
+}
+
 function replaceStateWithHistory(page) {
   const topicNumber = localStorage.getItem("topic");
   const token = localStorage.getItem("token");
+  if (isSameLanguageSelected()) {
+    return;
+  }
   if (topicNumber == 0 && !token) {
     showToast(
       "Access to this section requires a login.\nPlease login first !!"
@@ -645,6 +658,10 @@ $(document).ready(function () {
 });
 
 const redirectionToAI = () => {
+  if (isSameLanguageSelected()) {
+    return;
+  }
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   if (user?.userType != "1") {

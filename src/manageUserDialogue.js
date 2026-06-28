@@ -182,7 +182,7 @@ async function updateData() {
 }
 
 backButton.onclick = function () {
-  window.location.href = "dialoguePlayer.html";
+  window.location.href = "levelTopicSelection.html";
 };
 
 function replaceStateWithHistory(page) {

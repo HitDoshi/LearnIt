@@ -776,3 +776,121 @@ function disabledDialogueControls() {
     updateLoopCheckboxesState();
   }
 }
+
+let userDB = null;
+let totalUserData = 0;
+
+const userOpenRequest = (window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB).open("user", 1);
+userOpenRequest.onupgradeneeded = (event) => {
+  userDB = event.target.result;
+  if (!userDB.objectStoreNames.contains("userData")) {
+    const objectStore = userDB.createObjectStore("userData", { keyPath: "id" });
+    objectStore.createIndex("subjectIndex", ["sourceSubjectId", "targetSubjectId"]);
+  }
+};
+userOpenRequest.onsuccess = (event) => {
+  userDB = event.target.result;
+  countTotalUserData();
+};
+
+function countTotalUserData() {
+  if (!userDB) return;
+  try {
+    const tx = userDB.transaction('userData', "readonly");
+    const os = tx.objectStore('userData');
+    const req = os.count();
+    req.onsuccess = () => { totalUserData = req.result; };
+  } catch (error) { }
+}
+
+function addUserDataModalShow() {
+  const token = localStorage.getItem('token');
+  if (token) {
+    const user = JSON.parse(localStorage.getItem('user') || "{}");
+    if (user?.email) {
+      const maxUD = parseInt(user?.maxUD || 0);
+      if (maxUD > 0 && totalUserData >= maxUD) {
+        showToast('Maximum number of values is reached for this account.');
+      } else {
+        $('#exampleModalCenter').modal('show');
+      }
+    } else {
+      showToast('User not found.\nPlease login again !!');
+    }
+  } else {
+    showToast('Access to this section requires a login.\nPlease login first !!');
+  }
+}
+
+async function addUserData(newData) {
+  if (!userDB) return;
+  let maxIdNumber = 0;
+  const tx = userDB.transaction(["userData"], "readwrite");
+  const os = tx.objectStore("userData");
+
+  const getMaxId = () => new Promise((resolve, reject) => {
+    const req = os.openCursor();
+    req.onsuccess = (e) => {
+      const cursor = e.target.result;
+      if (cursor) {
+        if (cursor.value.id > maxIdNumber) maxIdNumber = cursor.value.id;
+        cursor.continue();
+      } else {
+        resolve(maxIdNumber);
+      }
+    };
+    req.onerror = () => reject();
+  });
+
+  try {
+    maxIdNumber = await getMaxId();
+    newData.id = maxIdNumber + 1;
+    const req = os.add(newData);
+    req.onsuccess = () => {
+      showToast("Data added !!");
+      countTotalUserData();
+    };
+  } catch (e) {
+    showToast("Error while adding data !!");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("addData-Form");
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const source = document.getElementById("source").value;
+      const target = document.getElementById("target").value;
+      const targetNote = document.getElementById("targetNote").value;
+      const isFav = document.getElementById("favourite").checked;
+      const isSkip = document.getElementById("skip").checked;
+
+      const subjectId = parseInt(JSON.parse(localStorage.getItem("source-language") || "{}")?.id || 1);
+      const targetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
+
+      if (source.trim() && target.trim()) {
+        addUserData({
+          subjectId: subjectId,
+          source: source,
+          target: target,
+          targetNote: targetNote,
+          isFav: isFav,
+          isSkip: isSkip,
+          showInDays: 0,
+          lastShown: 0,
+          targetSubjectId: targetSubjectId,
+          sourceSubjectId: subjectId,
+          topicId: 0,
+        });
+      }
+      $("#exampleModalCenter").modal("hide");
+      form.reset();
+    });
+
+    const cancelButton = document.getElementById("cancelButton");
+    if (cancelButton) {
+      cancelButton.addEventListener("click", () => form.reset());
+    }
+  }
+});

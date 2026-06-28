@@ -61,15 +61,15 @@
         d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z" />
     </svg>
 
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-anthropic"
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars"
       viewBox="0 0 16 16" style="
           align-self: center;
           margin-right: 20px;
           color: white;
           cursor: pointer;
         " onclick="redirectionToAI()">
-      <path fill-rule="evenodd"
-        d="M9.218 2h2.402L16 12.987h-2.402zM4.379 2h2.512l4.38 10.987H8.82l-.895-2.308h-4.58l-.896 2.307H0L4.38 2.001zm2.755 6.64L5.635 4.777 4.137 8.64z" />
+      <path
+        d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z" />
     </svg>
 
     <!-- <svg
@@ -321,7 +321,7 @@
       </div>
     </div> -->
 
-    
+
     <div class="custom-dropdown">
       <select class="target-subject-list-custom-dropdown-select main-custom-button">
         <!-- Options will be populated dynamically -->
@@ -417,19 +417,20 @@
           <p>Subject data will be reloaded. Do you want to proceed?</p>
           <p>Which data do you want to download?</p>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="downloadData" id="initialData" value="initialData" checked>
+            <input class="form-check-input" type="radio" name="downloadData" id="initialData" value="initialData"
+              checked>
             <label class="form-check-label" for="initialData">
               Initial Data
             </label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="downloadData" id="userData" value="userData" >
+            <input class="form-check-input" type="radio" name="downloadData" id="userData" value="userData">
             <label class="form-check-label" for="updatedData">
               User Data
             </label>
           </div>
-        </div>                
-        <br />        
+        </div>
+        <br />
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Cancel
@@ -524,7 +525,8 @@
             <span style="margin: 0 10px; font-size: 13px; color: #888; white-space: nowrap;">OR</span>
             <hr style="flex: 1; margin: 0; border-color: #ddd;" />
           </div>
-          <div id="google-login-btn" style="display: flex; justify-content: center; margin-bottom: 12px;display: none;"></div>
+          <div id="google-login-btn" style="display: flex; justify-content: center; margin-bottom: 12px;display: none;">
+          </div>
 
           <div style="display: flex">
             <label style="margin-left: auto; margin-right: auto; font-size: 14px" id="signupLink">Don’t have an account?
@@ -580,7 +582,8 @@
             <span style="margin: 0 10px; font-size: 13px; color: #888; white-space: nowrap;">OR</span>
             <hr style="flex: 1; margin: 0; border-color: #ddd;" />
           </div>
-          <div id="google-signup-btn" style="display: flex; justify-content: center; margin-bottom: 12px;display: none;"></div>
+          <div id="google-signup-btn"
+            style="display: flex; justify-content: center; margin-bottom: 12px;display: none;"></div>
 
           <div style="display: flex">
             <label style="margin-left: auto; margin-right: auto; font-size: 14px" id="loginLink">Already have an
@@ -817,9 +820,10 @@
   <div class="modal fade" id="modal-loading" data-backdrop="static">
     <div class="modal-dialog modal-sm modal-dialog-centered" style="max-width: 150px; margin: 0 auto;">
       <div class="modal-content">
-        <div class="modal-body text-center" style="display: flex;flex-direction: row;align-items: center;justify-content: center;gap: 12px;">
+        <div class="modal-body text-center"
+          style="display: flex;flex-direction: row;align-items: center;justify-content: center;gap: 12px;">
           <div class="loading-spinner"></div>
-           <div>Loading</div>
+          <div>Loading</div>
         </div>
       </div>
     </div>
@@ -964,10 +968,13 @@
       $('#deleteAccountModal').modal('show');
     }
 
-    function showDownloadDataModal(){
+    function showDownloadDataModal() {
+      if (isSameLanguageSelected()) {
+        return;
+      }
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user?.userType == '1' || user?.userType == '2') {
-        $('#exampleModalCenter').modal('show');        
+        $('#exampleModalCenter').modal('show');
       } else {
         $('#exampleModalCenter').modal('show');
       }
@@ -989,13 +996,13 @@
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       let loadFrom = 'initialData'; // this is key
 
-      if(user?.userType == '1' || user?.userType == '2'){
+      if (user?.userType == '1' || user?.userType == '2') {
         // const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
         // if (selectedValue === 'userData') {
         //   loadFrom = 'userData'; // this is key
         loadFrom = 'userData'; // this is key
       }
-      
+
       const testDB = await openDatabase(testDBName, testDBVersion, testStoreName);
 
       const SubjectID = JSON.parse(localStorage.getItem("source-language") || '{}')?.id;
@@ -1008,7 +1015,7 @@
       console.log('SubjectID', SubjectID);
 
       const token = localStorage.getItem("token");
-      
+
       return fetch(
         `${API_URL}/api/get_quiz_data.php?sourceSubjectId=${SubjectID}&targetSubjectId=${targetSubjectId}&topicId=${topicId}&loadFrom=${loadFrom}${token ? `&token=${token}` : ''}`
       )
@@ -1024,47 +1031,47 @@
             localStorage.setItem("currentLoadedSubjectId", SubjectID);
             localStorage.setItem("currentLoadedTargetSubjectId", targetSubjectId);
 
-            if(jsonData?.success){
+            if (jsonData?.success) {
               if (count == 0) {
-              // Store data from data.json into IndexedDB
-              jsonData.data.forEach((item) => {                
-                item.isFav = item?.isFav == "Y" ? true : false;
-                item.isSkip = item?.isSkip == "Y" ? true : (loadFrom == 'initialData' || jsonData?.isFromInitialTable) ? true : false;
-                item.showInDays = parseInt(item?.showInDays || 0);
-                item.lastShown = parseInt(item?.lastShown || 0);                
-                objectStore.add(item);
-              });
-              $("#modal-loading").modal("hide");
-              showToast(`Total ${jsonData.data.length + totalUserData} records downloaded successfully !!`);
-            } else {
-              // User confirmed, proceed with data reloading
-              // Delete all records from IndexedDB
-              const clearRequest = objectStore.clear();
-
-              clearRequest.onsuccess = () => {
                 // Store data from data.json into IndexedDB
                 jsonData.data.forEach((item) => {
-                item.isFav = item?.isFav == "Y" ? true : false;
-                item.isSkip = item?.isSkip == "Y" ? true : (loadFrom == 'initialData' || jsonData?.isFromInitialTable) ? true : false;
-                item.showInDays = parseInt(item?.showInDays || 0);
-                item.lastShown = parseInt(item?.lastShown || 0);
-                
+                  item.isFav = item?.isFav == "Y" ? true : false;
+                  item.isSkip = item?.isSkip == "Y" ? true : (loadFrom == 'initialData' || jsonData?.isFromInitialTable) ? true : false;
+                  item.showInDays = parseInt(item?.showInDays || 0);
+                  item.lastShown = parseInt(item?.lastShown || 0);
                   objectStore.add(item);
                 });
                 $("#modal-loading").modal("hide");
                 showToast(`Total ${jsonData.data.length + totalUserData} records downloaded successfully !!`);
-              };
+              } else {
+                // User confirmed, proceed with data reloading
+                // Delete all records from IndexedDB
+                const clearRequest = objectStore.clear();
 
-              clearRequest.onerror = (event) => {
-                console.error("Error clearing IndexedDB:", event.target.error);
-              };
-            }
-            }else{
+                clearRequest.onsuccess = () => {
+                  // Store data from data.json into IndexedDB
+                  jsonData.data.forEach((item) => {
+                    item.isFav = item?.isFav == "Y" ? true : false;
+                    item.isSkip = item?.isSkip == "Y" ? true : (loadFrom == 'initialData' || jsonData?.isFromInitialTable) ? true : false;
+                    item.showInDays = parseInt(item?.showInDays || 0);
+                    item.lastShown = parseInt(item?.lastShown || 0);
+
+                    objectStore.add(item);
+                  });
+                  $("#modal-loading").modal("hide");
+                  showToast(`Total ${jsonData.data.length + totalUserData} records downloaded successfully !!`);
+                };
+
+                clearRequest.onerror = (event) => {
+                  console.error("Error clearing IndexedDB:", event.target.error);
+                };
+              }
+            } else {
               $("#modal-loading").modal("hide");
               showToast(jsonData?.message);
             }
 
-            
+
             $("#modal-loading").modal("hide");
           };
         })
@@ -1081,12 +1088,12 @@
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       let loadFrom = 'initialData'; // this is key
 
-      if(user?.userType == '1' || user?.userType == '2'){
+      if (user?.userType == '1' || user?.userType == '2') {
         // const selectedValue = document.querySelector('input[name="downloadData"]:checked').value;
         // if (selectedValue === 'userData') {
-          //   loadFrom = 'userData'; // this is key
-          // }
-          loadFrom = 'userData'; // this is key
+        //   loadFrom = 'userData'; // this is key
+        // }
+        loadFrom = 'userData'; // this is key
       }
 
       userDB = await openDatabase(dbName, dbVersion, storeName);
@@ -1128,26 +1135,26 @@
               });
             } else {
               const clearRequest = objectStore.clear();
-                clearRequest.onsuccess = () => {
-                  // Store data from data.json into IndexedDB
-                  jsonData?.data?.forEach((item) => {
-                    item.questionId = parseInt(item.id);
-                    item.id = id;
-                    item.isFav = item?.isFav == "Y" ? true : false;
-                    item.isSkip = item?.isSkip == "Y" ? true : false;
-                    item.sourceSubjectId = parseInt(item.sourceSubjectId);
-                    item.targetSubjectId = parseInt(item.targetSubjectId);
-                    item.showInDays = parseInt(item.showInDays || 0);
-                    item.lastShown = parseInt(item.lastShown || 0);
-                    item.fileName = item.audio_file_name;
-                    objectStore.add(item);
-                    id++;
-                  });
-                };
+              clearRequest.onsuccess = () => {
+                // Store data from data.json into IndexedDB
+                jsonData?.data?.forEach((item) => {
+                  item.questionId = parseInt(item.id);
+                  item.id = id;
+                  item.isFav = item?.isFav == "Y" ? true : false;
+                  item.isSkip = item?.isSkip == "Y" ? true : false;
+                  item.sourceSubjectId = parseInt(item.sourceSubjectId);
+                  item.targetSubjectId = parseInt(item.targetSubjectId);
+                  item.showInDays = parseInt(item.showInDays || 0);
+                  item.lastShown = parseInt(item.lastShown || 0);
+                  item.fileName = item.audio_file_name;
+                  objectStore.add(item);
+                  id++;
+                });
+              };
 
-                clearRequest.onerror = (event) => {
-                  console.error("Error clearing IndexedDB:", event.target.error);
-                };
+              clearRequest.onerror = (event) => {
+                console.error("Error clearing IndexedDB:", event.target.error);
+              };
             }
           };
         })
@@ -1172,7 +1179,7 @@
       )
         .then((response) => response.json())
         .then((data) => {
-          if(!data.success){
+          if (!data.success) {
             localStorage.removeItem("token");
             localStorage.removeItem("username");
             localStorage.removeItem("useremail");
@@ -1181,53 +1188,53 @@
             isTokenChange();
             showToast(data.message);
             document.querySelector(".secondary-language-dropdown").style.display = "none";
-          }else{
-            localStorage.setItem('EnableAudio',data?.data.EnableAudio);
-            localStorage.setItem('user',JSON.stringify(data?.data || "{}"));      
-            if(data?.data?.secondaryEnable?.toUpperCase() == "Y"){
+          } else {
+            localStorage.setItem('EnableAudio', data?.data.EnableAudio);
+            localStorage.setItem('user', JSON.stringify(data?.data || "{}"));
+            if (data?.data?.secondaryEnable?.toUpperCase() == "Y") {
               document.querySelector(".secondary-language-dropdown").style.display = "";
-            }else{
+            } else {
               document.querySelector(".secondary-language-dropdown").style.display = "none";
-            }      
+            }
           }
         })
         .catch((error) => {
-          console.error("Error:", error);          
+          console.error("Error:", error);
         });
     }
 
     //get messsage list and show
-    
+
     fetch(`${API_URL}/api/get_message_list.php`)
-  .then((response) => response.json())
-  .then((response) => {
-    const messageList = document.getElementById("message-list");
-    const messageUl = messageList.childNodes[1];
-    messageUl.innerHTML = "";
-    messageList.style.display = "flex";
+      .then((response) => response.json())
+      .then((response) => {
+        const messageList = document.getElementById("message-list");
+        const messageUl = messageList.childNodes[1];
+        messageUl.innerHTML = "";
+        messageList.style.display = "flex";
 
-    if (response.success) {
-      const urlPattern = /(\b(https?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi;
+        if (response.success) {
+          const urlPattern = /(\b(https?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi;
 
-      response.data.forEach((message) => {
-        const messageLi = document.createElement("li");
-        messageLi.className = "list-group";
-        messageLi.style.alignSelf = "center";
-        messageLi.style.textAlign = "center";
-        messageLi.style.fontSize = "14px";
+          response.data.forEach((message) => {
+            const messageLi = document.createElement("li");
+            messageLi.className = "list-group";
+            messageLi.style.alignSelf = "center";
+            messageLi.style.textAlign = "center";
+            messageLi.style.fontSize = "14px";
 
-        const messageWithLinks = message.message.replace(urlPattern, function(url) {
-          return `<a href="${url}" target="_blank" class="message-link" style="margin-top: 10px;margin-bottom: 10px">${url}</a>`;
-        });
+            const messageWithLinks = message.message.replace(urlPattern, function (url) {
+              return `<a href="${url}" target="_blank" class="message-link" style="margin-top: 10px;margin-bottom: 10px">${url}</a>`;
+            });
 
-        messageLi.innerHTML = messageWithLinks;
-        messageUl.appendChild(messageLi);
+            messageLi.innerHTML = messageWithLinks;
+            messageUl.appendChild(messageLi);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
       });
-    }
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
   </script>
 
 </body>
