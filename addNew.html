@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearnIt - Add New</title>
+
+  <link rel="stylesheet" href="./styles/toast.style.css" />
+  <link rel="stylesheet" href="./bootstrap/bootstrap@4.3.1/css/bootstrap.min.css" />
+  <script src="./jquery/jquery-3.2.1.slim.min.js"></script>
+  <script src="./jquery/popper.min.js"></script>
+  <script src="./bootstrap/bootstrap@4.3.1/js/bootstrap.min.js"></script>
+  <script src="./constant.js"></script>
+
+  <link rel="stylesheet" href="./styles/addNew.style.css" />
+</head>
+
+<body>
+
+  <nav>
+    <svg id="backBtn" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" viewBox="0 0 16 16">
+      <path fill-rule="evenodd"
+        d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
+    </svg>
+    <span class="nav-title">Add New</span>
+  </nav>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <div id="snackbar"></div>
+
+  <div class="page-body">
+
+    <div class="cell-toolbar" id="cellToolbar">
+      <span class="sel-info" id="selectionInfo"></span>
+    </div>
+
+    <div class="grid-wrapper" id="gridWrapper">
+      <div class="grid-header">
+        <div id="headerNum" title="Click to select all">No.</div>
+        <div>Source</div>
+        <div>Target</div>
+        <div>Note</div>
+      </div>
+      <div id="gridRows"></div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="count-bar">Filled: <span id="filledCount">0</span> / 10</div>
+      <div class="action-bar">
+        <button class="btn-clear" id="clearBtn">Clear</button>
+        <button class="btn-save" id="saveBtn">Save</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="./src/displayToast.js"></script>
+  <script src="./src/addNew.js"></script>
+</body>
+
+</html>

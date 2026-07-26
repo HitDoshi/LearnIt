@@ -894,3 +894,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+function replaceStateWithHistory(page) {
+  window.location.href = page;
+}

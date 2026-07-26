@@ -1,0 +1,255 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+nav {
+  background: #00569D;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  height: 52px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+nav svg {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+nav .nav-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.page-body {
+  padding: 14px 10px 60px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.cell-toolbar {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.cell-toolbar.visible {
+  display: flex;
+}
+
+.cell-toolbar button {
+  background: #f0f4ff;
+  border: 1px solid #c5d4f0;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #00569D;
+  cursor: pointer;
+}
+
+.cell-toolbar button:active {
+  background: #dce8ff;
+}
+
+.sel-info {
+  font-size: 12px;
+  color: #888;
+  margin-left: 4px;
+  display: none;
+}
+
+.grid-wrapper {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #dde3ee;
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: 34px 1fr 1fr 1fr;
+  background: #00569D;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  user-select: none;
+}
+
+.grid-header div {
+  padding: 9px 6px;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.grid-header div:last-child {
+  border-right: none;
+}
+
+#headerNum {
+  cursor: pointer;
+}
+
+#headerNum:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: 34px 1fr 1fr 1fr;
+  border-bottom: 1px solid #e8ecf2;
+  transition: background 0.1s;
+}
+
+.grid-row:last-child {
+  border-bottom: none;
+}
+
+.grid-row.has-data {
+  background: #f4fff6;
+}
+
+.grid-row.row-selected {
+  background: #ebf2ff;
+}
+
+.row-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #bbb;
+  background: #fafbfc;
+  border-right: 1px solid #e8ecf2;
+  user-select: none;
+  cursor: pointer;
+}
+
+.row-num:hover {
+  background: #eef2ff;
+  color: #00569D;
+}
+
+.grid-row input {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 9px 7px;
+  font-size: 14px;
+  color: #222;
+  background: transparent;
+  border-right: 1px solid #e8ecf2;
+  border-left: 2px solid transparent;
+  transition: border-color 0.1s, background 0.1s;
+}
+
+.grid-row input:last-child {
+  border-right: none;
+}
+
+.grid-row input:focus {
+  background: #fffdf0;
+  border-left-color: #00569D;
+  position: relative;
+  z-index: 1;
+}
+
+.grid-row input.cell-selected {
+  background: #d6e8ff;
+  border-left-color: #0066cc;
+  box-shadow: inset 0 0 0 2px #0066cc;
+}
+
+.grid-row input.cell-in-range {
+  background: #e8f1ff;
+}
+
+.grid-row input.cell-cut {
+  background: #fff3f3;
+  border-left-color: #cc0000;
+  border-style: dashed;
+}
+
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.count-bar {
+  font-size: 13px;
+  color: #666;
+}
+
+.count-bar span {
+  font-weight: 700;
+  color: #00569D;
+}
+
+.action-bar {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save {
+  background: #00569D;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-save:active {
+  opacity: 0.85;
+}
+
+.btn-clear {
+  background: white;
+  color: #555;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn-clear:active {
+  background: #f2f2f2;
+}
+
+#snackbar {
+  display: none;
+}
