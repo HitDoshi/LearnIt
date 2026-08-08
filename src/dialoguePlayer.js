@@ -55,6 +55,33 @@ function replaceStateWithHistory(page) {
   }
 }
 
+// Open TypeIt from Dialogue Practice context (Level 1 + Level 3 from current dialogue)
+function openTypeItFromDialogue() {
+  localStorage.setItem('typeit_source', 'dialoguePlayer');
+
+  // Serialize current dialogue sentences (all available, up to 6)
+  try {
+    const sourceLangDesc = sourceLang?.description;
+    const targetLangDesc = targetLang?.description;
+
+    const dialoguePairs = sentences
+      .filter(s => s !== undefined && s !== null)
+      .slice(0, 6)
+      .map(s => ({
+        target: s[(targetLangDesc || '') + '_text'] || '',
+        source: s[(sourceLangDesc || '') + '_text'] || ''
+      }))
+      .filter(p => p.target || p.source);
+
+    localStorage.setItem('typeit_dialogue_sentences', JSON.stringify(dialoguePairs));
+  } catch (err) {
+    console.error('Could not serialize dialogue sentences:', err);
+    localStorage.removeItem('typeit_dialogue_sentences');
+  }
+
+  replaceStateWithHistory('TypeIt.html');
+}
+
 async function getData() {
   $("#modal-loading").modal("show");
   isShowLoading = true;

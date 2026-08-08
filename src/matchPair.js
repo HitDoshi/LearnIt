@@ -30,6 +30,12 @@ function replaceStateWithHistory(page) {
   window.location.href = page;
 }
 
+// Open TypeIt from Match Pairs context (Level 1 + Level 2 from IndexedDB)
+function openTypeItFromMatchPairs() {
+  localStorage.setItem('typeit_source', 'matchPairs');
+  replaceStateWithHistory('TypeIt.html');
+}
+
 // icon back press function
 
 const backButton = document.getElementById('backButton');
