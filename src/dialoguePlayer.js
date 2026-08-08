@@ -24,6 +24,13 @@ document.addEventListener("DOMContentLoaded", function () {
   delayInput1.value = delay1;
   delayInput2.value = delay2;
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if (user?.TypingEnable === 'Y') {
+    const typeItIcon = document.getElementById('typeItIcon');
+    if (typeItIcon) typeItIcon.style.display = 'block';
+  }
+
   // Add TTS checkbox event listener
   ttsCheckbox.addEventListener("change", function () {
     updateLoopCheckboxesState();
