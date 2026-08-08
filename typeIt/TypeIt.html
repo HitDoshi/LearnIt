@@ -1,0 +1,2706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeLingual Engine v2</title>
+    <style>
+        :root {
+            --bg-primary: #f7fafc;
+            --text-main: #2d3748;
+            --accent-blue: #3182ce;
+            --key-correct: #38a169;
+            --key-wrong: #e53e3e;
+            --sheet-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --priority-yellow: #d69e2e;
+            --priority-red: #e53e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #1a365d;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select,
+        button,
+        .file-label {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-label {
+            background-color: #ebf8ff;
+            border-color: #bee3f8;
+            color: #2b6cb0;
+        }
+
+        .file-label:hover {
+            background-color: #e2e8f0;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .stats-bar {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .stat-card span {
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            margin-left: 5px;
+        }
+
+        .progress-container {
+            width: 100%;
+            max-width: 800px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--key-correct);
+            border-radius: 3px;
+            transition: width 0.2s ease;
+        }
+
+        .radio-toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #edf2f7;
+            padding: 4px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .radio-toggle-group input[type="radio"] {
+            display: none;
+        }
+
+        .radio-toggle-group label {
+            padding: 4px 14px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            user-select: none;
+        }
+
+        .radio-toggle-group label:hover {
+            background: rgba(49, 130, 206, 0.08);
+        }
+
+        .radio-toggle-group input[type="radio"]:checked+label {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .phase-indicator {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+
+        .phase-indicator .phase-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .phase-indicator .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: background 0.3s ease;
+        }
+
+        .phase-indicator .dot.active {
+            background: var(--accent-blue);
+        }
+
+        .phase-indicator .dot.done {
+            background: var(--key-correct);
+        }
+
+        .phase-indicator .dot-line {
+            width: 20px;
+            height: 2px;
+            background: #e2e8f0;
+        }
+
+        .phase-indicator .dot-line.done {
+            background: var(--key-correct);
+        }
+
+        .phase-indicator .label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .phase-indicator .label.active {
+            color: var(--accent-blue);
+        }
+
+        .phase-indicator .label.done {
+            color: var(--key-correct);
+        }
+
+        .circulation-panel {
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .panel-row {
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.4rem;
+        }
+
+        .panel-label {
+            font-weight: 700;
+            color: #4a5568;
+            min-width: 150px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding-top: 2px;
+        }
+
+        .panel-content {
+            color: #2d3748;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+            font-size: 1rem;
+            word-break: break-all;
+        }
+
+        .display-sheet {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--sheet-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .text-line {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2rem;
+            letter-spacing: 3px;
+            white-space: pre-wrap;
+            line-height: 2.8rem;
+            word-break: break-word;
+            word-wrap: break-word;
+            text-align: left;
+        }
+
+        .char-untyped {
+            color: #a0aec0;
+        }
+
+        .char-correct {
+            color: #2d3748;
+            background-color: #e6fffa;
+            border-radius: 2px;
+        }
+
+        .char-current {
+            color: #000;
+            border-bottom: 4px solid var(--accent-blue);
+            background-color: #ebf8ff;
+            border-radius: 2px;
+        }
+
+        .char-error {
+            color: white !important;
+            background-color: var(--key-wrong) !important;
+            border-bottom: 4px solid var(--key-wrong) !important;
+            border-radius: 2px;
+        }
+
+        .recall-mode .char-untyped {
+            color: inherit !important;
+        }
+
+        .typewriter-row {
+            width: 100%;
+            max-width: 800px;
+            background: #edf2f7;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            border-left: 5px solid var(--accent-blue);
+            min-height: 56px;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            word-break: break-all;
+        }
+
+        .typewriter-row .char-error {
+            color: white !important;
+            background-color: var(--key-wrong) !important;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .translation-row {
+            width: 100%;
+            max-width: 800px;
+            background: #f0f4f8;
+            padding: 8px 24px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            border-left: 5px solid #a0aec0;
+            min-height: 40px;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            word-break: break-all;
+            transition: opacity 0.2s ease;
+        }
+
+        .translation-row .label {
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-right: 10px;
+        }
+
+        .translation-row .source {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* focus-overlay removed */
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>⌨️ TypeLingual</h1>
+        <div class="controls">
+            <select id="levelSelect">
+                <option value="1">Level 1: Practice</option>
+                <option value="2">Level 2: Words (3 modes)</option>
+                <option value="3">Level 3: Sentences (3 modes)</option>
+            </select>
+        </div>
+    </header>
+    <div class="stats-bar">
+        <div class="stat-card" id="streakCard">Streak: <span id="streakDisplay">0/30</span></div>
+        <div class="stat-card">WPM: <span id="wpmDisplay">0</span></div>
+        <div class="stat-card">Accuracy: <span id="accuracyDisplay">100%</span></div>
+    </div>
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- 3-state radio toggle for Level 2 -->
+    <div class="phase-indicator" id="toggleContainerWords" style="display:none; justify-content:center;">
+        <div class="radio-toggle-group">
+            <input type="radio" name="l2_mode" id="l2_typing" value="typing" checked>
+            <label for="l2_typing">Typing</label>
+            <input type="radio" name="l2_mode" id="l2_passive" value="passive">
+            <label for="l2_passive">Passive</label>
+            <input type="radio" name="l2_mode" id="l2_active" value="active">
+            <label for="l2_active">Active</label>
+        </div>
+    </div>
+
+    <!-- 3-state radio toggle for Level 3 -->
+    <div class="phase-indicator" id="toggleContainerSentences" style="display:none; justify-content:center;">
+        <div class="radio-toggle-group">
+            <input type="radio" name="l3_mode" id="l3_typing" value="typing" checked>
+            <label for="l3_typing">Typing</label>
+            <input type="radio" name="l3_mode" id="l3_passive" value="passive">
+            <label for="l3_passive">Recall</label>
+            <input type="radio" name="l3_mode" id="l3_active" value="active">
+            <label for="l3_active">Active</label>
+        </div>
+    </div>
+
+    <div class="phase-indicator" id="phaseIndicator">
+        <div class="phase-dots">
+            <span class="label" id="phaseLabel1">Phase 1</span>
+            <div class="dot" id="dot1"></div>
+            <div class="dot-line" id="line1"></div>
+            <div class="dot" id="dot2"></div>
+            <div class="dot-line" id="line2"></div>
+            <div class="dot" id="dot3"></div>
+            <span class="label" id="phaseLabel2">Sprint</span>
+        </div>
+        <span id="phaseProgressText"></span>
+    </div>
+
+    <div class="circulation-panel">
+        <div class="panel-row" id="circulationRow">
+            <div class="panel-label">Sub-Deck:</div>
+            <div class="panel-content" id="circulationContent">Loading...</div>
+        </div>
+        <div class="panel-row">
+            <div class="panel-label">Status:</div>
+            <div class="panel-content" id="statusContent">Loading...</div>
+        </div>
+    </div>
+
+    <div class="display-sheet">
+        <div id="sourceTextContainer" class="text-line"></div>
+    </div>
+    <div id="typewriterRow" class="typewriter-row">⏎ Start typing...</div>
+    <div id="translationRow" class="translation-row" style="opacity:0;"><span class="label">→</span><span class="source"
+            id="translationText"></span></div>
+
+    <script>
+        // ============================================================
+        // CONFIG
+        // ============================================================
+        const L2_GATES = [
+            { wpm: 10, acc: 85, label: "Phase 1" },
+            { wpm: 15, acc: 88, label: "Phase 2" },
+            { wpm: 15, acc: 88, label: "Sprint" }
+        ];
+
+        const L1_SEQUENCE = [
+            ['f', 'j'], ['a', 's'], ['d', ';'], ['e', 'i'],
+            ['r', 'u'], ['t', 'y'], ['g', 'h'], ['v', 'm'],
+            ['b', 'n'], ['c', ','], ['x', '.'], ['z', '/'],
+            ['q', 'w'], ['o', 'p'], ['k', "'"]
+        ];
+
+        // ============================================================
+        // DEAD KEY MAPPINGS
+        // ============================================================
+        const DEAD_KEY_MAP = {
+            "'": {
+                'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú', 'c': 'ç',
+                'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú', 'C': 'Ç'
+            },
+            '`': {
+                'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù',
+                'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù'
+            },
+            '"': {
+                'a': 'ä', 'e': 'ë', 'i': 'ï', 'o': 'ö', 'u': 'ü', 's': 'ß',
+                'A': 'Ä', 'E': 'Ë', 'I': 'Ï', 'O': 'Ö', 'U': 'Ü'
+            },
+            '^': {
+                'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û',
+                'A': 'Â', 'E': 'Ê', 'I': 'Î', 'O': 'Ô', 'U': 'Û'
+            },
+            '~': {
+                'a': 'ã', 'n': 'ñ', 'o': 'õ',
+                'A': 'Ã', 'N': 'Ñ', 'O': 'Õ'
+            },
+            ',': {
+                'c': 'ç', 's': 'ş', 'g': 'ğ',
+                'C': 'Ç', 'S': 'Ş', 'G': 'Ğ'
+            }
+        };
+        const DEAD_KEYS = Object.keys(DEAD_KEY_MAP);
+        let pendingDeadKey = null;
+
+        // ============================================================
+        // LEVEL 2 – 3-STATE DATA (Words)
+        // ============================================================
+        let L2_PAIRS = [];
+        let L2_ACTIVE_MODE = 'typing';
+
+        let L2_TYPING = { queue: [], phase: 0, sprintAttempts: 0, isSprint: false, phaseInitialSize: 0, completed: false };
+        let L2_PASSIVE = { pool: [], reservoir: [], removed: 0, total: 0, waitingForExclusion: false, exclusionTimer: null, currentWordObj: null, priority: 0, questionCount: 0, completed: false, extraSlots: 0 };
+        let L2_ACTIVE = { pool: [], reservoir: [], removed: 0, total: 0, waitingForExclusion: false, exclusionTimer: null, currentWordObj: null, priority: 0, questionCount: 0, completed: false, extraSlots: 0 };
+
+        let L2_CURRENT_TRANSLATION = null;
+        let L2_TRANSLATION_WORD = null;
+        let l2_startTime = null;
+        let l2_totalKeystrokes = 0;
+        let l2_errorCount = 0;
+        let l2_lineWpm = 0;
+        let l2_lineAcc = 100;
+        let l2_currentIndex = 0;
+        let l2_isErrorState = false;
+        let l2_currentTypedString = "";
+        let l2_sourceText = "";
+        let l2_targetText = "";
+
+        let l2_itemBoundaries = [];
+        let l2_currentItemIndex = -1;
+        let l2_currentLineWords = [];
+        let l2_currentLinePairs = [];
+        let l2_priorityTimer = null;
+        let l2_expandTimer = null;
+
+        // ============================================================
+        // LEVEL 3 – 3-STATE DATA (Sentences)
+        // ============================================================
+        let L3_PAIRS = [];
+        let L3_ACTIVE_MODE = 'typing';
+
+        let L3_TYPING = { queue: [], phase: 0, sprintAttempts: 0, isSprint: false, phaseInitialSize: 0, completed: false };
+        let L3_PASSIVE = { pool: [], reservoir: [], removed: 0, total: 0, waitingForExclusion: false, exclusionTimer: null, currentSentenceObj: null, penalty: 0, questionCount: 0, completed: false };
+        let L3_ACTIVE = { pool: [], reservoir: [], removed: 0, total: 0, waitingForExclusion: false, exclusionTimer: null, currentSentenceObj: null, penalty: 0, questionCount: 0, completed: false };
+
+        let L3_CURRENT_TRANSLATION = null;
+        let L3_TRANSLATION_SENTENCE = null;
+        let l3_startTime = null;
+        let l3_totalKeystrokes = 0;
+        let l3_errorCount = 0;
+        let l3_lineWpm = 0;
+        let l3_lineAcc = 100;
+        let l3_currentIndex = 0;
+        let l3_isErrorState = false;
+        let l3_currentTypedString = "";
+        let l3_sourceText = "";
+        let l3_targetText = "";
+
+        let l3_currentPair = null;
+
+        // ============================================================
+        // GLOBAL STATE
+        // ============================================================
+        let activeLevel = 1;
+        let levelGraduationActive = false;
+        let sourceText = "";
+        let targetText = "";
+        let currentIndex = 0;
+        let isErrorState = false;
+        let currentTypedString = "";
+        let startTime = null;
+        let totalKeystrokes = 0;
+        let errorCount = 0;
+        let lineWpm = 0;
+        let lineAcc = 100;
+
+        let l1_practiceItems = [];
+        let l1_itemQueue = [];
+        let l1_seenItems = new Set();
+        let l1_phaseItems = new Set();
+        let l1_unlockedPool = ['f', 'j', ' '];
+        let l1_progressionIndex = 0;
+        let l1_currentStreak = 0;
+        const L1_STREAK_TARGET = 30;
+
+        let lineTransition = false;
+
+        // ============================================================
+        // DOM REFS
+        // ============================================================
+        const levelSelect = document.getElementById("levelSelect");
+        const streakCard = document.getElementById("streakCard");
+        const streakDisplay = document.getElementById("streakDisplay");
+        const wpmDisplay = document.getElementById("wpmDisplay");
+        const accuracyDisplay = document.getElementById("accuracyDisplay");
+        const circulationRow = document.getElementById("circulationRow");
+        const circulationContent = document.getElementById("circulationContent");
+        const statusContent = document.getElementById("statusContent");
+        const sourceTextContainer = document.getElementById("sourceTextContainer");
+        const typewriterRow = document.getElementById("typewriterRow");
+        const translationRow = document.getElementById("translationRow");
+        const translationText = document.getElementById("translationText");
+        const progressBar = document.getElementById("progressBar");
+        const phaseIndicator = document.getElementById("phaseIndicator");
+        const phaseLabel1 = document.getElementById("phaseLabel1");
+        const phaseLabel2 = document.getElementById("phaseLabel2");
+        const dot1 = document.getElementById("dot1");
+        const dot2 = document.getElementById("dot2");
+        const dot3 = document.getElementById("dot3");
+        const line1 = document.getElementById("line1");
+        const line2 = document.getElementById("line2");
+        const phaseProgressText = document.getElementById("phaseProgressText");
+        const toggleContainerWords = document.getElementById("toggleContainerWords");
+        const toggleContainerSentences = document.getElementById("toggleContainerSentences");
+        const radioL2Typing = document.getElementById("l2_typing");
+        const radioL2Passive = document.getElementById("l2_passive");
+        const radioL2Active = document.getElementById("l2_active");
+        const radioL3Typing = document.getElementById("l3_typing");
+        const radioL3Passive = document.getElementById("l3_passive");
+        const radioL3Active = document.getElementById("l3_active");
+
+        // ============================================================
+        // UTILITY
+        // ============================================================
+        function shuffleArray(arr) {
+            const temp = [...arr];
+            for (let i = temp.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [temp[i], temp[j]] = [temp[j], temp[i]];
+            }
+            return temp;
+        }
+
+        function weightedRandomPick(arr, weightFn) {
+            if (!arr || arr.length === 0) return null;
+            const weights = arr.map(weightFn);
+            const total = weights.reduce((a, b) => a + b, 0);
+            let rand = Math.random() * total;
+            for (let i = 0; i < arr.length; i++) {
+                rand -= weights[i];
+                if (rand <= 0) return arr[i];
+            }
+            return arr[arr.length - 1];
+        }
+
+        function updateProgressBar(width) {
+            progressBar.style.width = Math.min(100, Math.max(0, width)) + '%';
+        }
+
+        function updatePhaseIndicator(phase, progress, isSprint) {
+            [dot1, dot2, dot3].forEach(d => d.className = 'dot');
+            [line1, line2].forEach(l => l.className = 'dot-line');
+            phaseLabel1.className = 'label';
+            phaseLabel2.className = 'label';
+            if (isSprint) {
+                dot1.className = 'dot done';
+                line1.className = 'dot-line done';
+                dot2.className = 'dot done';
+                line2.className = 'dot-line done';
+                dot3.className = 'dot active';
+                phaseLabel1.className = 'label done';
+                phaseLabel2.className = 'label active';
+                let attempts, completed;
+                if (activeLevel === 2) {
+                    attempts = L2_TYPING.sprintAttempts;
+                    completed = L2_TYPING.completed;
+                } else if (activeLevel === 3) {
+                    attempts = L3_TYPING.sprintAttempts;
+                    completed = L3_TYPING.completed;
+                }
+                phaseProgressText.textContent = `Sprint ${attempts > 0 ? `(attempt ${attempts + 1})` : ''}`;
+                const sprintProgress = completed ? 100 : 0;
+                updateProgressBar(sprintProgress);
+                return;
+            }
+            if (phase === 0) {
+                dot1.className = 'dot active';
+                line1.className = 'dot-line';
+                dot2.className = 'dot';
+                line2.className = 'dot-line';
+                dot3.className = 'dot';
+                phaseLabel1.className = 'label active';
+                phaseLabel2.className = 'label';
+                let queue, phaseInitialSize;
+                if (activeLevel === 2) {
+                    queue = L2_TYPING.queue;
+                    phaseInitialSize = L2_TYPING.phaseInitialSize;
+                } else if (activeLevel === 3) {
+                    queue = L3_TYPING.queue;
+                    phaseInitialSize = L3_TYPING.phaseInitialSize;
+                }
+                const remaining = queue.length;
+                const total = phaseInitialSize || 1;
+                const pct = total > 0 ? Math.round((1 - remaining / total) * 100) : 0;
+                phaseProgressText.textContent = `${remaining}/${total} items (${pct}%)`;
+                updateProgressBar(pct);
+            } else if (phase === 1) {
+                dot1.className = 'dot done';
+                line1.className = 'dot-line done';
+                dot2.className = 'dot active';
+                line2.className = 'dot-line';
+                dot3.className = 'dot';
+                phaseLabel1.className = 'label done';
+                phaseLabel2.className = 'label';
+                let queue, phaseInitialSize;
+                if (activeLevel === 2) {
+                    queue = L2_TYPING.queue;
+                    phaseInitialSize = L2_TYPING.phaseInitialSize;
+                } else if (activeLevel === 3) {
+                    queue = L3_TYPING.queue;
+                    phaseInitialSize = L3_TYPING.phaseInitialSize;
+                }
+                const remaining = queue.length;
+                const total = phaseInitialSize || 1;
+                const pct = total > 0 ? Math.round((1 - remaining / total) * 100) : 0;
+                phaseProgressText.textContent = `${remaining}/${total} items (${pct}%)`;
+                updateProgressBar(pct);
+            }
+        }
+
+        function showTranslation(text) {
+            if (text) {
+                translationText.textContent = text;
+                translationRow.style.opacity = '1';
+            } else {
+                translationRow.style.opacity = '0';
+                translationText.textContent = '';
+            }
+        }
+
+        // ============================================================
+        // LEVEL 2 RECALL HELPERS
+        // ============================================================
+        function updateL2RecallColor(state) {
+            if (!state || !state.currentWordObj) return;
+            const priority = state.currentWordObj.priority || 0;
+            let color = 'var(--text-main)';
+            if (priority >= 4) color = 'var(--priority-red)';
+            else if (priority === 3) color = 'var(--priority-yellow)';
+            sourceTextContainer.style.color = color;
+        }
+
+        function updateL2RecallStatus(state) {
+            if (!state || !state.currentWordObj) return;
+            const priority = state.currentWordObj.priority || 0;
+            statusContent.textContent = `Priority: ${priority} | Type '??' for hint | Type '>>' to increase deck`;
+        }
+
+        function updateRecallCirculation(mode) {
+            const state = (mode === 'passive') ? L2_PASSIVE : L2_ACTIVE;
+            const remaining = getL2Remaining(mode);
+            const total = state.total;
+            const removed = state.removed;
+            const extra = state.extraSlots || 0;
+            circulationContent.textContent = `Deck: 20(+${extra}) | Remaining: ${remaining}/${total} | Removed: ${removed}`;
+        }
+
+        function updateTypewriterDisplay() {
+            if (isErrorState && currentTypedString.length > 0) {
+                const correct = currentTypedString.slice(0, -1);
+                const wrong = currentTypedString.slice(-1);
+                typewriterRow.innerHTML = correct + '<span class="char-error">' + wrong + '</span>';
+            } else {
+                typewriterRow.textContent = currentTypedString || "⏎ Start typing...";
+            }
+        }
+
+        // ============================================================
+        // LEVEL 1 HELPERS
+        // ============================================================
+        function buildL1Queue() {
+            let availableItems;
+            if (l1_practiceItems.length > 0) {
+                availableItems = l1_practiceItems.filter(item =>
+                    item.split('').every(char => l1_unlockedPool.includes(char))
+                );
+            } else {
+                availableItems = l1_unlockedPool.filter(c => c !== ' ');
+            }
+            const uniqueItems = [...new Set(availableItems)];
+            l1_phaseItems = new Set(uniqueItems);
+            const unseen = uniqueItems.filter(item => !l1_seenItems.has(item));
+            if (unseen.length === 0) {
+                l1_itemQueue = shuffleArray(uniqueItems);
+            } else {
+                l1_itemQueue = shuffleArray(unseen);
+            }
+        }
+
+        function getNextL1Item() {
+            if (l1_itemQueue.length === 0) buildL1Queue();
+            if (l1_itemQueue.length === 0) return null;
+            const item = l1_itemQueue.shift();
+            l1_seenItems.add(item);
+            return item;
+        }
+
+        function isL1PhaseComplete() {
+            if (l1_phaseItems.size === 0) return l1_currentStreak >= L1_STREAK_TARGET;
+            return l1_seenItems.size >= l1_phaseItems.size && l1_currentStreak >= L1_STREAK_TARGET;
+        }
+
+        function resetL1PhaseTracking() {
+            l1_seenItems = new Set();
+            l1_itemQueue = [];
+            buildL1Queue();
+        }
+
+        // ============================================================
+        // LEVEL 2 HELPERS
+        // ============================================================
+        function initL2Typing() {
+            const words = L2_PAIRS.map(p => p.target);
+            L2_TYPING.queue = shuffleArray(words.slice());
+            L2_TYPING.phaseInitialSize = L2_TYPING.queue.length;
+            L2_TYPING.completed = false;
+            L2_TYPING.isSprint = false;
+            L2_TYPING.sprintAttempts = 0;
+            L2_TYPING.phase = 0;
+        }
+
+        function initL2Passive() {
+            const pairs = L2_PAIRS.map(p => ({ source: p.source, target: p.target, priority: 0 }));
+            L2_PASSIVE.reservoir = shuffleArray(pairs.slice());
+            L2_PASSIVE.total = pairs.length;
+            L2_PASSIVE.removed = 0;
+            L2_PASSIVE.pool = [];
+            L2_PASSIVE.completed = false;
+            L2_PASSIVE.waitingForExclusion = false;
+            L2_PASSIVE.currentWordObj = null;
+            L2_PASSIVE.priority = 0;
+            L2_PASSIVE.questionCount = 0;
+            L2_PASSIVE.extraSlots = 0;
+            if (L2_PASSIVE.exclusionTimer) {
+                clearTimeout(L2_PASSIVE.exclusionTimer);
+                L2_PASSIVE.exclusionTimer = null;
+            }
+            refillL2Pool('passive');
+        }
+
+        function initL2Active() {
+            const pairs = L2_PAIRS.map(p => ({ source: p.source, target: p.target, priority: 0 }));
+            L2_ACTIVE.reservoir = shuffleArray(pairs.slice());
+            L2_ACTIVE.total = pairs.length;
+            L2_ACTIVE.removed = 0;
+            L2_ACTIVE.pool = [];
+            L2_ACTIVE.completed = false;
+            L2_ACTIVE.waitingForExclusion = false;
+            L2_ACTIVE.currentWordObj = null;
+            L2_ACTIVE.priority = 0;
+            L2_ACTIVE.questionCount = 0;
+            L2_ACTIVE.extraSlots = 0;
+            if (L2_ACTIVE.exclusionTimer) {
+                clearTimeout(L2_ACTIVE.exclusionTimer);
+                L2_ACTIVE.exclusionTimer = null;
+            }
+            refillL2Pool('active');
+        }
+
+        function refillL2Pool(mode) {
+            const extraSlots = (mode === 'passive') ? L2_PASSIVE.extraSlots : L2_ACTIVE.extraSlots;
+            const poolMax = 20 + extraSlots;
+            let pool, reservoir;
+            if (mode === 'passive') {
+                pool = L2_PASSIVE.pool;
+                reservoir = L2_PASSIVE.reservoir;
+            } else if (mode === 'active') {
+                pool = L2_ACTIVE.pool;
+                reservoir = L2_ACTIVE.reservoir;
+            } else return;
+            while (pool.length < poolMax && reservoir.length > 0) {
+                pool.push(reservoir.shift());
+            }
+        }
+
+        function getL2Remaining(mode) {
+            if (mode === 'passive') return L2_PASSIVE.pool.length + L2_PASSIVE.reservoir.length;
+            if (mode === 'active') return L2_ACTIVE.pool.length + L2_ACTIVE.reservoir.length;
+            return 0;
+        }
+
+        function getL2Progress(mode) {
+            let total, removed;
+            if (mode === 'passive') { total = L2_PASSIVE.total || 1; removed = L2_PASSIVE.removed; }
+            else if (mode === 'active') { total = L2_ACTIVE.total || 1; removed = L2_ACTIVE.removed; }
+            else return 0;
+            return Math.min(100, (removed / total) * 100);
+        }
+
+        function selectWeightedL2Word(mode) {
+            let pool;
+            if (mode === 'passive') {
+                if (L2_PASSIVE.pool.length === 0) return null;
+                pool = L2_PASSIVE.pool;
+            } else if (mode === 'active') {
+                if (L2_ACTIVE.pool.length === 0) return null;
+                pool = L2_ACTIVE.pool;
+            } else return null;
+            return weightedRandomPick(pool, item => 1 + (item.priority || 0) * 2);
+        }
+
+        // ============================================================
+        // LEVEL 3 HELPERS
+        // ============================================================
+        function initL3Typing() {
+            const sentences = L3_PAIRS.map(p => p.target);
+            L3_TYPING.queue = shuffleArray(sentences.slice());
+            L3_TYPING.phaseInitialSize = L3_TYPING.queue.length;
+            L3_TYPING.completed = false;
+            L3_TYPING.isSprint = false;
+            L3_TYPING.sprintAttempts = 0;
+            L3_TYPING.phase = 0;
+        }
+
+        function initL3Passive() {
+            const pairs = L3_PAIRS.map(p => ({ source: p.source, target: p.target, penalty: 0 }));
+            L3_PASSIVE.reservoir = shuffleArray(pairs.slice());
+            L3_PASSIVE.total = pairs.length;
+            L3_PASSIVE.removed = 0;
+            L3_PASSIVE.pool = [];
+            L3_PASSIVE.completed = false;
+            L3_PASSIVE.waitingForExclusion = false;
+            L3_PASSIVE.currentSentenceObj = null;
+            L3_PASSIVE.penalty = 0;
+            L3_PASSIVE.questionCount = 0;
+            if (L3_PASSIVE.exclusionTimer) {
+                clearTimeout(L3_PASSIVE.exclusionTimer);
+                L3_PASSIVE.exclusionTimer = null;
+            }
+            refillL3Pool('passive');
+        }
+
+        function initL3Active() {
+            const pairs = L3_PAIRS.map(p => ({ source: p.source, target: p.target, penalty: 0 }));
+            L3_ACTIVE.reservoir = shuffleArray(pairs.slice());
+            L3_ACTIVE.total = pairs.length;
+            L3_ACTIVE.removed = 0;
+            L3_ACTIVE.pool = [];
+            L3_ACTIVE.completed = false;
+            L3_ACTIVE.waitingForExclusion = false;
+            L3_ACTIVE.currentSentenceObj = null;
+            L3_ACTIVE.penalty = 0;
+            L3_ACTIVE.questionCount = 0;
+            if (L3_ACTIVE.exclusionTimer) {
+                clearTimeout(L3_ACTIVE.exclusionTimer);
+                L3_ACTIVE.exclusionTimer = null;
+            }
+            refillL3Pool('active');
+        }
+
+        function refillL3Pool(mode) {
+            const POOL_MAX = 10;
+            let pool, reservoir;
+            if (mode === 'passive') { pool = L3_PASSIVE.pool; reservoir = L3_PASSIVE.reservoir; }
+            else if (mode === 'active') { pool = L3_ACTIVE.pool; reservoir = L3_ACTIVE.reservoir; }
+            else return;
+            while (pool.length < POOL_MAX && reservoir.length > 0) {
+                pool.push(reservoir.shift());
+            }
+        }
+
+        function getL3Remaining(mode) {
+            if (mode === 'passive') return L3_PASSIVE.pool.length + L3_PASSIVE.reservoir.length;
+            if (mode === 'active') return L3_ACTIVE.pool.length + L3_ACTIVE.reservoir.length;
+            return 0;
+        }
+
+        function getL3Progress(mode) {
+            let total, removed;
+            if (mode === 'passive') { total = L3_PASSIVE.total || 1; removed = L3_PASSIVE.removed; }
+            else if (mode === 'active') { total = L3_ACTIVE.total || 1; removed = L3_ACTIVE.removed; }
+            else return 0;
+            return Math.min(100, (removed / total) * 100);
+        }
+
+        function selectWeightedL3Sentence(mode) {
+            let pool;
+            if (mode === 'passive') { if (L3_PASSIVE.pool.length === 0) return null; pool = L3_PASSIVE.pool; }
+            else if (mode === 'active') { if (L3_ACTIVE.pool.length === 0) return null; pool = L3_ACTIVE.pool; }
+            else return null;
+            for (let i = 0; i < pool.length; i++) {
+                if (pool[i].penalty > 0) return pool[i];
+            }
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        // ============================================================
+        // AUTO-LOAD: LEVEL 1 – fetch practice items from server
+        // ============================================================
+        async function autoLoadLevel1() {
+            try {
+                const response = await fetch('./Level1_typing_practice.txt');
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const text = await response.text();
+                const items = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+                const unique = [...new Set(items)];
+                if (unique.length) {
+                    l1_practiceItems = unique;
+                    console.log(`Level 1: auto-loaded ${unique.length} practice items`);
+                }
+            } catch (err) {
+                console.warn('Level 1 auto-load failed, using built-in key sequence:', err);
+            }
+        }
+
+        // ============================================================
+        // AUTO-LOAD: LEVEL 2 – read full deck from IndexedDB
+        // ============================================================
+        function autoLoadLevel2FromIndexedDB() {
+            return new Promise((resolve) => {
+                try {
+                    const subject = parseInt(JSON.parse(localStorage.getItem('source-language') || '{}')?.id || 1);
+                    const targetSubjectId = parseInt(JSON.parse(localStorage.getItem('target-language') || '{}')?.id || 1);
+                    const topic = parseInt(localStorage.getItem('topic') || '0');
+
+                    const dbName = topic == 0 ? 'user' : 'test';
+                    const dbVersion = 1;
+                    const storeName = topic == 0 ? 'userData' : 'data';
+                    const keyIndex = topic == 0 ? 'subjectIndex' : 'subjectTopicIndex';
+
+                    const idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+                    const openReq = idb.open(dbName, dbVersion);
+
+                    openReq.onerror = () => {
+                        console.error('Level 2 IndexedDB open failed');
+                        resolve(false);
+                    };
+
+                    openReq.onsuccess = (event) => {
+                        const db = event.target.result;
+                        const transaction = db.transaction(storeName, 'readonly');
+                        const store = transaction.objectStore(storeName);
+                        const range = topic == 0
+                            ? IDBKeyRange.only([subject, targetSubjectId])
+                            : IDBKeyRange.only([subject, targetSubjectId, topic]);
+
+                        const idx = store.index(keyIndex);
+                        const getAllReq = idx.getAll(range);
+                        getAllReq.onsuccess = (ev) => {
+                            const allData = ev.target.result || [];
+                            // Load ALL items (not just favourites), skip skipped items
+                            const filtered = allData.filter(item => item.isSkip !== true);
+                            if (filtered.length > 0) {
+                                L2_PAIRS = filtered.map(item => ({
+                                    target: item.target || '',
+                                    source: item.source || ''
+                                })).filter(p => p.target || p.source);
+                                console.log(`Level 2: auto-loaded ${L2_PAIRS.length} pairs from IndexedDB`);
+                                resolve(true);
+                            } else {
+                                console.warn('Level 2: no data found in IndexedDB for current subject/topic');
+                                resolve(false);
+                            }
+                        };
+                        getAllReq.onerror = () => {
+                            console.error('Level 2 IndexedDB query failed');
+                            resolve(false);
+                        };
+                    };
+                } catch (err) {
+                    console.error('Level 2 IndexedDB load error:', err);
+                    resolve(false);
+                }
+            });
+        }
+
+        // ============================================================
+        // AUTO-LOAD: LEVEL 3 – read dialogue sentences from localStorage
+        // ============================================================
+        function autoLoadLevel3FromDialogue() {
+            try {
+                const raw = localStorage.getItem('typeit_dialogue_sentences');
+                if (!raw) return false;
+                const pairs = JSON.parse(raw);
+                if (pairs && pairs.length > 0) {
+                    L3_PAIRS = pairs;
+                    console.log(`Level 3: auto-loaded ${L3_PAIRS.length} dialogue sentences`);
+                    return true;
+                }
+            } catch (err) {
+                console.error('Level 3 dialogue load failed:', err);
+            }
+            return false;
+        }
+
+        // ============================================================
+        // INITIALIZE ENGINE SESSION
+        // ============================================================
+        function initializeEngineSession(level) {
+            activeLevel = parseInt(level);
+            levelGraduationActive = false;
+
+            // Reset Level 1
+            l1_unlockedPool = ['f', 'j', ' '];
+            l1_progressionIndex = 0;
+            l1_currentStreak = 0;
+            l1_seenItems = new Set();
+            l1_itemQueue = [];
+            l1_phaseItems = new Set();
+
+            // Reset Level 2
+            if (activeLevel === 2) {
+                L2_TYPING.queue = []; L2_TYPING.phase = 0; L2_TYPING.sprintAttempts = 0; L2_TYPING.isSprint = false; L2_TYPING.phaseInitialSize = 0; L2_TYPING.completed = false;
+                L2_PASSIVE.pool = []; L2_PASSIVE.reservoir = []; L2_PASSIVE.removed = 0; L2_PASSIVE.total = 0; L2_PASSIVE.completed = false; L2_PASSIVE.waitingForExclusion = false; L2_PASSIVE.currentWordObj = null; L2_PASSIVE.priority = 0; L2_PASSIVE.questionCount = 0; L2_PASSIVE.extraSlots = 0; if (L2_PASSIVE.exclusionTimer) { clearTimeout(L2_PASSIVE.exclusionTimer); L2_PASSIVE.exclusionTimer = null; }
+                L2_ACTIVE.pool = []; L2_ACTIVE.reservoir = []; L2_ACTIVE.removed = 0; L2_ACTIVE.total = 0; L2_ACTIVE.completed = false; L2_ACTIVE.waitingForExclusion = false; L2_ACTIVE.currentWordObj = null; L2_ACTIVE.priority = 0; L2_ACTIVE.questionCount = 0; L2_ACTIVE.extraSlots = 0; if (L2_ACTIVE.exclusionTimer) { clearTimeout(L2_ACTIVE.exclusionTimer); L2_ACTIVE.exclusionTimer = null; }
+                L2_ACTIVE_MODE = 'typing';
+                radioL2Typing.checked = true;
+                L2_CURRENT_TRANSLATION = null; L2_TRANSLATION_WORD = null;
+                l2_itemBoundaries = [];
+                l2_currentItemIndex = -1;
+                l2_currentLineWords = [];
+                l2_currentLinePairs = [];
+                if (l2_priorityTimer) { clearTimeout(l2_priorityTimer); l2_priorityTimer = null; }
+                if (l2_expandTimer) { clearTimeout(l2_expandTimer); l2_expandTimer = null; }
+            }
+
+            // Reset Level 3
+            if (activeLevel === 3) {
+                L3_TYPING.queue = []; L3_TYPING.phase = 0; L3_TYPING.sprintAttempts = 0; L3_TYPING.isSprint = false; L3_TYPING.phaseInitialSize = 0; L3_TYPING.completed = false;
+                L3_PASSIVE.pool = []; L3_PASSIVE.reservoir = []; L3_PASSIVE.removed = 0; L3_PASSIVE.total = 0; L3_PASSIVE.completed = false; L3_PASSIVE.waitingForExclusion = false; L3_PASSIVE.currentSentenceObj = null; L3_PASSIVE.penalty = 0; L3_PASSIVE.questionCount = 0; if (L3_PASSIVE.exclusionTimer) { clearTimeout(L3_PASSIVE.exclusionTimer); L3_PASSIVE.exclusionTimer = null; }
+                L3_ACTIVE.pool = []; L3_ACTIVE.reservoir = []; L3_ACTIVE.removed = 0; L3_ACTIVE.total = 0; L3_ACTIVE.completed = false; L3_ACTIVE.waitingForExclusion = false; L3_ACTIVE.currentSentenceObj = null; L3_ACTIVE.penalty = 0; L3_ACTIVE.questionCount = 0; if (L3_ACTIVE.exclusionTimer) { clearTimeout(L3_ACTIVE.exclusionTimer); L3_ACTIVE.exclusionTimer = null; }
+                L3_ACTIVE_MODE = 'typing';
+                radioL3Typing.checked = true;
+                L3_CURRENT_TRANSLATION = null; L3_TRANSLATION_SENTENCE = null;
+                l3_currentPair = null;
+            }
+
+            // Reset global telemetry
+            startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; currentIndex = 0; isErrorState = false; currentTypedString = ""; showTranslation(null);
+
+            levelSelect.value = level;
+            document.title = "TypeLingual Engine v2";
+
+            // Set toggle visibility
+            if (activeLevel === 1) {
+                toggleContainerWords.style.display = 'none';
+                toggleContainerSentences.style.display = 'none';
+                streakCard.style.display = "block";
+                circulationRow.style.display = "flex";
+                circulationRow.querySelector('.panel-label').textContent = "Circulation:";
+                document.getElementById('progressContainer').style.display = 'block';
+                phaseIndicator.style.display = 'flex';
+                translationRow.style.display = 'none';
+                if (l1_practiceItems.length > 0) buildL1Queue();
+                generateNextSequenceLine();
+            } else if (activeLevel === 2) {
+                toggleContainerWords.style.display = 'flex';
+                toggleContainerSentences.style.display = 'none';
+                if (L2_PAIRS.length === 0) {
+                    typewriterRow.innerHTML = "⏳ Loading word deck from database...";
+                    statusContent.textContent = "Fetching data...";
+                    circulationContent.textContent = "0 pairs";
+                    sourceTextContainer.innerHTML = "";
+                    updateProgressBar(0);
+                    phaseIndicator.style.display = 'flex';
+                    translationRow.style.display = 'flex';
+                    document.getElementById('progressContainer').style.display = 'block';
+                    streakCard.style.display = "none";
+                    circulationRow.style.display = "flex";
+                    circulationRow.querySelector('.panel-label').textContent = "Words:";
+                    radioL2Typing.checked = true;
+                    L2_ACTIVE_MODE = 'typing';
+                    // Try to load from IndexedDB now (in case async init hadn't finished)
+                    autoLoadLevel2FromIndexedDB().then(loaded => {
+                        if (loaded && L2_PAIRS.length > 0) {
+                            initL2Typing(); initL2Passive(); initL2Active();
+                            generateNextSequenceLine();
+                        } else {
+                            typewriterRow.innerHTML = "⚠️ No deck data found. Please check Manage Records has items loaded.";
+                            statusContent.textContent = "No data in database for current subject/topic";
+                            circulationContent.textContent = "0 pairs";
+                        }
+                    });
+                } else {
+                    initL2Typing(); initL2Passive(); initL2Active();
+                    generateNextSequenceLine();
+                }
+            } else if (activeLevel === 3) {
+                toggleContainerSentences.style.display = 'flex';
+                toggleContainerWords.style.display = 'none';
+                if (L3_PAIRS.length === 0) {
+                    const loaded = autoLoadLevel3FromDialogue();
+                    if (loaded && L3_PAIRS.length > 0) {
+                        initL3Typing(); initL3Passive(); initL3Active();
+                        generateNextSequenceLine();
+                    } else {
+                        typewriterRow.innerHTML = "⚠️ No dialogue sentences found. Please select a dialogue in Dialogue Practice first.";
+                        statusContent.textContent = "No dialogue data available";
+                        circulationContent.textContent = "0 sentence pairs";
+                        sourceTextContainer.innerHTML = "";
+                        updateProgressBar(0);
+                        phaseIndicator.style.display = 'flex';
+                        translationRow.style.display = 'flex';
+                        document.getElementById('progressContainer').style.display = 'block';
+                        streakCard.style.display = "none";
+                        circulationRow.style.display = "flex";
+                        circulationRow.querySelector('.panel-label').textContent = "Sentences:";
+                        radioL3Typing.checked = true;
+                        L3_ACTIVE_MODE = 'typing';
+                    }
+                } else {
+                    initL3Typing(); initL3Passive(); initL3Active();
+                    generateNextSequenceLine();
+                }
+            }
+        }
+
+        // ============================================================
+        // GENERATE NEXT LINE
+        // ============================================================
+        function generateNextSequenceLine() {
+            lineTransition = false;
+            levelGraduationActive = false;
+
+            if (L2_PASSIVE.exclusionTimer) { clearTimeout(L2_PASSIVE.exclusionTimer); L2_PASSIVE.exclusionTimer = null; }
+            L2_PASSIVE.waitingForExclusion = false; L2_PASSIVE.questionCount = 0; L2_PASSIVE.currentWordObj = null;
+            if (L2_ACTIVE.exclusionTimer) { clearTimeout(L2_ACTIVE.exclusionTimer); L2_ACTIVE.exclusionTimer = null; }
+            L2_ACTIVE.waitingForExclusion = false; L2_ACTIVE.questionCount = 0; L2_ACTIVE.currentWordObj = null;
+            if (L3_PASSIVE.exclusionTimer) { clearTimeout(L3_PASSIVE.exclusionTimer); L3_PASSIVE.exclusionTimer = null; }
+            L3_PASSIVE.waitingForExclusion = false; L3_PASSIVE.questionCount = 0; L3_PASSIVE.currentSentenceObj = null;
+            if (L3_ACTIVE.exclusionTimer) { clearTimeout(L3_ACTIVE.exclusionTimer); L3_ACTIVE.exclusionTimer = null; }
+            L3_ACTIVE.waitingForExclusion = false; L3_ACTIVE.questionCount = 0; L3_ACTIVE.currentSentenceObj = null;
+            if (l2_priorityTimer) { clearTimeout(l2_priorityTimer); l2_priorityTimer = null; }
+            if (l2_expandTimer) { clearTimeout(l2_expandTimer); l2_expandTimer = null; }
+
+            showTranslation(null);
+            sourceTextContainer.classList.remove('recall-mode');
+            sourceTextContainer.style.color = '';
+
+            if (activeLevel === 1) {
+                if (l1_phaseItems.size === 0) buildL1Queue();
+                if (isL1PhaseComplete()) {
+                    if (l1_progressionIndex < L1_SEQUENCE.length - 1) {
+                        l1_progressionIndex++;
+                        L1_SEQUENCE[l1_progressionIndex].forEach(k => { if (!l1_unlockedPool.includes(k)) l1_unlockedPool.push(k); });
+                        resetL1PhaseTracking();
+                        l1_currentStreak = 0;
+                    } else {
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ LEVEL 1 COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        return;
+                    }
+                }
+                const outputBlocks = [];
+                const lettersOnly = l1_unlockedPool.filter(c => c !== ' ');
+                if (l1_itemQueue.length === 0) buildL1Queue();
+                for (let i = 0; i < 12; i++) {
+                    const item = getNextL1Item();
+                    if (item) {
+                        outputBlocks.push(item);
+                    } else {
+                        if (lettersOnly.length) {
+                            outputBlocks.push(lettersOnly[Math.floor(Math.random() * lettersOnly.length)]);
+                        } else {
+                            outputBlocks.push('f');
+                        }
+                    }
+                }
+                sourceText = outputBlocks.join(" ");
+                targetText = sourceText;
+                const phaseLabel = (l1_progressionIndex >= L1_SEQUENCE.length - 1) ? 'Final' : `${l1_progressionIndex + 1}`;
+                const seenCount = l1_seenItems.size;
+                const totalAvailable = l1_phaseItems.size;
+                statusContent.textContent = `Phase ${phaseLabel}/${L1_SEQUENCE.length} | Seen: ${seenCount}/${totalAvailable} | Streak: ${l1_currentStreak}/${L1_STREAK_TARGET}`;
+                streakDisplay.textContent = `${l1_currentStreak}/${L1_STREAK_TARGET}`;
+                circulationContent.textContent = l1_unlockedPool.map(c => c === ' ' ? 'Space' : c.toUpperCase()).join(" ");
+                updateProgressBar((l1_currentStreak / L1_STREAK_TARGET) * 100);
+            } else if (activeLevel === 2) {
+                if (L2_PAIRS.length === 0) {
+                    sourceText = ""; targetText = "";
+                    typewriterRow.innerHTML = "⚠️ No deck data found in database.";
+                    resetTelemetryState();
+                    statusContent.textContent = "No data — check Match Pairs is loaded";
+                    circulationContent.textContent = "0 pairs";
+                    sourceTextContainer.innerHTML = "";
+                    updateProgressBar(0);
+                    return;
+                }
+
+                const mode = L2_ACTIVE_MODE;
+
+                // ----- TYPING MODE (swapped: shows source, types source, hint = target) -----
+                if (mode === 'typing') {
+                    if (L2_TYPING.completed) {
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ TYPING MODE COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    if (L2_TYPING.isSprint) {
+                        const sprintTargets = shuffleArray(L2_PAIRS.map(p => p.target)).slice(0, 12);
+                        const sprintPairs = sprintTargets.map(t => L2_PAIRS.find(p => p.target === t));
+                        const sprintSources = sprintPairs.map(p => p.source);
+                        sourceText = sprintSources.join(" ");
+                        targetText = sourceText;
+                        typewriterRow.textContent = "";
+                        statusContent.textContent = "GRADUATION SPRINT | Complete all words";
+                        circulationContent.textContent = `Sprint: 12 words`;
+                        updatePhaseIndicator(2, 0, true);
+                        resetTelemetryState();
+                        renderSourceSheetDisplay();
+                        l2_currentLineWords = sprintSources.slice();
+                        l2_currentLinePairs = sprintPairs.slice();
+                        return;
+                    }
+                    if (L2_TYPING.queue.length === 0) {
+                        const words = L2_PAIRS.map(p => p.target);
+                        L2_TYPING.queue = shuffleArray(words.slice());
+                        L2_TYPING.phaseInitialSize = L2_TYPING.queue.length;
+                        L2_TYPING.phase = 0;
+                        L2_TYPING.isSprint = false;
+                    }
+                    const gate = L2_GATES[L2_TYPING.phase] || L2_GATES[0];
+                    const currentTargets = L2_TYPING.queue.slice(0, 8);
+                    const currentPairs = currentTargets.map(t => L2_PAIRS.find(p => p.target === t));
+                    const currentSources = currentPairs.map(p => p.source);
+                    sourceText = currentSources.join(" ");
+                    targetText = sourceText;
+                    l2_currentLineWords = currentSources.slice();
+                    l2_currentLinePairs = currentPairs.slice();
+                    typewriterRow.textContent = "";
+                    l2_itemBoundaries = [];
+                    let charPos = 0;
+                    for (let i = 0; i < currentSources.length; i++) {
+                        const word = currentSources[i];
+                        const start = charPos;
+                        const end = charPos + word.length;
+                        l2_itemBoundaries.push({ start, end, item: word, pair: currentPairs[i] });
+                        charPos += word.length + 1;
+                    }
+                    l2_currentItemIndex = -1;
+                    const remaining = L2_TYPING.queue.length;
+                    const total = L2_TYPING.phaseInitialSize || 1;
+                    const pct = total > 0 ? Math.round((1 - remaining / total) * 100) : 0;
+                    statusContent.textContent = `${gate.label} | ${gate.wpm} WPM @ ${gate.acc}% Acc`;
+                    circulationContent.textContent = `Queue: ${remaining}/${total}`;
+                    updatePhaseIndicator(L2_TYPING.phase, pct, false);
+                }
+
+                // ----- PASSIVE RECALL (prompt source, expect target) -----
+                else if (mode === 'passive') {
+                    if (L2_PASSIVE.completed) {
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ PASSIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    let remaining = getL2Remaining('passive');
+                    if (remaining === 0) {
+                        L2_PASSIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ PASSIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    if (L2_PASSIVE.pool.length === 0) {
+                        refillL2Pool('passive');
+                        remaining = getL2Remaining('passive');
+                        if (remaining === 0) {
+                            L2_PASSIVE.completed = true;
+                            levelGraduationActive = true;
+                            sourceText = ""; targetText = "";
+                            typewriterRow.innerHTML = "✅ PASSIVE RECALL COMPLETE! Press [Enter].";
+                            resetTelemetryState();
+                            updateProgressBar(100);
+                            return;
+                        }
+                    }
+                    const word = selectWeightedL2Word('passive');
+                    if (!word) {
+                        L2_PASSIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ PASSIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    L2_PASSIVE.currentWordObj = word;
+                    L2_PASSIVE.priority = word.priority || 0;
+                    sourceText = word.source;
+                    targetText = word.target;
+                    typewriterRow.textContent = "";
+                    const progressPct = getL2Progress('passive');
+                    updateL2RecallStatus(L2_PASSIVE);
+                    updateRecallCirculation('passive');
+                    updateProgressBar(progressPct);
+                    phaseIndicator.style.display = 'none';
+                    sourceTextContainer.classList.add('recall-mode');
+                    updateL2RecallColor(L2_PASSIVE);
+                }
+
+                // ----- ACTIVE RECALL (prompt target, expect source) -----
+                else if (mode === 'active') {
+                    if (L2_ACTIVE.completed) {
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ ACTIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    let remaining = getL2Remaining('active');
+                    if (remaining === 0) {
+                        L2_ACTIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ ACTIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    if (L2_ACTIVE.pool.length === 0) {
+                        refillL2Pool('active');
+                        remaining = getL2Remaining('active');
+                        if (remaining === 0) {
+                            L2_ACTIVE.completed = true;
+                            levelGraduationActive = true;
+                            sourceText = ""; targetText = "";
+                            typewriterRow.innerHTML = "✅ ACTIVE RECALL COMPLETE! Press [Enter].";
+                            resetTelemetryState();
+                            updateProgressBar(100);
+                            return;
+                        }
+                    }
+                    const word = selectWeightedL2Word('active');
+                    if (!word) {
+                        L2_ACTIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ ACTIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    L2_ACTIVE.currentWordObj = word;
+                    L2_ACTIVE.priority = word.priority || 0;
+                    sourceText = word.target;
+                    targetText = word.source;
+                    typewriterRow.textContent = "";
+                    const progressPct = getL2Progress('active');
+                    updateL2RecallStatus(L2_ACTIVE);
+                    updateRecallCirculation('active');
+                    updateProgressBar(progressPct);
+                    phaseIndicator.style.display = 'none';
+                    sourceTextContainer.classList.add('recall-mode');
+                    updateL2RecallColor(L2_ACTIVE);
+                }
+            } else if (activeLevel === 3) {
+                if (L3_PAIRS.length === 0) {
+                    sourceText = ""; targetText = "";
+                    typewriterRow.innerHTML = "⚠️ No dialogue sentences found in database.";
+                    resetTelemetryState();
+                    statusContent.textContent = "No data — open from Dialogue Practice first";
+                    circulationContent.textContent = "0 sentence pairs";
+                    sourceTextContainer.innerHTML = "";
+                    updateProgressBar(0);
+                    return;
+                }
+                const mode = L3_ACTIVE_MODE;
+
+                if (mode === 'typing') {
+                    if (L3_TYPING.completed) {
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ TYPING MODE COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    if (L3_TYPING.isSprint) {
+                        const sprintTargets = shuffleArray(L3_PAIRS.map(p => p.target)).slice(0, 3);
+                        const sprintPairs = sprintTargets.map(t => L3_PAIRS.find(p => p.target === t));
+                        const sprintSources = sprintPairs.map(p => p.source);
+                        sourceText = sprintSources.join(" ");
+                        targetText = sourceText;
+                        typewriterRow.textContent = "";
+                        statusContent.textContent = "GRADUATION SPRINT | Complete all sentences";
+                        circulationContent.textContent = `Sprint: 3 sentences`;
+                        updatePhaseIndicator(2, 0, true);
+                        resetTelemetryState();
+                        renderSourceSheetDisplay();
+                        l3_currentPair = sprintPairs[0];
+                        return;
+                    }
+                    if (L3_TYPING.queue.length === 0) {
+                        const sentences = L3_PAIRS.map(p => p.target);
+                        L3_TYPING.queue = shuffleArray(sentences.slice());
+                        L3_TYPING.phaseInitialSize = L3_TYPING.queue.length;
+                        L3_TYPING.phase = 0;
+                        L3_TYPING.isSprint = false;
+                    }
+                    const gate = L2_GATES[L3_TYPING.phase] || L2_GATES[0];
+                    const currentTarget = L3_TYPING.queue[0];
+                    const pair = L3_PAIRS.find(p => p.target === currentTarget);
+                    if (!pair) {
+                        sourceText = currentTarget || "";
+                        targetText = sourceText;
+                        l3_currentPair = null;
+                    } else {
+                        sourceText = pair.source;
+                        targetText = sourceText;
+                        l3_currentPair = pair;
+                    }
+                    typewriterRow.textContent = "";
+                    const remaining = L3_TYPING.queue.length;
+                    const total = L3_TYPING.phaseInitialSize || 1;
+                    const pct = total > 0 ? Math.round((1 - remaining / total) * 100) : 0;
+                    statusContent.textContent = `${gate.label} | ${gate.wpm} WPM @ ${gate.acc}% Acc`;
+                    circulationContent.textContent = `Queue: ${remaining}/${total}`;
+                    updatePhaseIndicator(L3_TYPING.phase, pct, false);
+                } else if (mode === 'passive') {
+                    if (L3_PASSIVE.completed) {
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ PASSIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    const remaining = getL3Remaining('passive');
+                    if (remaining === 0 || L3_PASSIVE.pool.length === 0) {
+                        L3_PASSIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ PASSIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    const sentence = selectWeightedL3Sentence('passive');
+                    if (!sentence) {
+                        L3_PASSIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ PASSIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    L3_PASSIVE.currentSentenceObj = sentence;
+                    L3_PASSIVE.penalty = sentence.penalty;
+                    sourceText = sentence.source;
+                    targetText = sentence.target;
+                    typewriterRow.textContent = "";
+                    const progressPct = getL3Progress('passive');
+                    statusContent.textContent = `Type '??' for hint | Penalty: ${sentence.penalty}`;
+                    circulationContent.textContent = `Remaining: ${remaining}/${L3_PASSIVE.total} | Removed: ${L3_PASSIVE.removed}`;
+                    updateProgressBar(progressPct);
+                    phaseIndicator.style.display = 'none';
+                } else if (mode === 'active') {
+                    if (L3_ACTIVE.completed) {
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ ACTIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    const remaining = getL3Remaining('active');
+                    if (remaining === 0 || L3_ACTIVE.pool.length === 0) {
+                        L3_ACTIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ ACTIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    const sentence = selectWeightedL3Sentence('active');
+                    if (!sentence) {
+                        L3_ACTIVE.completed = true;
+                        levelGraduationActive = true;
+                        sourceText = ""; targetText = "";
+                        typewriterRow.innerHTML = "✅ ACTIVE RECALL COMPLETE! Press [Enter].";
+                        resetTelemetryState();
+                        updateProgressBar(100);
+                        return;
+                    }
+                    L3_ACTIVE.currentSentenceObj = sentence;
+                    L3_ACTIVE.penalty = sentence.penalty;
+                    sourceText = sentence.target;
+                    targetText = sentence.source;
+                    typewriterRow.textContent = "";
+                    const progressPct = getL3Progress('active');
+                    statusContent.textContent = `Type '??' for hint | Penalty: ${sentence.penalty}`;
+                    circulationContent.textContent = `Remaining: ${remaining}/${L3_ACTIVE.total} | Removed: ${L3_ACTIVE.removed}`;
+                    updateProgressBar(progressPct);
+                    phaseIndicator.style.display = 'none';
+                }
+            }
+
+            resetTelemetryState();
+            renderSourceSheetDisplay();
+        }
+
+        // ============================================================
+        // RESET TELEMETRY & RENDER
+        // ============================================================
+        function resetTelemetryState() {
+            currentIndex = 0;
+            isErrorState = false;
+            currentTypedString = "";
+            startTime = null;
+            totalKeystrokes = 0;
+            errorCount = 0;
+            wpmDisplay.textContent = "0";
+            accuracyDisplay.textContent = "100%";
+            if (activeLevel === 1) {
+                typewriterRow.textContent = "⏎ Start typing...";
+            }
+            if (activeLevel === 2) {
+                showTranslation(null);
+                L2_CURRENT_TRANSLATION = null;
+                L2_TRANSLATION_WORD = null;
+                l2_currentItemIndex = -1;
+            }
+            if (activeLevel === 3) {
+                showTranslation(null);
+                L3_CURRENT_TRANSLATION = null;
+                L3_TRANSLATION_SENTENCE = null;
+                if (!sourceText) {
+                    typewriterRow.textContent = "⏎ Start typing...";
+                }
+            }
+        }
+
+        function renderSourceSheetDisplay() {
+            sourceTextContainer.innerHTML = "";
+            if (!sourceText) {
+                const span = document.createElement("span");
+                span.textContent = "No items loaded";
+                span.className = "char-untyped";
+                sourceTextContainer.appendChild(span);
+                return;
+            }
+            for (let i = 0; i < sourceText.length; i++) {
+                const span = document.createElement("span");
+                span.textContent = sourceText[i];
+                span.className = "char-untyped";
+                sourceTextContainer.appendChild(span);
+            }
+            updateSourceSheetStyles();
+        }
+
+        function updateSourceSheetStyles() {
+            const children = sourceTextContainer.children;
+            for (let i = 0; i < children.length; i++) {
+                if (i < currentIndex) {
+                    children[i].className = "char-correct";
+                } else if (i === currentIndex) {
+                    children[i].className = "char-current";
+                } else {
+                    children[i].className = "char-untyped";
+                }
+            }
+        }
+
+        function calculateTelemetryMetrics() {
+            if (totalKeystrokes === 0) return;
+            lineAcc = Math.max(0, ((totalKeystrokes - errorCount) / totalKeystrokes) * 100);
+            accuracyDisplay.textContent = lineAcc.toFixed(1) + "%";
+            if (startTime && currentIndex > 0) {
+                const mins = (new Date() - startTime) / 60000;
+                if (mins > 0) {
+                    lineWpm = (currentIndex / 5) / mins;
+                    wpmDisplay.textContent = Math.round(lineWpm);
+                }
+            }
+        }
+
+        // ============================================================
+        // EVALUATE LINE COMPLETION
+        // ============================================================
+        function evaluateLineCompletionProgress() {
+            calculateTelemetryMetrics();
+
+            if (activeLevel === 1) {
+                if (isL1PhaseComplete()) {
+                    generateNextSequenceLine();
+                } else {
+                    if (l1_currentStreak >= L1_STREAK_TARGET) {
+                        const phaseLabel = (l1_progressionIndex >= L1_SEQUENCE.length - 1) ? 'Final' : `${l1_progressionIndex + 1}`;
+                        const seen = l1_seenItems.size;
+                        const total = l1_phaseItems.size;
+                        statusContent.textContent = `Phase ${phaseLabel} | Seen: ${seen}/${total} | Streak: ${l1_currentStreak}/${L1_STREAK_TARGET} (✅)`;
+                        typewriterRow.innerHTML = `✅ Streak complete! See all items. (${seen}/${total})`;
+                    }
+                    lineTransition = true;
+                    setTimeout(() => {
+                        generateNextSequenceLine();
+                    }, 400);
+                }
+            } else if (activeLevel === 2) {
+                const mode = L2_ACTIVE_MODE;
+                if (mode === 'typing') {
+                    const finalWpm = Math.round(lineWpm);
+                    const gate = L2_TYPING.isSprint ? L2_GATES[2] : L2_GATES[L2_TYPING.phase] || L2_GATES[0];
+                    if (L2_TYPING.isSprint) {
+                        L2_TYPING.completed = true;
+                        levelGraduationActive = true;
+                        typewriterRow.innerHTML = `✅ TYPING MODE COMPLETE! Press [Enter].`;
+                        updatePhaseIndicator(2, 100, true);
+                        updateProgressBar(100);
+                        showTranslation(null);
+                        return;
+                    }
+                    const isPassing = finalWpm >= gate.wpm && lineAcc >= gate.acc;
+                    const attemptedPairs = l2_currentLinePairs;
+                    if (isPassing) {
+                        const targetsToRemove = new Set(attemptedPairs.map(p => p.target));
+                        L2_TYPING.queue = L2_TYPING.queue.filter(w => !targetsToRemove.has(w));
+                        typewriterRow.innerHTML = `✅ Line cleared! (${finalWpm} WPM, ${Math.round(lineAcc)}% Acc)`;
+                        showTranslation(null);
+                        if (L2_TYPING.queue.length === 0) {
+                            if (L2_TYPING.phase < L2_GATES.length - 1) {
+                                L2_TYPING.phase++;
+                                const seg = Math.max(1, Math.ceil(L2_PAIRS.length / 4));
+                                const start = L2_TYPING.phase * seg;
+                                const end = Math.min((L2_TYPING.phase + 1) * seg, L2_PAIRS.length);
+                                const slice = L2_PAIRS.slice(start, end).map(p => p.target);
+                                L2_TYPING.queue = shuffleArray(slice);
+                                L2_TYPING.phaseInitialSize = L2_TYPING.queue.length;
+                            } else {
+                                L2_TYPING.isSprint = true;
+                                L2_TYPING.sprintAttempts = 0;
+                            }
+                        }
+                    } else {
+                        const currentDeck = L2_TYPING.queue.slice(8);
+                        const attemptedTargets = attemptedPairs.map(p => p.target);
+                        const shuffled = shuffleArray(attemptedTargets);
+                        L2_TYPING.queue = shuffleArray([...currentDeck, ...shuffled]);
+                        typewriterRow.innerHTML = `🔄 Retry later (${finalWpm} WPM, ${Math.round(lineAcc)}% Acc)`;
+                        showTranslation(null);
+                    }
+                    lineTransition = true;
+                    setTimeout(() => {
+                        generateNextSequenceLine();
+                    }, 800);
+                } else if (mode === 'passive' || mode === 'active') {
+                    const state = (mode === 'passive') ? L2_PASSIVE : L2_ACTIVE;
+                    if (state.currentWordObj) {
+                        const word = state.currentWordObj;
+                        const idx = state.pool.indexOf(word);
+                        if (idx > -1) {
+                            state.pool.splice(idx, 1);
+                            state.pool.push(word);
+                        }
+                        lineTransition = true;
+                        setTimeout(() => {
+                            generateNextSequenceLine();
+                        }, 400);
+                    }
+                }
+            } else if (activeLevel === 3) {
+                const mode = L3_ACTIVE_MODE;
+                if (mode === 'typing') {
+                    if (L3_TYPING.isSprint) {
+                        L3_TYPING.completed = true;
+                        levelGraduationActive = true;
+                        typewriterRow.innerHTML = `✅ TYPING MODE COMPLETE! Press [Enter].`;
+                        updatePhaseIndicator(2, 100, true);
+                        updateProgressBar(100);
+                        showTranslation(null);
+                        return;
+                    }
+                    if (L3_TYPING.queue.length > 0) {
+                        L3_TYPING.queue.shift();
+                    }
+                    if (L3_TYPING.queue.length === 0) {
+                        if (L3_TYPING.phase < L2_GATES.length - 1) {
+                            L3_TYPING.phase++;
+                            const seg = Math.max(1, Math.ceil(L3_PAIRS.length / 4));
+                            const start = L3_TYPING.phase * seg;
+                            const end = Math.min((L3_TYPING.phase + 1) * seg, L3_PAIRS.length);
+                            const slice = L3_PAIRS.slice(start, end).map(p => p.target);
+                            L3_TYPING.queue = shuffleArray(slice);
+                            L3_TYPING.phaseInitialSize = L3_TYPING.queue.length;
+                        } else {
+                            L3_TYPING.isSprint = true;
+                            L3_TYPING.sprintAttempts = 0;
+                        }
+                    }
+                    typewriterRow.innerHTML = "✅ Sentence done!";
+                    showTranslation(null);
+                    lineTransition = true;
+                    setTimeout(() => {
+                        generateNextSequenceLine();
+                    }, 400);
+                } else if (mode === 'passive' || mode === 'active') {
+                    const state = (mode === 'passive') ? L3_PASSIVE : L3_ACTIVE;
+                    if (state.currentSentenceObj) {
+                        const sentence = state.currentSentenceObj;
+                        const idx = state.pool.indexOf(sentence);
+                        if (idx > -1) {
+                            state.pool.splice(idx, 1);
+                            state.pool.push(sentence);
+                        }
+                        lineTransition = true;
+                        setTimeout(() => {
+                            generateNextSequenceLine();
+                        }, 400);
+                    }
+                }
+            }
+        }
+
+        // ============================================================
+        // KEYBOARD HANDLERS – with dead-key support
+        // ============================================================
+        function handleL1Keydown(e, overrideKey = null) {
+            const key = overrideKey !== null ? overrideKey : e.key;
+            if (key === "Backspace") {
+                e.preventDefault();
+                if (activeLevel === 1) {
+                    if (isErrorState) {
+                        isErrorState = false;
+                        currentTypedString = currentTypedString.slice(0, -1);
+                    } else if (currentIndex > 0) {
+                        const removed = targetText[currentIndex - 1];
+                        currentIndex--;
+                        currentTypedString = currentTypedString.slice(0, -1);
+                        if (removed !== ' ') {
+                            l1_currentStreak = Math.max(0, l1_currentStreak - 1);
+                            streakDisplay.textContent = `${l1_currentStreak}/${L1_STREAK_TARGET}`;
+                            updateProgressBar((l1_currentStreak / L1_STREAK_TARGET) * 100);
+                        }
+                    }
+                    updateSourceSheetStyles();
+                    updateTypewriterDisplay();
+                }
+                return;
+            }
+            if (key.length !== 1) return;
+            if (!startTime) startTime = new Date();
+            const expected = targetText[currentIndex];
+            totalKeystrokes++;
+            if (!isErrorState && key === expected) {
+                currentIndex++;
+                currentTypedString += key;
+                updateTypewriterDisplay();
+                if (activeLevel === 1 && expected !== ' ') {
+                    if (l1_currentStreak < L1_STREAK_TARGET) l1_currentStreak++;
+                    streakDisplay.textContent = `${l1_currentStreak}/${L1_STREAK_TARGET}`;
+                    updateProgressBar((l1_currentStreak / L1_STREAK_TARGET) * 100);
+                    if (isL1PhaseComplete() && l1_progressionIndex === L1_SEQUENCE.length - 1) {
+                        levelGraduationActive = true;
+                        typewriterRow.innerHTML = "✅ LEVEL 1 COMPLETE! Press [Enter].";
+                        return;
+                    }
+                }
+                if (currentIndex >= targetText.length) {
+                    evaluateLineCompletionProgress();
+                    return;
+                }
+            } else {
+                if (!isErrorState) {
+                    if (key !== ' ') {
+                        isErrorState = true;
+                        if (expected !== ' ') errorCount++;
+                        currentTypedString += key;
+                        updateTypewriterDisplay();
+                        if (activeLevel === 1) {
+                            if (expected !== ' ') {
+                                l1_currentStreak = 0;
+                                streakDisplay.textContent = `${l1_currentStreak}/${L1_STREAK_TARGET}`;
+                                updateProgressBar(0);
+                            }
+                        }
+                    }
+                } else return;
+            }
+            updateSourceSheetStyles();
+            calculateTelemetryMetrics();
+        }
+
+        function handleL2Keydown(e, overrideKey = null) {
+            const key = overrideKey !== null ? overrideKey : e.key;
+            const mode = L2_ACTIVE_MODE;
+
+            if (mode === 'typing') {
+                if (key === "Backspace") {
+                    e.preventDefault();
+                    if (l2_currentItemIndex >= 0 && currentIndex <= l2_itemBoundaries[l2_currentItemIndex].start) {
+                        showTranslation(null);
+                        L2_CURRENT_TRANSLATION = null;
+                        L2_TRANSLATION_WORD = null;
+                        l2_currentItemIndex = -1;
+                    }
+                    if (L2_CURRENT_TRANSLATION) {
+                        showTranslation(null);
+                        L2_CURRENT_TRANSLATION = null;
+                        L2_TRANSLATION_WORD = null;
+                    }
+                    if (isErrorState) {
+                        isErrorState = false;
+                        currentTypedString = currentTypedString.slice(0, -1);
+                    } else if (currentIndex > 0) {
+                        const removed = targetText[currentIndex - 1];
+                        currentIndex--;
+                        currentTypedString = currentTypedString.slice(0, -1);
+                        if (l2_currentItemIndex >= 0 && currentIndex <= l2_itemBoundaries[l2_currentItemIndex].start) {
+                            showTranslation(null);
+                            L2_CURRENT_TRANSLATION = null;
+                            L2_TRANSLATION_WORD = null;
+                            l2_currentItemIndex = -1;
+                        }
+                    }
+                    updateSourceSheetStyles();
+                    updateTypewriterDisplay();
+                    return;
+                }
+                if (key === "Enter" || key === "Tab") { e.preventDefault(); return; }
+                if (key.length !== 1) return;
+                if (!startTime) startTime = new Date();
+                const expected = targetText[currentIndex];
+                totalKeystrokes++;
+                if (!isErrorState && key === expected) {
+                    currentIndex++;
+                    currentTypedString += key;
+                    updateTypewriterDisplay();
+                    let completedPair = null;
+                    for (let i = 0; i < l2_itemBoundaries.length; i++) {
+                        const b = l2_itemBoundaries[i];
+                        if (currentIndex === b.end) {
+                            completedPair = b.pair;
+                            l2_currentItemIndex = i;
+                            break;
+                        }
+                    }
+                    if (completedPair) {
+                        L2_CURRENT_TRANSLATION = completedPair.target;
+                        L2_TRANSLATION_WORD = completedPair.source;
+                        showTranslation(completedPair.target);
+                    }
+                    if (currentIndex >= targetText.length) {
+                        evaluateLineCompletionProgress();
+                        return;
+                    }
+                } else {
+                    if (!isErrorState) {
+                        isErrorState = true;
+                        if (expected !== ' ') errorCount++;
+                        currentTypedString += key;
+                        updateTypewriterDisplay();
+                        showTranslation(null);
+                        L2_CURRENT_TRANSLATION = null;
+                        L2_TRANSLATION_WORD = null;
+                    } else return;
+                }
+                updateSourceSheetStyles();
+                calculateTelemetryMetrics();
+                return;
+            }
+
+            // Recall modes
+            const state = (mode === 'passive') ? L2_PASSIVE : L2_ACTIVE;
+
+            if (key !== "+" && key !== "-") {
+                if (l2_priorityTimer) {
+                    clearTimeout(l2_priorityTimer);
+                    l2_priorityTimer = null;
+                }
+            }
+
+            // Expand detection
+            if (key === '>') {
+                if (!state.waitingForExclusion && currentTypedString === "") {
+                    if (l2_expandTimer) {
+                        clearTimeout(l2_expandTimer);
+                        l2_expandTimer = null;
+                        if (state.extraSlots < 20 && state.reservoir.length > 0) {
+                            state.extraSlots++;
+                            refillL2Pool(mode);
+                            updateRecallCirculation(mode);
+                            typewriterRow.innerHTML = `🔽 Deck expanded (20+${state.extraSlots})`;
+                            setTimeout(() => {
+                                if (mode === 'passive') {
+                                    typewriterRow.textContent = state.currentWordObj ? state.currentWordObj.source : "";
+                                } else {
+                                    typewriterRow.textContent = state.currentWordObj ? state.currentWordObj.target : "";
+                                }
+                            }, 500);
+                        } else {
+                            typewriterRow.innerHTML = `⚠️ ${state.extraSlots >= 20 ? 'Max extra slots reached' : 'No more words to add'}`;
+                            setTimeout(() => {
+                                if (mode === 'passive') {
+                                    typewriterRow.textContent = state.currentWordObj ? state.currentWordObj.source : "";
+                                } else {
+                                    typewriterRow.textContent = state.currentWordObj ? state.currentWordObj.target : "";
+                                }
+                            }, 500);
+                        }
+                        e.preventDefault();
+                        return;
+                    } else {
+                        l2_expandTimer = setTimeout(() => {
+                            l2_expandTimer = null;
+                        }, 500);
+                        e.preventDefault();
+                        return;
+                    }
+                }
+            }
+
+            if (key === "+") {
+                e.preventDefault();
+                if (l2_priorityTimer) { clearTimeout(l2_priorityTimer); l2_priorityTimer = null; }
+                if (!state.waitingForExclusion && state.currentWordObj) {
+                    if (state.currentWordObj.priority < 5) {
+                        state.currentWordObj.priority++;
+                        state.priority = state.currentWordObj.priority;
+                        updateL2RecallColor(state);
+                        updateL2RecallStatus(state);
+                        typewriterRow.innerHTML = `🔺 Priority +1 (now ${state.currentWordObj.priority})`;
+                        l2_priorityTimer = setTimeout(() => {
+                            l2_priorityTimer = null;
+                            if (currentTypedString === "") {
+                                if (mode === 'passive') {
+                                    typewriterRow.textContent = state.currentWordObj.source;
+                                } else {
+                                    typewriterRow.textContent = state.currentWordObj.target;
+                                }
+                            }
+                        }, 500);
+                    } else {
+                        typewriterRow.innerHTML = `⚠️ Priority already max (5)`;
+                        l2_priorityTimer = setTimeout(() => {
+                            l2_priorityTimer = null;
+                            if (currentTypedString === "") {
+                                if (mode === 'passive') {
+                                    typewriterRow.textContent = state.currentWordObj.source;
+                                } else {
+                                    typewriterRow.textContent = state.currentWordObj.target;
+                                }
+                            }
+                        }, 300);
+                    }
+                }
+                return;
+            }
+
+            if (key === "-") {
+                e.preventDefault();
+                if (l2_priorityTimer) { clearTimeout(l2_priorityTimer); l2_priorityTimer = null; }
+                if (!state.waitingForExclusion && state.currentWordObj) {
+                    if (state.currentWordObj.priority > 0) {
+                        state.currentWordObj.priority--;
+                        state.priority = state.currentWordObj.priority;
+                        updateL2RecallColor(state);
+                        updateL2RecallStatus(state);
+                        typewriterRow.innerHTML = `🔻 Priority -1 (now ${state.currentWordObj.priority})`;
+                        l2_priorityTimer = setTimeout(() => {
+                            l2_priorityTimer = null;
+                            if (currentTypedString === "") {
+                                if (mode === 'passive') {
+                                    typewriterRow.textContent = state.currentWordObj.source;
+                                } else {
+                                    typewriterRow.textContent = state.currentWordObj.target;
+                                }
+                            }
+                        }, 500);
+                    } else {
+                        typewriterRow.innerHTML = `⚠️ Priority already minimum (0)`;
+                        l2_priorityTimer = setTimeout(() => {
+                            l2_priorityTimer = null;
+                            if (currentTypedString === "") {
+                                if (mode === 'passive') {
+                                    typewriterRow.textContent = state.currentWordObj.source;
+                                } else {
+                                    typewriterRow.textContent = state.currentWordObj.target;
+                                }
+                            }
+                        }, 300);
+                    }
+                }
+                return;
+            }
+
+            if (l2_expandTimer) {
+                clearTimeout(l2_expandTimer);
+                l2_expandTimer = null;
+            }
+
+            if (key === "Backspace") {
+                e.preventDefault();
+                if (state.waitingForExclusion) {
+                    state.waitingForExclusion = false;
+                    if (state.exclusionTimer) {
+                        clearTimeout(state.exclusionTimer);
+                        state.exclusionTimer = null;
+                    }
+                    generateNextSequenceLine();
+                    return;
+                }
+                state.questionCount = 0;
+                if (isErrorState) {
+                    isErrorState = false;
+                    currentTypedString = currentTypedString.slice(0, -1);
+                } else if (currentIndex > 0) {
+                    currentIndex--;
+                    currentTypedString = currentTypedString.slice(0, -1);
+                }
+                updateSourceSheetStyles();
+                updateTypewriterDisplay();
+                return;
+            }
+
+            if (key === "Enter" || key === "Tab") { e.preventDefault(); return; }
+            if (key.length !== 1) return;
+
+            if (key === "?" && currentIndex === 0 && !state.waitingForExclusion) {
+                state.questionCount++;
+                if (state.questionCount === 1) {
+                    currentTypedString = "?";
+                    typewriterRow.textContent = "?";
+                    return;
+                } else if (state.questionCount === 2) {
+                    if (state.currentWordObj) {
+                        const hintText = (mode === 'passive') ? state.currentWordObj.target : state.currentWordObj.source;
+                        typewriterRow.innerHTML = `💡 HINT: <strong style='color:var(--accent-blue);'>${hintText}</strong> | Type the word...`;
+                        statusContent.textContent = `Hint shown (priority unchanged)`;
+                        state.questionCount = 0;
+                        currentTypedString = "";
+                        updateSourceSheetStyles();
+                        return;
+                    }
+                }
+                return;
+            }
+
+            if (state.questionCount > 0 && key !== "?") {
+                state.questionCount = 0;
+                if (currentTypedString === "?") currentTypedString = "";
+            }
+
+            if (state.waitingForExclusion) {
+                if (key === ".") {
+                    if (currentTypedString === "") {
+                        currentTypedString = ".";
+                        typewriterRow.innerHTML = `✅ ${targetText} | Press '.' to exclude`;
+                        return;
+                    } else if (currentTypedString === ".") {
+                        if (state.currentWordObj) {
+                            const idx = state.pool.indexOf(state.currentWordObj);
+                            if (idx > -1) state.pool.splice(idx, 1);
+                            state.removed++;
+                            if (state.extraSlots > 0) state.extraSlots--;
+                            const remaining = getL2Remaining(mode);
+                            const progressPct = getL2Progress(mode);
+                            updateRecallCirculation(mode);
+                            updateProgressBar(progressPct);
+                            typewriterRow.innerHTML = `🗑️ Excluded! (${remaining} left)`;
+                            if (state.exclusionTimer) {
+                                clearTimeout(state.exclusionTimer);
+                                state.exclusionTimer = null;
+                            }
+                            state.waitingForExclusion = false;
+                            setTimeout(generateNextSequenceLine, 500);
+                        }
+                        return;
+                    }
+                }
+                state.waitingForExclusion = false;
+                if (state.exclusionTimer) {
+                    clearTimeout(state.exclusionTimer);
+                    state.exclusionTimer = null;
+                }
+                generateNextSequenceLine();
+                return;
+            }
+
+            if (currentTypedString === "?" && key !== "?") {
+                currentTypedString = "";
+                errorCount++;
+                totalKeystrokes++;
+            }
+
+            if (!startTime) startTime = new Date();
+
+            const expected = targetText[currentIndex];
+            totalKeystrokes++;
+
+            if (!isErrorState && key === expected) {
+                currentIndex++;
+                currentTypedString += key;
+                updateTypewriterDisplay();
+
+                if (currentIndex >= targetText.length) {
+                    const word = state.currentWordObj;
+                    if (word) {
+                        const idx = state.pool.indexOf(word);
+                        if (idx > -1) {
+                            state.pool.splice(idx, 1);
+                            state.pool.push(word);
+                        }
+                        state.waitingForExclusion = true;
+                        currentTypedString = "";
+                        state.questionCount = 0;
+                        typewriterRow.innerHTML = `✅ ${targetText} | Press '..' to exclude`;
+                        if (state.exclusionTimer) clearTimeout(state.exclusionTimer);
+                        state.exclusionTimer = setTimeout(() => {
+                            state.waitingForExclusion = false;
+                            state.exclusionTimer = null;
+                            generateNextSequenceLine();
+                        }, 800);
+                    }
+                    updateSourceSheetStyles();
+                    calculateTelemetryMetrics();
+                    return;
+                }
+            } else {
+                if (!isErrorState) {
+                    isErrorState = true;
+                    if (expected !== ' ') errorCount++;
+                    currentTypedString += key;
+                    updateTypewriterDisplay();
+                } else return;
+            }
+            updateSourceSheetStyles();
+            calculateTelemetryMetrics();
+        }
+
+        function handleL3Keydown(e, overrideKey = null) {
+            const key = overrideKey !== null ? overrideKey : e.key;
+            const mode = L3_ACTIVE_MODE;
+
+            if (mode === 'typing') {
+                if (key === "Backspace") {
+                    e.preventDefault();
+                    if (L3_CURRENT_TRANSLATION) {
+                        showTranslation(null);
+                        L3_CURRENT_TRANSLATION = null;
+                        L3_TRANSLATION_SENTENCE = null;
+                    }
+                    if (isErrorState) {
+                        isErrorState = false;
+                        currentTypedString = currentTypedString.slice(0, -1);
+                    } else if (currentIndex > 0) {
+                        const removed = targetText[currentIndex - 1];
+                        currentIndex--;
+                        currentTypedString = currentTypedString.slice(0, -1);
+                    }
+                    updateSourceSheetStyles();
+                    updateTypewriterDisplay();
+                    return;
+                }
+                if (key === "Enter" || key === "Tab") { e.preventDefault(); return; }
+                if (key.length !== 1) return;
+                if (!startTime) startTime = new Date();
+                const expected = targetText[currentIndex];
+                totalKeystrokes++;
+                if (!isErrorState && key === expected) {
+                    currentIndex++;
+                    currentTypedString += key;
+                    updateTypewriterDisplay();
+                    if (currentIndex >= targetText.length) {
+                        if (l3_currentPair) {
+                            L3_CURRENT_TRANSLATION = l3_currentPair.target;
+                            L3_TRANSLATION_SENTENCE = l3_currentPair.source;
+                            showTranslation(l3_currentPair.target);
+                        }
+                        evaluateLineCompletionProgress();
+                        return;
+                    }
+                } else {
+                    if (!isErrorState) {
+                        isErrorState = true;
+                        if (expected !== ' ') errorCount++;
+                        currentTypedString += key;
+                        updateTypewriterDisplay();
+                        showTranslation(null);
+                        L3_CURRENT_TRANSLATION = null;
+                        L3_TRANSLATION_SENTENCE = null;
+                    } else return;
+                }
+                updateSourceSheetStyles();
+                calculateTelemetryMetrics();
+                return;
+            }
+
+            const state = (mode === 'passive') ? L3_PASSIVE : L3_ACTIVE;
+
+            if (key === "Backspace") {
+                e.preventDefault();
+                if (state.waitingForExclusion) {
+                    state.waitingForExclusion = false;
+                    if (state.exclusionTimer) {
+                        clearTimeout(state.exclusionTimer);
+                        state.exclusionTimer = null;
+                    }
+                    generateNextSequenceLine();
+                    return;
+                }
+                state.questionCount = 0;
+                if (isErrorState) {
+                    isErrorState = false;
+                    currentTypedString = currentTypedString.slice(0, -1);
+                } else if (currentIndex > 0) {
+                    currentIndex--;
+                    currentTypedString = currentTypedString.slice(0, -1);
+                }
+                updateSourceSheetStyles();
+                updateTypewriterDisplay();
+                return;
+            }
+
+            if (key === "Enter" || key === "Tab") { e.preventDefault(); return; }
+            if (key.length !== 1) return;
+
+            if (key === "?" && currentIndex === 0 && !state.waitingForExclusion) {
+                state.questionCount++;
+                if (state.questionCount === 1) {
+                    currentTypedString = "?";
+                    typewriterRow.textContent = "?";
+                    return;
+                } else if (state.questionCount === 2) {
+                    if (state.currentSentenceObj) {
+                        state.currentSentenceObj.penalty++;
+                        state.penalty = state.currentSentenceObj.penalty;
+                        const hintText = (mode === 'passive') ? state.currentSentenceObj.target : state.currentSentenceObj.source;
+                        typewriterRow.innerHTML = `💡 HINT: <strong style='color:var(--accent-blue);'>${hintText}</strong> | Type the sentence...`;
+                        statusContent.textContent = `Hint used! Penalty: ${state.penalty}`;
+                        state.questionCount = 0;
+                        currentTypedString = "";
+                        errorCount += 2;
+                        updateSourceSheetStyles();
+                        return;
+                    }
+                }
+                return;
+            }
+
+            if (state.questionCount > 0 && key !== "?") {
+                state.questionCount = 0;
+                if (currentTypedString === "?") currentTypedString = "";
+            }
+
+            if (state.waitingForExclusion) {
+                if (key === ".") {
+                    if (currentTypedString === "") {
+                        currentTypedString = ".";
+                        typewriterRow.innerHTML = `✅ ${targetText} | Press '.' to exclude`;
+                        return;
+                    } else if (currentTypedString === ".") {
+                        if (state.currentSentenceObj) {
+                            const idx = state.pool.indexOf(state.currentSentenceObj);
+                            if (idx > -1) state.pool.splice(idx, 1);
+                            state.removed++;
+                            if (mode === 'passive') {
+                                refillL3Pool('passive');
+                                const remaining = getL3Remaining('passive');
+                                const progressPct = getL3Progress('passive');
+                                circulationContent.textContent = `Remaining: ${remaining}/${state.total} | Removed: ${state.removed}`;
+                                updateProgressBar(progressPct);
+                            } else {
+                                refillL3Pool('active');
+                                const remaining = getL3Remaining('active');
+                                const progressPct = getL3Progress('active');
+                                circulationContent.textContent = `Remaining: ${remaining}/${state.total} | Removed: ${state.removed}`;
+                                updateProgressBar(progressPct);
+                            }
+                            typewriterRow.innerHTML = `🗑️ Excluded! (${getL3Remaining(mode)} left)`;
+                            if (state.exclusionTimer) {
+                                clearTimeout(state.exclusionTimer);
+                                state.exclusionTimer = null;
+                            }
+                            state.waitingForExclusion = false;
+                            setTimeout(generateNextSequenceLine, 500);
+                        }
+                        return;
+                    }
+                }
+                state.waitingForExclusion = false;
+                if (state.exclusionTimer) {
+                    clearTimeout(state.exclusionTimer);
+                    state.exclusionTimer = null;
+                }
+                generateNextSequenceLine();
+                return;
+            }
+
+            if (currentTypedString === "?" && key !== "?") {
+                currentTypedString = "";
+                errorCount++;
+                totalKeystrokes++;
+            }
+
+            if (!startTime) startTime = new Date();
+
+            const expected = targetText[currentIndex];
+            totalKeystrokes++;
+
+            if (!isErrorState && key === expected) {
+                currentIndex++;
+                currentTypedString += key;
+                updateTypewriterDisplay();
+
+                if (currentIndex >= targetText.length) {
+                    const sentence = state.currentSentenceObj;
+                    if (sentence) {
+                        if (sentence.penalty > 0) sentence.penalty--;
+                        const idx = state.pool.indexOf(sentence);
+                        if (idx > -1) {
+                            state.pool.splice(idx, 1);
+                            state.pool.push(sentence);
+                        }
+                        state.waitingForExclusion = true;
+                        currentTypedString = "";
+                        state.questionCount = 0;
+                        typewriterRow.innerHTML = `✅ ${targetText} | Press '..' to exclude`;
+                        if (state.exclusionTimer) clearTimeout(state.exclusionTimer);
+                        state.exclusionTimer = setTimeout(() => {
+                            state.waitingForExclusion = false;
+                            state.exclusionTimer = null;
+                            generateNextSequenceLine();
+                        }, 800);
+                    }
+                    updateSourceSheetStyles();
+                    calculateTelemetryMetrics();
+                    return;
+                }
+            } else {
+                if (!isErrorState) {
+                    isErrorState = true;
+                    if (expected !== ' ') errorCount++;
+                    currentTypedString += key;
+                    updateTypewriterDisplay();
+                } else return;
+            }
+            updateSourceSheetStyles();
+            calculateTelemetryMetrics();
+        }
+
+        // ============================================================
+        // GLOBAL KEYDOWN EVENT – with context‑aware dead‑key bypass
+        // ============================================================
+        window.addEventListener("keydown", function (e) {
+            if (lineTransition) {
+                e.preventDefault();
+                return;
+            }
+
+            const key = e.key;
+
+            if (key === "Backspace" && pendingDeadKey) {
+                pendingDeadKey = null;
+                e.preventDefault();
+                return;
+            }
+
+            if (pendingDeadKey) {
+                if (key.length === 1 && key.match(/[a-zA-Z]/)) {
+                    const combo = DEAD_KEY_MAP[pendingDeadKey];
+                    if (combo && combo[key]) {
+                        const combinedChar = combo[key];
+                        pendingDeadKey = null;
+                        e.preventDefault();
+                        if (activeLevel === 2) {
+                            handleL2Keydown(e, combinedChar);
+                        } else if (activeLevel === 3) {
+                            handleL3Keydown(e, combinedChar);
+                        } else if (activeLevel === 1) {
+                            handleL1Keydown(e, combinedChar);
+                        }
+                        return;
+                    } else {
+                        pendingDeadKey = null;
+                    }
+                } else if (DEAD_KEYS.includes(key)) {
+                    const deadChar = pendingDeadKey;
+                    pendingDeadKey = null;
+                    e.preventDefault();
+                    if (activeLevel === 2) {
+                        handleL2Keydown(e, deadChar);
+                    } else if (activeLevel === 3) {
+                        handleL3Keydown(e, deadChar);
+                    } else if (activeLevel === 1) {
+                        handleL1Keydown(e, deadChar);
+                    }
+                    pendingDeadKey = key;
+                    e.preventDefault();
+                    return;
+                } else {
+                    pendingDeadKey = null;
+                }
+            }
+
+            // Context‑aware dead‑key bypass
+            if (DEAD_KEYS.includes(key) && !pendingDeadKey) {
+                if (currentIndex < targetText.length && targetText[currentIndex] === key) {
+                    // Expected char is exactly this dead key – treat as literal
+                    // Fall through to normal processing
+                } else {
+                    pendingDeadKey = key;
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            if (e.key === "Enter" && levelGraduationActive) {
+                if (activeLevel === 2) {
+                    const typingDone = L2_TYPING.completed;
+                    const passiveDone = L2_PASSIVE.completed;
+                    const activeDone = L2_ACTIVE.completed;
+                    if (typingDone && passiveDone && activeDone) {
+                        const next = activeLevel + 1 > 3 ? 1 : activeLevel + 1;
+                        initializeEngineSession(next);
+                        return;
+                    }
+                    if (typingDone && !passiveDone) {
+                        radioL2Passive.checked = true;
+                        L2_ACTIVE_MODE = 'passive';
+                        levelGraduationActive = false;
+                        generateNextSequenceLine();
+                        return;
+                    }
+                    if (typingDone && passiveDone && !activeDone) {
+                        radioL2Active.checked = true;
+                        L2_ACTIVE_MODE = 'active';
+                        levelGraduationActive = false;
+                        generateNextSequenceLine();
+                        return;
+                    }
+                    if (!typingDone) {
+                        levelGraduationActive = false;
+                        generateNextSequenceLine();
+                        return;
+                    }
+                    levelGraduationActive = false;
+                    generateNextSequenceLine();
+                    return;
+                } else if (activeLevel === 3) {
+                    const typingDone = L3_TYPING.completed;
+                    const passiveDone = L3_PASSIVE.completed;
+                    const activeDone = L3_ACTIVE.completed;
+                    if (typingDone && passiveDone && activeDone) {
+                        const next = activeLevel + 1 > 3 ? 1 : activeLevel + 1;
+                        initializeEngineSession(next);
+                        return;
+                    }
+                    if (typingDone && !passiveDone) {
+                        radioL3Passive.checked = true;
+                        L3_ACTIVE_MODE = 'passive';
+                        levelGraduationActive = false;
+                        generateNextSequenceLine();
+                        return;
+                    }
+                    if (typingDone && passiveDone && !activeDone) {
+                        radioL3Active.checked = true;
+                        L3_ACTIVE_MODE = 'active';
+                        levelGraduationActive = false;
+                        generateNextSequenceLine();
+                        return;
+                    }
+                    if (!typingDone) {
+                        levelGraduationActive = false;
+                        generateNextSequenceLine();
+                        return;
+                    }
+                    levelGraduationActive = false;
+                    generateNextSequenceLine();
+                    return;
+                }
+                const next = activeLevel + 1 > 3 ? 1 : activeLevel + 1;
+                initializeEngineSession(next);
+                return;
+            }
+
+            if (e.key === "Tab" || e.key === "Enter") { e.preventDefault(); return; }
+
+            if (activeLevel === 2) {
+                handleL2Keydown(e);
+            } else if (activeLevel === 3) {
+                handleL3Keydown(e);
+            } else if (activeLevel === 1) {
+                handleL1Keydown(e);
+            }
+        });
+
+        // ============================================================
+        // RADIO BUTTON EVENTS
+        // ============================================================
+        radioL2Typing.addEventListener("change", function () {
+            if (activeLevel !== 2) return;
+            if (this.checked) {
+                L2_ACTIVE_MODE = 'typing';
+                isErrorState = false; currentTypedString = ""; currentIndex = 0; startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; wpmDisplay.textContent = "0"; accuracyDisplay.textContent = "100%"; showTranslation(null); L2_CURRENT_TRANSLATION = null; L2_TRANSLATION_WORD = null;
+                sourceTextContainer.classList.remove('recall-mode');
+                sourceTextContainer.style.color = '';
+                if (l2_priorityTimer) { clearTimeout(l2_priorityTimer); l2_priorityTimer = null; }
+                if (l2_expandTimer) { clearTimeout(l2_expandTimer); l2_expandTimer = null; }
+                if (L2_TYPING.queue.length === 0 && L2_PAIRS.length > 0) {
+                    const words = L2_PAIRS.map(p => p.target);
+                    L2_TYPING.queue = shuffleArray(words.slice());
+                    L2_TYPING.phaseInitialSize = L2_TYPING.queue.length;
+                    L2_TYPING.phase = 0; L2_TYPING.isSprint = false; L2_TYPING.completed = false;
+                }
+                generateNextSequenceLine();
+            }
+        });
+
+        radioL2Passive.addEventListener("change", function () {
+            if (activeLevel !== 2) return;
+            if (this.checked) {
+                L2_ACTIVE_MODE = 'passive';
+                isErrorState = false; currentTypedString = ""; currentIndex = 0; startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; wpmDisplay.textContent = "0"; accuracyDisplay.textContent = "100%"; showTranslation(null); L2_CURRENT_TRANSLATION = null; L2_TRANSLATION_WORD = null;
+                if (l2_priorityTimer) { clearTimeout(l2_priorityTimer); l2_priorityTimer = null; }
+                if (l2_expandTimer) { clearTimeout(l2_expandTimer); l2_expandTimer = null; }
+                generateNextSequenceLine();
+            }
+        });
+
+        radioL2Active.addEventListener("change", function () {
+            if (activeLevel !== 2) return;
+            if (this.checked) {
+                L2_ACTIVE_MODE = 'active';
+                isErrorState = false; currentTypedString = ""; currentIndex = 0; startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; wpmDisplay.textContent = "0"; accuracyDisplay.textContent = "100%"; showTranslation(null); L2_CURRENT_TRANSLATION = null; L2_TRANSLATION_WORD = null;
+                if (l2_priorityTimer) { clearTimeout(l2_priorityTimer); l2_priorityTimer = null; }
+                if (l2_expandTimer) { clearTimeout(l2_expandTimer); l2_expandTimer = null; }
+                generateNextSequenceLine();
+            }
+        });
+
+        radioL3Typing.addEventListener("change", function () {
+            if (activeLevel !== 3) return;
+            if (this.checked) {
+                L3_ACTIVE_MODE = 'typing';
+                isErrorState = false; currentTypedString = ""; currentIndex = 0; startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; wpmDisplay.textContent = "0"; accuracyDisplay.textContent = "100%"; showTranslation(null); L3_CURRENT_TRANSLATION = null; L3_TRANSLATION_SENTENCE = null;
+                if (L3_TYPING.queue.length === 0 && L3_PAIRS.length > 0) {
+                    const sentences = L3_PAIRS.map(p => p.target);
+                    L3_TYPING.queue = shuffleArray(sentences.slice());
+                    L3_TYPING.phaseInitialSize = L3_TYPING.queue.length;
+                    L3_TYPING.phase = 0; L3_TYPING.isSprint = false; L3_TYPING.completed = false;
+                }
+                generateNextSequenceLine();
+            }
+        });
+
+        radioL3Passive.addEventListener("change", function () {
+            if (activeLevel !== 3) return;
+            if (this.checked) {
+                L3_ACTIVE_MODE = 'passive';
+                isErrorState = false; currentTypedString = ""; currentIndex = 0; startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; wpmDisplay.textContent = "0"; accuracyDisplay.textContent = "100%"; showTranslation(null); L3_CURRENT_TRANSLATION = null; L3_TRANSLATION_SENTENCE = null;
+                generateNextSequenceLine();
+            }
+        });
+
+        radioL3Active.addEventListener("change", function () {
+            if (activeLevel !== 3) return;
+            if (this.checked) {
+                L3_ACTIVE_MODE = 'active';
+                isErrorState = false; currentTypedString = ""; currentIndex = 0; startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; wpmDisplay.textContent = "0"; accuracyDisplay.textContent = "100%"; showTranslation(null); L3_CURRENT_TRANSLATION = null; L3_TRANSLATION_SENTENCE = null;
+                generateNextSequenceLine();
+            }
+        });
+
+        levelSelect.addEventListener("change", function () {
+            initializeEngineSession(this.value);
+        });
+
+        // ============================================================
+        // CONTEXT-AWARE STARTUP
+        // ============================================================
+        (async function initTypeItContext() {
+            const typeitSource = localStorage.getItem('typeit_source') || 'direct';
+
+            // --- Filter level dropdown based on launch context ---
+            if (typeitSource === 'matchPairs') {
+                // Show Level 1 (auto-load) and Level 2 (IndexedDB). Hide Level 3.
+                const opt3 = levelSelect.querySelector('option[value="3"]');
+                if (opt3) opt3.remove();
+                levelSelect.querySelector('option[value="1"]').textContent = 'Level 1: Typing Practice';
+                levelSelect.querySelector('option[value="2"]').textContent = 'Level 2: Current Deck (Words)';
+            } else if (typeitSource === 'dialoguePlayer') {
+                // Show Level 1 (auto-load) and Level 3 (dialogue). Hide Level 2.
+                const opt2 = levelSelect.querySelector('option[value="2"]');
+                if (opt2) opt2.remove();
+                levelSelect.querySelector('option[value="1"]').textContent = 'Level 1: Typing Practice';
+                levelSelect.querySelector('option[value="3"]').textContent = 'Level 3: Current Dialogue';
+            }
+            // else: direct access – all three levels visible as-is
+
+            // --- Auto-load Level 1 data (always) ---
+            await autoLoadLevel1();
+
+            // --- Pre-load Level 2 or Level 3 data so it is ready on first switch ---
+            if (typeitSource === 'matchPairs') {
+                await autoLoadLevel2FromIndexedDB();
+            } else if (typeitSource === 'dialoguePlayer') {
+                autoLoadLevel3FromDialogue();
+            }
+
+            // --- Start the engine on Level 1 ---
+            initializeEngineSession(1);
+        })();
+    </script>
+</body>
+
+</html>
