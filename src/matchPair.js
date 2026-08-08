@@ -12,6 +12,16 @@ if (topic == 0) {
   keyIndex = "subjectIndex";
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if (user?.TypingEnable === 'Y') {
+    const typeItIcon = document.getElementById('typeItIcon');
+    if (typeItIcon) typeItIcon.style.display = 'block';
+  }
+});
+
 // replace screen function
 
 function replaceStateWithHistory(page) {
@@ -23,15 +33,15 @@ function replaceStateWithHistory(page) {
 // icon back press function
 
 const backButton = document.getElementById('backButton');
-backButton.onclick = function() {
+backButton.onclick = function () {
   // window.history.back();
   window.location.href = 'test.html';
 };
 
 const openRequest = indexedDB.open(dbName, dbVersion);
 let db; // Reference to the IndexedDB database
-var source = []; 
-var target = []; 
+var source = [];
+var target = [];
 var ansId = null;
 var questionId = null;
 var select = 0; // 0-none , 1-left , 2-right
@@ -42,8 +52,8 @@ var subject = parseInt(JSON.parse(localStorage.getItem("source-language") || "{}
 var targetSubjectId = parseInt(JSON.parse(localStorage.getItem("target-language") || "{}")?.id || 1);
 var topic = parseInt(localStorage.getItem("topic"));
 
-const color = ['#EEE685',"#9F9F5F","#808000","#48D1CC","#C0D9D9","#AFEEEE","#00B2EE","#A4D3EE","#D8BFD8","#ECC8EC",
-"#6f42c1","#fd7e14","#ffc107","#7F5A58","#3C565B","#808000","#FFFFCC","#FFDEAD","#9F8C76","#F98B88"];
+const color = ['#EEE685', "#9F9F5F", "#808000", "#48D1CC", "#C0D9D9", "#AFEEEE", "#00B2EE", "#A4D3EE", "#D8BFD8", "#ECC8EC",
+  "#6f42c1", "#fd7e14", "#ffc107", "#7F5A58", "#3C565B", "#808000", "#FFFFCC", "#FFDEAD", "#9F8C76", "#F98B88"];
 var index = 0;
 
 var indexedDB =
@@ -60,10 +70,10 @@ openRequest.onupgradeneeded = (event) => {
   if (!db.objectStoreNames.contains(storeName)) {
     db.createObjectStore(storeName, { keyPath: "id" });
     // Create a compound index for subjectId and topicId
-    if(topic==0){
+    if (topic == 0) {
       objectStore.createIndex(keyIndex, ["sourceSubjectId", "targetSubjectId"]);
-    }else{
-      objectStore.createIndex(keyIndex, ["sourceSubjectId","targetSubjectId", "topicId"]);
+    } else {
+      objectStore.createIndex(keyIndex, ["sourceSubjectId", "targetSubjectId", "topicId"]);
     }
   }
 };
@@ -119,20 +129,20 @@ function getData() {
   // const favoritesTable = document.getElementById("favoritesTable");
   // const favoritesTbody = favoritesTable.querySelector("tbody");
 
-   // Specify the subjectId and topicId you want to search for
-   var subjectId = subject; // Change this to the subjectId you want to search for
-   var topicId = topic;   // Change this to the topicId you want to search for
+  // Specify the subjectId and topicId you want to search for
+  var subjectId = subject; // Change this to the subjectId you want to search for
+  var topicId = topic;   // Change this to the topicId you want to search for
 
-   // Create a range for the compound index
-   if(topic==0){
-    var range = IDBKeyRange.only([subjectId,targetSubjectId]);
-  }else{
-    var range = IDBKeyRange.only([subjectId,targetSubjectId, topicId]);
+  // Create a range for the compound index
+  if (topic == 0) {
+    var range = IDBKeyRange.only([subjectId, targetSubjectId]);
+  } else {
+    var range = IDBKeyRange.only([subjectId, targetSubjectId, topicId]);
   }
-   // Use the compound index for the search
-   var request = objectStore.index(keyIndex);
+  // Use the compound index for the search
+  var request = objectStore.index(keyIndex);
 
-   request.getAll(range).onsuccess = (event) => {
+  request.getAll(range).onsuccess = (event) => {
     var allData = event.target.result;
 
     console.log(allData);
@@ -164,7 +174,7 @@ function getData() {
       const tbody = dataTable.querySelector("tbody");
       tbody.innerHTML = "";
 
-      if(favData.length==0){
+      if (favData.length == 0) {
         dataTable.style.display = 'none';
         suggestion.style.display = 'block';
       }
@@ -182,16 +192,16 @@ function appendData(data1, data2) {
 
   const td1 = document.createElement("td");
   td1.setAttribute("data-id", data1.id);
-  td1.style.backgroundColor = "white"; 
-  td1.style.cursor = "pointer"; 
+  td1.style.backgroundColor = "white";
+  td1.style.cursor = "pointer";
   td1.textContent = data1.value;
 
   console.log(td1);
 
   const td2 = document.createElement("td");
   td2.setAttribute("data-id", data2.id);
-  td2.style.backgroundColor = "white"; 
-  td2.style.cursor = "pointer"; 
+  td2.style.backgroundColor = "white";
+  td2.style.cursor = "pointer";
   td2.textContent = data2.value;
 
   // Add an onclick event handler to the first td element
