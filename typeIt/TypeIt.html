@@ -2706,9 +2706,7 @@
 
             // --- Start the engine on Level 1 ---
             initializeEngineSession(1);
-
-            // Auto-focus mobile input after startup
-            setTimeout(focusMobileInput, 400);
+            // Note: mobile keyboard opens only when user taps the grey typing area
         })();
 
         // ============================================================
@@ -2720,17 +2718,7 @@
             try { mobileKeyCapture.focus(); } catch(e) {}
         }
 
-        // Re-focus after blur ONLY if focus didn't move to an interactive element
-        mobileKeyCapture.addEventListener('blur', function() {
-            setTimeout(function() {
-                const active = document.activeElement;
-                // Don't steal focus from select/button/input/label
-                if (active && (active.tagName === 'SELECT' || active.tagName === 'BUTTON' ||
-                    (active.tagName === 'INPUT' && active.id !== 'mobileKeyCapture') ||
-                    active.tagName === 'LABEL')) return;
-                focusMobileInput();
-            }, 150);
-        });
+        // Keyboard opens ONLY when user taps the grey typing area (see onclick on display-sheet / typewriterRow)
 
         // Backspace and Enter are reliable via keydown even on mobile
         mobileKeyCapture.addEventListener('keydown', function(e) {
