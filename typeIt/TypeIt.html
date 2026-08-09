@@ -444,12 +444,17 @@
         </div>
     </div>
 
-    <div class="display-sheet">
+    <div class="display-sheet" onclick="focusMobileInput()">
         <div id="sourceTextContainer" class="text-line"></div>
     </div>
-    <div id="typewriterRow" class="typewriter-row">⏎ Start typing...</div>
+    <div id="typewriterRow" class="typewriter-row" onclick="focusMobileInput()">⏎ Start typing...</div>
     <div id="translationRow" class="translation-row" style="opacity:0;"><span class="label">→</span><span class="source"
             id="translationText"></span></div>
+
+    <!-- Hidden input to capture mobile virtual keyboard -->
+    <input id="mobileKeyCapture" type="text"
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        style="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0.01;z-index:999;border:none;outline:none;padding:0;color:transparent;background:transparent;">
 
     <script>
         // ============================================================
@@ -2699,7 +2704,86 @@
 
             // --- Start the engine on Level 1 ---
             initializeEngineSession(1);
+
+            // Auto-focus mobile input after startup
+            setTimeout(focusMobileInput, 400);
         })();
+
+        // ============================================================
+        // MOBILE KEYBOARD SUPPORT
+        // ============================================================
+        const mobileKeyCapture = document.getElementById('mobileKeyCapture');
+
+        function focusMobileInput() {
+            try { mobileKeyCapture.focus(); } catch(e) {}
+        }
+
+        // Re-focus after blur (keep keyboard available)
+        mobileKeyCapture.addEventListener('blur', function() {
+            setTimeout(focusMobileInput, 150);
+        });
+
+        // Backspace and Enter are reliable via keydown even on mobile
+        mobileKeyCapture.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                routeMobileKey('Backspace');
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                // Use the main window handler for graduation logic
+                window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+            }
+        });
+
+        // Regular characters: use input event (most reliable on all mobile keyboards)
+        mobileKeyCapture.addEventListener('input', function() {
+            const val = this.value;
+            if (!val) return;
+            // Take last character typed and clear the field
+            const char = val[val.length - 1];
+            this.value = '';
+            if (char !== undefined) routeMobileKey(char);
+        });
+
+        function routeMobileKey(key) {
+            if (lineTransition) return;
+
+            // Backspace clears pending dead key
+            if (key === 'Backspace' && pendingDeadKey) {
+                pendingDeadKey = null;
+                return;
+            }
+
+            // Resolve pending dead key combination
+            if (pendingDeadKey && key.length === 1 && /[a-zA-Z]/.test(key)) {
+                const combo = DEAD_KEY_MAP[pendingDeadKey];
+                if (combo && combo[key]) {
+                    const combined = combo[key];
+                    pendingDeadKey = null;
+                    dispatchToLevelHandler(combined);
+                    return;
+                }
+                pendingDeadKey = null;
+            }
+
+            // Detect dead key input
+            if (DEAD_KEYS.includes(key)) {
+                // Only treat as dead key if the expected character is NOT this literal key
+                if (targetText[currentIndex] !== key) {
+                    pendingDeadKey = key;
+                    return;
+                }
+            }
+
+            dispatchToLevelHandler(key);
+        }
+
+        function dispatchToLevelHandler(key) {
+            const fakeEvent = { key: key, preventDefault: () => {} };
+            if (activeLevel === 1) handleL1Keydown(fakeEvent, key);
+            else if (activeLevel === 2) handleL2Keydown(fakeEvent, key);
+            else if (activeLevel === 3) handleL3Keydown(fakeEvent, key);
+        }
     </script>
 </body>
 
