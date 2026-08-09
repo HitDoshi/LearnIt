@@ -2447,6 +2447,8 @@
         // GLOBAL KEYDOWN EVENT – with context‑aware dead‑key bypass
         // ============================================================
         window.addEventListener("keydown", function (e) {
+            // If the hidden mobile input is focused, it handles input — skip window handler
+            if (document.activeElement && document.activeElement.id === 'mobileKeyCapture') return;
             if (lineTransition) {
                 e.preventDefault();
                 return;
@@ -2718,9 +2720,16 @@
             try { mobileKeyCapture.focus(); } catch(e) {}
         }
 
-        // Re-focus after blur (keep keyboard available)
+        // Re-focus after blur ONLY if focus didn't move to an interactive element
         mobileKeyCapture.addEventListener('blur', function() {
-            setTimeout(focusMobileInput, 150);
+            setTimeout(function() {
+                const active = document.activeElement;
+                // Don't steal focus from select/button/input/label
+                if (active && (active.tagName === 'SELECT' || active.tagName === 'BUTTON' ||
+                    (active.tagName === 'INPUT' && active.id !== 'mobileKeyCapture') ||
+                    active.tagName === 'LABEL')) return;
+                focusMobileInput();
+            }, 150);
         });
 
         // Backspace and Enter are reliable via keydown even on mobile
