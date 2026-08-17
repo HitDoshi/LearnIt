@@ -373,6 +373,136 @@
         }
 
         /* focus-overlay removed */
+
+        /* ============================================================
+           DEAD-KEY CHEAT SHEET
+           ============================================================ */
+        /* ── Dead-key cheat sheet ── */
+        .deadkey-section {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 24px;
+            margin-bottom: 30px;
+        }
+
+        /* Cheat sheet card (always visible) */
+        .deadkey-details {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        /* Header bar */
+        .deadkey-summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            user-select: none;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: #718096;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Content area */
+        .deadkey-body {
+            padding: 14px 16px 8px;
+        }
+
+        .deadkey-lang-card {
+            background: #f7fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+        }
+
+        .deadkey-lang-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .deadkey-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .deadkey-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .deadkey-row-label {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: #a0aec0;
+            min-width: 22px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .deadkey-row-sep {
+            font-size: 0.68rem;
+            color: #cbd5e0;
+            flex-shrink: 0;
+        }
+
+        .deadkey-combos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .deadkey-combo {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 2px 7px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .deadkey-combo .dk-key {
+            color: #3182ce;
+            font-weight: 700;
+        }
+
+        .deadkey-combo .dk-plus {
+            color: #a0aec0;
+            font-size: 0.62rem;
+        }
+
+        .deadkey-combo .dk-base {
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .deadkey-combo .dk-arrow {
+            color: #a0aec0;
+            font-size: 0.62rem;
+            margin: 0 1px;
+        }
+
+        .deadkey-combo .dk-result {
+            color: #2d3748;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 
@@ -2676,19 +2806,23 @@
         // CONTEXT-AWARE STARTUP
         // ============================================================
         (async function initTypeItContext() {
+            // Read and immediately consume the source flag so it only applies once.
             const typeitSource = localStorage.getItem('typeit_source') || 'direct';
+            localStorage.removeItem('typeit_source');
 
             // --- Filter level dropdown based on launch context ---
             if (typeitSource === 'matchPairs') {
-                // Show Level 1 (auto-load) and Level 2 (IndexedDB). Hide Level 3.
+                // From Match Pairs: show Level 1 & Level 2 only. Hide Level 3.
                 const opt3 = levelSelect.querySelector('option[value="3"]');
                 if (opt3) opt3.remove();
+                levelSelect.value = '1';
                 levelSelect.querySelector('option[value="1"]').textContent = 'Level 1: Typing Practice';
                 levelSelect.querySelector('option[value="2"]').textContent = 'Level 2: Current Deck (Words)';
             } else if (typeitSource === 'dialoguePlayer') {
-                // Show Level 1 (auto-load) and Level 3 (dialogue). Hide Level 2.
+                // From Dialogue Practice: show Level 1 & Level 3 only. Hide Level 2.
                 const opt2 = levelSelect.querySelector('option[value="2"]');
                 if (opt2) opt2.remove();
+                levelSelect.value = '1';
                 levelSelect.querySelector('option[value="1"]').textContent = 'Level 1: Typing Practice';
                 levelSelect.querySelector('option[value="3"]').textContent = 'Level 3: Current Dialogue';
             }
@@ -2781,6 +2915,107 @@
             else if (activeLevel === 2) handleL2Keydown(fakeEvent, key);
             else if (activeLevel === 3) handleL3Keydown(fakeEvent, key);
         }
+    </script>
+
+    <!-- ============================================================
+         DEAD-KEY CHEAT SHEET  (always visible, target-language only)
+         ============================================================ -->
+    <div class="deadkey-section">
+        <div class="deadkey-details" id="deadkeyPanel">
+            <div class="deadkey-summary" style="cursor:default;">
+                ⌨️ Special Character Shortcuts — <span id="deadkeyLangLabel" style="color:#3182ce;"></span>
+            </div>
+            <div class="deadkey-body" id="deadkeyBody">
+                <!-- Rendered by renderDeadkeySheet() below -->
+            </div>
+        </div>
+    </div><!-- /.deadkey-section -->
+
+    <script>
+        // ============================================================
+        // DEAD-KEY CHEAT SHEET – per-language data & renderer
+        // ============================================================
+        const DK_SHEET = {
+            spanish: [
+                { key: "'", combos: [["'","a","á"],["'","e","é"],["'","i","í"],["'","o","ó"],["'","u","ú"],["'","c","ç"]] },
+                { key: "~", combos: [["~","n","ñ"]] },
+                { key: '"', combos:  [['"',"u","ü"]] }
+            ],
+            french: [
+                { key: "'", combos: [["'","e","é"],["'","c","ç"]] },
+                { key: "`", combos: [["`","a","à"],["`","e","è"],["`","u","ù"]] },
+                { key: "^", combos: [["^","a","â"],["^","e","ê"],["^","i","î"],["^","o","ô"],["^","u","û"]] },
+                { key: '"', combos:  [['"',"e","ë"],['"',"i","ï"],['"',"u","ü"]] },
+                { key: ",", combos: [[",","c","ç"]] }
+            ],
+            portuguese: [
+                { key: "'", combos: [["'","a","á"],["'","e","é"],["'","i","í"],["'","o","ó"],["'","u","ú"],["'","c","ç"]] },
+                { key: "`", combos: [["`","a","à"]] },
+                { key: "~", combos: [["~","a","ã"],["~","o","õ"]] },
+                { key: "^", combos: [["^","a","â"],["^","e","ê"],["^","o","ô"]] },
+                { key: '"', combos:  [['"',"u","ü"]] },
+                { key: ",", combos: [[",","c","ç"]] }
+            ],
+            italian: [
+                { key: "`", combos: [["`","a","à"],["`","e","è"],["`","i","ì"],["`","o","ò"],["`","u","ù"]] },
+                { key: "'", combos: [["'","e","é"]] }
+            ],
+            turkish: [
+                { key: ",", combos: [[",","c","ç"],[",","s","ş"],[",","g","ğ"]] },
+                { key: '"', combos:  [['"',"o","ö"],['"',"u","ü"]] },
+                { key: "^", combos: [["^","a","â"],["^","i","î"],["^","u","û"]] }
+            ],
+            german: [
+                { key: '"', combos: [['"',"a","ä"],['"',"o","ö"],['"',"u","ü"],['"',"s","ß"]] }
+            ]
+        };
+
+        // Map localStorage target-language name → DK_SHEET key
+        const LANG_NAME_MAP = {
+            'Spanish':    'spanish',
+            'French':     'french',
+            'Portuguese': 'portuguese',
+            'Italian':    'italian',
+            'Turkish':    'turkish',
+            'German':     'german'
+        };
+
+        function renderDeadkeySheet() {
+            const targetLangObj = JSON.parse(localStorage.getItem('target-language') || '{}');
+            // `description` holds the full name (e.g. "French"), `name` is the short code (e.g. "FRA")
+            const langName = targetLangObj?.description || '';
+            const sheetKey = LANG_NAME_MAP[langName];
+
+            const labelEl = document.getElementById('deadkeyLangLabel');
+            const bodyEl  = document.getElementById('deadkeyBody');
+
+            if (!sheetKey) {
+                // No special characters for this language – hide the whole panel
+                document.getElementById('deadkeyPanel').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('deadkeyPanel').style.display = '';
+            if (labelEl) labelEl.textContent = langName;
+
+            const rows = DK_SHEET[sheetKey];
+            let html = '<div class="deadkey-lang-card"><div class="deadkey-rows">';
+            for (const row of rows) {
+                const combosHtml = row.combos.map(([dk, base, result]) =>
+                    `<span class="deadkey-combo"><span class="dk-key">${dk}</span><span class="dk-plus">+</span><span class="dk-base">${base}</span><span class="dk-arrow">→</span><span class="dk-result">${result}</span></span>`
+                ).join('');
+                html += `<div class="deadkey-row">
+                    <span class="deadkey-row-label">${row.key}</span>
+                    <span class="deadkey-row-sep">+</span>
+                    <div class="deadkey-combos">${combosHtml}</div>
+                </div>`;
+            }
+            html += '</div></div>';
+            bodyEl.innerHTML = html;
+        }
+
+        // Render once on page load
+        renderDeadkeySheet();
     </script>
 </body>
 
