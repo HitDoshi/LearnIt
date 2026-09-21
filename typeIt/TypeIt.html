@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeLingual Engine v2</title>
+    <title>TypeIt</title>
     <style>
         :root {
             --bg-primary: #f7fafc;
@@ -32,7 +32,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
         }
 
         header {
@@ -244,13 +244,15 @@
         .panel-row {
             display: flex;
             align-items: flex-start;
+            gap: 8px;
             line-height: 1.4rem;
         }
 
         .panel-label {
             font-weight: 700;
             color: #4a5568;
-            min-width: 150px;
+            min-width: 90px;
+            flex-shrink: 0;
             text-transform: uppercase;
             font-size: 0.75rem;
             letter-spacing: 1px;
@@ -261,8 +263,9 @@
             color: #2d3748;
             font-family: 'Courier New', Courier, monospace;
             font-weight: 600;
-            font-size: 1rem;
-            word-break: break-all;
+            font-size: 0.88rem;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .display-sheet {
@@ -333,7 +336,8 @@
             color: #4a5568;
             display: flex;
             align-items: center;
-            word-break: break-all;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .typewriter-row .char-error {
@@ -357,7 +361,8 @@
             color: #4a5568;
             display: flex;
             align-items: center;
-            word-break: break-all;
+            word-break: break-word;
+            overflow-wrap: anywhere;
             transition: opacity 0.2s ease;
         }
 
@@ -438,9 +443,9 @@
 
         .deadkey-row {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 6px;
+            /* NO flex-wrap here: label stays on same line as combos */
         }
 
         .deadkey-row-label {
@@ -503,12 +508,86 @@
             font-weight: 800;
             font-size: 0.95rem;
         }
+
+        /* ============================================================
+           RESPONSIVE — MOBILE BREAKPOINTS
+           ============================================================ */
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            header {
+                margin-bottom: 12px;
+            }
+
+            h1 {
+                font-size: 1.15rem;
+            }
+
+            .stats-bar {
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .stat-card {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+                min-width: 0;
+            }
+
+            .stat-card span {
+                font-size: 1rem;
+            }
+
+            .panel-label {
+                min-width: 80px;
+                font-size: 0.7rem;
+                letter-spacing: 0.5px;
+            }
+
+            .panel-content {
+                font-size: 0.82rem;
+            }
+
+            .circulation-panel {
+                padding: 10px 12px;
+            }
+
+            .display-sheet {
+                padding: 18px 14px;
+                margin-bottom: 12px;
+            }
+
+            .text-line {
+                font-size: 1.55rem;
+                letter-spacing: 2px;
+                line-height: 2.2rem;
+            }
+
+            .typewriter-row {
+                padding: 10px 14px;
+                font-size: 1.05rem;
+                min-height: 46px;
+            }
+
+            .translation-row {
+                padding: 7px 14px;
+                font-size: 0.95rem;
+                margin-bottom: 16px;
+            }
+
+            .radio-toggle-group label {
+                padding: 4px 10px;
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>⌨️ TypeLingual</h1>
+        <h1>⌨️ TypeIt</h1>
         <div class="controls">
             <select id="levelSelect">
                 <option value="1">Level 1: Practice</option>
@@ -582,8 +661,8 @@
             id="translationText"></span></div>
 
     <!-- Hidden input to capture mobile virtual keyboard -->
-    <input id="mobileKeyCapture" type="text"
-        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+    <input id="mobileKeyCapture" type="text" autocomplete="off" autocorrect="off" autocapitalize="none"
+        spellcheck="false"
         style="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0.01;z-index:999;border:none;outline:none;padding:0;color:transparent;background:transparent;">
 
     <script>
@@ -689,6 +768,9 @@
         let l3_targetText = "";
 
         let l3_currentPair = null;
+        let l3_itemBoundaries = [];
+        let l3_currentItemIndex = -1;
+        let l3_sourceWords = [];
 
         // ============================================================
         // GLOBAL STATE
@@ -857,6 +939,23 @@
             } else {
                 translationRow.style.opacity = '0';
                 translationText.textContent = '';
+            }
+        }
+
+        function updateL2LineTranslation() {
+            if (l2_currentItemIndex >= 0 && l2_currentItemIndex < l2_itemBoundaries.length) {
+                const translations = l2_itemBoundaries.slice(0, l2_currentItemIndex + 1).map(b => b.pair.source);
+                showTranslation(translations.join(' '));
+            } else {
+                showTranslation(null);
+            }
+        }
+
+        function updateL3LineTranslation() {
+            if (l3_currentItemIndex >= 0 && l3_sourceWords.length > 0) {
+                showTranslation(l3_sourceWords.slice(0, l3_currentItemIndex + 1).join(' '));
+            } else {
+                showTranslation(null);
             }
         }
 
@@ -1261,7 +1360,7 @@
             startTime = null; totalKeystrokes = 0; errorCount = 0; lineWpm = 0; lineAcc = 100; currentIndex = 0; isErrorState = false; currentTypedString = ""; showTranslation(null);
 
             levelSelect.value = level;
-            document.title = "TypeLingual Engine v2";
+            document.title = "TypeIt";
 
             // Set toggle visibility
             if (activeLevel === 1) {
@@ -1304,6 +1403,7 @@
                         }
                     });
                 } else {
+                    translationRow.style.display = 'flex';
                     initL2Typing(); initL2Passive(); initL2Active();
                     generateNextSequenceLine();
                 }
@@ -1313,6 +1413,7 @@
                 if (L3_PAIRS.length === 0) {
                     const loaded = autoLoadLevel3FromDialogue();
                     if (loaded && L3_PAIRS.length > 0) {
+                        translationRow.style.display = 'flex';
                         initL3Typing(); initL3Passive(); initL3Active();
                         generateNextSequenceLine();
                     } else {
@@ -1331,6 +1432,7 @@
                         L3_ACTIVE_MODE = 'typing';
                     }
                 } else {
+                    translationRow.style.display = 'flex';
                     initL3Typing(); initL3Passive(); initL3Active();
                     generateNextSequenceLine();
                 }
@@ -1426,8 +1528,7 @@
                     if (L2_TYPING.isSprint) {
                         const sprintTargets = shuffleArray(L2_PAIRS.map(p => p.target)).slice(0, 12);
                         const sprintPairs = sprintTargets.map(t => L2_PAIRS.find(p => p.target === t));
-                        const sprintSources = sprintPairs.map(p => p.source);
-                        sourceText = sprintSources.join(" ");
+                        sourceText = sprintTargets.join(" ");
                         targetText = sourceText;
                         typewriterRow.textContent = "";
                         statusContent.textContent = "GRADUATION SPRINT | Complete all words";
@@ -1435,7 +1536,7 @@
                         updatePhaseIndicator(2, 0, true);
                         resetTelemetryState();
                         renderSourceSheetDisplay();
-                        l2_currentLineWords = sprintSources.slice();
+                        l2_currentLineWords = sprintTargets.slice();
                         l2_currentLinePairs = sprintPairs.slice();
                         return;
                     }
@@ -1449,16 +1550,15 @@
                     const gate = L2_GATES[L2_TYPING.phase] || L2_GATES[0];
                     const currentTargets = L2_TYPING.queue.slice(0, 8);
                     const currentPairs = currentTargets.map(t => L2_PAIRS.find(p => p.target === t));
-                    const currentSources = currentPairs.map(p => p.source);
-                    sourceText = currentSources.join(" ");
+                    sourceText = currentTargets.join(" ");
                     targetText = sourceText;
-                    l2_currentLineWords = currentSources.slice();
+                    l2_currentLineWords = currentTargets.slice();
                     l2_currentLinePairs = currentPairs.slice();
                     typewriterRow.textContent = "";
                     l2_itemBoundaries = [];
                     let charPos = 0;
-                    for (let i = 0; i < currentSources.length; i++) {
-                        const word = currentSources[i];
+                    for (let i = 0; i < currentTargets.length; i++) {
+                        const word = currentTargets[i];
                         const start = charPos;
                         const end = charPos + word.length;
                         l2_itemBoundaries.push({ start, end, item: word, pair: currentPairs[i] });
@@ -1518,8 +1618,8 @@
                     }
                     L2_PASSIVE.currentWordObj = word;
                     L2_PASSIVE.priority = word.priority || 0;
-                    sourceText = word.source;
-                    targetText = word.target;
+                    sourceText = word.target;   // Passive: show TARGET in big display
+                    targetText = word.source;   // Passive: user types SOURCE
                     typewriterRow.textContent = "";
                     const progressPct = getL2Progress('passive');
                     updateL2RecallStatus(L2_PASSIVE);
@@ -1575,8 +1675,8 @@
                     }
                     L2_ACTIVE.currentWordObj = word;
                     L2_ACTIVE.priority = word.priority || 0;
-                    sourceText = word.target;
-                    targetText = word.source;
+                    sourceText = word.source;   // Active: show SOURCE in big display
+                    targetText = word.target;   // Active: user types TARGET
                     typewriterRow.textContent = "";
                     const progressPct = getL2Progress('active');
                     updateL2RecallStatus(L2_ACTIVE);
@@ -1611,8 +1711,7 @@
                     if (L3_TYPING.isSprint) {
                         const sprintTargets = shuffleArray(L3_PAIRS.map(p => p.target)).slice(0, 3);
                         const sprintPairs = sprintTargets.map(t => L3_PAIRS.find(p => p.target === t));
-                        const sprintSources = sprintPairs.map(p => p.source);
-                        sourceText = sprintSources.join(" ");
+                        sourceText = sprintTargets.join(" ");
                         targetText = sourceText;
                         typewriterRow.textContent = "";
                         statusContent.textContent = "GRADUATION SPRINT | Complete all sentences";
@@ -1621,6 +1720,9 @@
                         resetTelemetryState();
                         renderSourceSheetDisplay();
                         l3_currentPair = sprintPairs[0];
+                        l3_itemBoundaries = [];
+                        l3_currentItemIndex = -1;
+                        l3_sourceWords = [];
                         return;
                     }
                     if (L3_TYPING.queue.length === 0) {
@@ -1633,14 +1735,23 @@
                     const gate = L2_GATES[L3_TYPING.phase] || L2_GATES[0];
                     const currentTarget = L3_TYPING.queue[0];
                     const pair = L3_PAIRS.find(p => p.target === currentTarget);
+                    l3_itemBoundaries = [];
+                    l3_currentItemIndex = -1;
+                    l3_sourceWords = [];
                     if (!pair) {
                         sourceText = currentTarget || "";
                         targetText = sourceText;
                         l3_currentPair = null;
                     } else {
-                        sourceText = pair.source;
-                        targetText = sourceText;
+                        sourceText = pair.target;  // Typing: show TARGET in big display
+                        targetText = sourceText;   // Typing: user types TARGET
                         l3_currentPair = pair;
+                        l3_sourceWords = (pair.source || '').split(' ').filter(w => w !== '');
+                        let charPos = 0;
+                        pair.target.split(' ').forEach(word => {
+                            l3_itemBoundaries.push({ start: charPos, end: charPos + word.length });
+                            charPos += word.length + 1;
+                        });
                     }
                     typewriterRow.textContent = "";
                     const remaining = L3_TYPING.queue.length;
@@ -1680,8 +1791,8 @@
                     }
                     L3_PASSIVE.currentSentenceObj = sentence;
                     L3_PASSIVE.penalty = sentence.penalty;
-                    sourceText = sentence.source;
-                    targetText = sentence.target;
+                    sourceText = sentence.target;  // Passive: show TARGET in big display
+                    targetText = sentence.source;  // Passive: user types SOURCE
                     typewriterRow.textContent = "";
                     const progressPct = getL3Progress('passive');
                     statusContent.textContent = `Type '??' for hint | Penalty: ${sentence.penalty}`;
@@ -1719,8 +1830,8 @@
                     }
                     L3_ACTIVE.currentSentenceObj = sentence;
                     L3_ACTIVE.penalty = sentence.penalty;
-                    sourceText = sentence.target;
-                    targetText = sentence.source;
+                    sourceText = sentence.source;  // Active: show SOURCE in big display
+                    targetText = sentence.target;  // Active: user types TARGET
                     typewriterRow.textContent = "";
                     const progressPct = getL3Progress('active');
                     statusContent.textContent = `Type '??' for hint | Penalty: ${sentence.penalty}`;
@@ -1851,7 +1962,6 @@
                         const targetsToRemove = new Set(attemptedPairs.map(p => p.target));
                         L2_TYPING.queue = L2_TYPING.queue.filter(w => !targetsToRemove.has(w));
                         typewriterRow.innerHTML = `✅ Line cleared! (${finalWpm} WPM, ${Math.round(lineAcc)}% Acc)`;
-                        showTranslation(null);
                         if (L2_TYPING.queue.length === 0) {
                             if (L2_TYPING.phase < L2_GATES.length - 1) {
                                 L2_TYPING.phase++;
@@ -1872,10 +1982,10 @@
                         const shuffled = shuffleArray(attemptedTargets);
                         L2_TYPING.queue = shuffleArray([...currentDeck, ...shuffled]);
                         typewriterRow.innerHTML = `🔄 Retry later (${finalWpm} WPM, ${Math.round(lineAcc)}% Acc)`;
-                        showTranslation(null);
                     }
                     lineTransition = true;
                     setTimeout(() => {
+                        showTranslation(null);
                         generateNextSequenceLine();
                     }, 800);
                 } else if (mode === 'passive' || mode === 'active') {
@@ -1923,9 +2033,9 @@
                         }
                     }
                     typewriterRow.innerHTML = "✅ Sentence done!";
-                    showTranslation(null);
                     lineTransition = true;
                     setTimeout(() => {
+                        showTranslation(null);
                         generateNextSequenceLine();
                     }, 400);
                 } else if (mode === 'passive' || mode === 'active') {
@@ -2022,31 +2132,17 @@
             if (mode === 'typing') {
                 if (key === "Backspace") {
                     e.preventDefault();
-                    if (l2_currentItemIndex >= 0 && currentIndex <= l2_itemBoundaries[l2_currentItemIndex].start) {
-                        showTranslation(null);
-                        L2_CURRENT_TRANSLATION = null;
-                        L2_TRANSLATION_WORD = null;
-                        l2_currentItemIndex = -1;
-                    }
-                    if (L2_CURRENT_TRANSLATION) {
-                        showTranslation(null);
-                        L2_CURRENT_TRANSLATION = null;
-                        L2_TRANSLATION_WORD = null;
-                    }
                     if (isErrorState) {
                         isErrorState = false;
                         currentTypedString = currentTypedString.slice(0, -1);
                     } else if (currentIndex > 0) {
-                        const removed = targetText[currentIndex - 1];
                         currentIndex--;
                         currentTypedString = currentTypedString.slice(0, -1);
-                        if (l2_currentItemIndex >= 0 && currentIndex <= l2_itemBoundaries[l2_currentItemIndex].start) {
-                            showTranslation(null);
-                            L2_CURRENT_TRANSLATION = null;
-                            L2_TRANSLATION_WORD = null;
-                            l2_currentItemIndex = -1;
-                        }
                     }
+                    while (l2_currentItemIndex >= 0 && currentIndex <= l2_itemBoundaries[l2_currentItemIndex].start) {
+                        l2_currentItemIndex--;
+                    }
+                    updateL2LineTranslation();
                     updateSourceSheetStyles();
                     updateTypewriterDisplay();
                     return;
@@ -2070,9 +2166,9 @@
                         }
                     }
                     if (completedPair) {
-                        L2_CURRENT_TRANSLATION = completedPair.target;
-                        L2_TRANSLATION_WORD = completedPair.source;
-                        showTranslation(completedPair.target);
+                        L2_CURRENT_TRANSLATION = completedPair.source;
+                        L2_TRANSLATION_WORD = completedPair.target;
+                        updateL2LineTranslation();  // Typing: typed target, accumulate source translations for the line
                     }
                     if (currentIndex >= targetText.length) {
                         evaluateLineCompletionProgress();
@@ -2084,9 +2180,6 @@
                         if (expected !== ' ') errorCount++;
                         currentTypedString += key;
                         updateTypewriterDisplay();
-                        showTranslation(null);
-                        L2_CURRENT_TRANSLATION = null;
-                        L2_TRANSLATION_WORD = null;
                     } else return;
                 }
                 updateSourceSheetStyles();
@@ -2116,6 +2209,7 @@
                             updateRecallCirculation(mode);
                             typewriterRow.innerHTML = `🔽 Deck expanded (20+${state.extraSlots})`;
                             setTimeout(() => {
+                                // Passive: user types source; Active: user types target
                                 if (mode === 'passive') {
                                     typewriterRow.textContent = state.currentWordObj ? state.currentWordObj.source : "";
                                 } else {
@@ -2157,6 +2251,7 @@
                         l2_priorityTimer = setTimeout(() => {
                             l2_priorityTimer = null;
                             if (currentTypedString === "") {
+                                // Passive: user types source; Active: user types target
                                 if (mode === 'passive') {
                                     typewriterRow.textContent = state.currentWordObj.source;
                                 } else {
@@ -2194,6 +2289,7 @@
                         l2_priorityTimer = setTimeout(() => {
                             l2_priorityTimer = null;
                             if (currentTypedString === "") {
+                                // Passive: user types source; Active: user types target
                                 if (mode === 'passive') {
                                     typewriterRow.textContent = state.currentWordObj.source;
                                 } else {
@@ -2258,7 +2354,8 @@
                     return;
                 } else if (state.questionCount === 2) {
                     if (state.currentWordObj) {
-                        const hintText = (mode === 'passive') ? state.currentWordObj.target : state.currentWordObj.source;
+                        // Passive types source → hint is source; Active types target → hint is target
+                        const hintText = (mode === 'passive') ? state.currentWordObj.source : state.currentWordObj.target;
                         typewriterRow.innerHTML = `💡 HINT: <strong style='color:var(--accent-blue);'>${hintText}</strong> | Type the word...`;
                         statusContent.textContent = `Hint shown (priority unchanged)`;
                         state.questionCount = 0;
@@ -2369,19 +2466,17 @@
             if (mode === 'typing') {
                 if (key === "Backspace") {
                     e.preventDefault();
-                    if (L3_CURRENT_TRANSLATION) {
-                        showTranslation(null);
-                        L3_CURRENT_TRANSLATION = null;
-                        L3_TRANSLATION_SENTENCE = null;
-                    }
                     if (isErrorState) {
                         isErrorState = false;
                         currentTypedString = currentTypedString.slice(0, -1);
                     } else if (currentIndex > 0) {
-                        const removed = targetText[currentIndex - 1];
                         currentIndex--;
                         currentTypedString = currentTypedString.slice(0, -1);
                     }
+                    while (l3_currentItemIndex >= 0 && currentIndex <= l3_itemBoundaries[l3_currentItemIndex].start) {
+                        l3_currentItemIndex--;
+                    }
+                    updateL3LineTranslation();
                     updateSourceSheetStyles();
                     updateTypewriterDisplay();
                     return;
@@ -2395,11 +2490,18 @@
                     currentIndex++;
                     currentTypedString += key;
                     updateTypewriterDisplay();
+                    for (let i = 0; i < l3_itemBoundaries.length; i++) {
+                        if (currentIndex === l3_itemBoundaries[i].end) {
+                            l3_currentItemIndex = i;
+                            break;
+                        }
+                    }
+                    updateL3LineTranslation();  // Typing: accumulate source-word translations as each target word completes
                     if (currentIndex >= targetText.length) {
                         if (l3_currentPair) {
-                            L3_CURRENT_TRANSLATION = l3_currentPair.target;
-                            L3_TRANSLATION_SENTENCE = l3_currentPair.source;
-                            showTranslation(l3_currentPair.target);
+                            L3_CURRENT_TRANSLATION = l3_currentPair.source;
+                            L3_TRANSLATION_SENTENCE = l3_currentPair.target;
+                            showTranslation(l3_currentPair.source);  // guarantee the full, correct sentence translation at completion
                         }
                         evaluateLineCompletionProgress();
                         return;
@@ -2410,9 +2512,6 @@
                         if (expected !== ' ') errorCount++;
                         currentTypedString += key;
                         updateTypewriterDisplay();
-                        showTranslation(null);
-                        L3_CURRENT_TRANSLATION = null;
-                        L3_TRANSLATION_SENTENCE = null;
                     } else return;
                 }
                 updateSourceSheetStyles();
@@ -2459,7 +2558,8 @@
                     if (state.currentSentenceObj) {
                         state.currentSentenceObj.penalty++;
                         state.penalty = state.currentSentenceObj.penalty;
-                        const hintText = (mode === 'passive') ? state.currentSentenceObj.target : state.currentSentenceObj.source;
+                        // Passive types source → hint is source; Active types target → hint is target
+                        const hintText = (mode === 'passive') ? state.currentSentenceObj.source : state.currentSentenceObj.target;
                         typewriterRow.innerHTML = `💡 HINT: <strong style='color:var(--accent-blue);'>${hintText}</strong> | Type the sentence...`;
                         statusContent.textContent = `Hint used! Penalty: ${state.penalty}`;
                         state.questionCount = 0;
@@ -2849,13 +2949,13 @@
         const mobileKeyCapture = document.getElementById('mobileKeyCapture');
 
         function focusMobileInput() {
-            try { mobileKeyCapture.focus(); } catch(e) {}
+            try { mobileKeyCapture.focus(); } catch (e) { }
         }
 
         // Keyboard opens ONLY when user taps the grey typing area (see onclick on display-sheet / typewriterRow)
 
         // Backspace and Enter are reliable via keydown even on mobile
-        mobileKeyCapture.addEventListener('keydown', function(e) {
+        mobileKeyCapture.addEventListener('keydown', function (e) {
             if (e.key === 'Backspace') {
                 e.preventDefault();
                 routeMobileKey('Backspace');
@@ -2867,7 +2967,7 @@
         });
 
         // Regular characters: use input event (most reliable on all mobile keyboards)
-        mobileKeyCapture.addEventListener('input', function() {
+        mobileKeyCapture.addEventListener('input', function () {
             const val = this.value;
             if (!val) return;
             // Take last character typed and clear the field
@@ -2910,7 +3010,7 @@
         }
 
         function dispatchToLevelHandler(key) {
-            const fakeEvent = { key: key, preventDefault: () => {} };
+            const fakeEvent = { key: key, preventDefault: () => { } };
             if (activeLevel === 1) handleL1Keydown(fakeEvent, key);
             else if (activeLevel === 2) handleL2Keydown(fakeEvent, key);
             else if (activeLevel === 3) handleL3Keydown(fakeEvent, key);
@@ -2937,47 +3037,47 @@
         // ============================================================
         const DK_SHEET = {
             spanish: [
-                { key: "'", combos: [["'","a","á"],["'","e","é"],["'","i","í"],["'","o","ó"],["'","u","ú"],["'","c","ç"]] },
-                { key: "~", combos: [["~","n","ñ"]] },
-                { key: '"', combos:  [['"',"u","ü"]] }
+                { key: "'", combos: [["'", "a", "á"], ["'", "e", "é"], ["'", "i", "í"], ["'", "o", "ó"], ["'", "u", "ú"], ["'", "c", "ç"]] },
+                { key: "~", combos: [["~", "n", "ñ"]] },
+                { key: '"', combos: [['"', "u", "ü"]] }
             ],
             french: [
-                { key: "'", combos: [["'","e","é"],["'","c","ç"]] },
-                { key: "`", combos: [["`","a","à"],["`","e","è"],["`","u","ù"]] },
-                { key: "^", combos: [["^","a","â"],["^","e","ê"],["^","i","î"],["^","o","ô"],["^","u","û"]] },
-                { key: '"', combos:  [['"',"e","ë"],['"',"i","ï"],['"',"u","ü"]] },
-                { key: ",", combos: [[",","c","ç"]] }
+                { key: "'", combos: [["'", "e", "é"], ["'", "c", "ç"]] },
+                { key: "`", combos: [["`", "a", "à"], ["`", "e", "è"], ["`", "u", "ù"]] },
+                { key: "^", combos: [["^", "a", "â"], ["^", "e", "ê"], ["^", "i", "î"], ["^", "o", "ô"], ["^", "u", "û"]] },
+                { key: '"', combos: [['"', "e", "ë"], ['"', "i", "ï"], ['"', "u", "ü"]] },
+                { key: ",", combos: [[",", "c", "ç"]] }
             ],
             portuguese: [
-                { key: "'", combos: [["'","a","á"],["'","e","é"],["'","i","í"],["'","o","ó"],["'","u","ú"],["'","c","ç"]] },
-                { key: "`", combos: [["`","a","à"]] },
-                { key: "~", combos: [["~","a","ã"],["~","o","õ"]] },
-                { key: "^", combos: [["^","a","â"],["^","e","ê"],["^","o","ô"]] },
-                { key: '"', combos:  [['"',"u","ü"]] },
-                { key: ",", combos: [[",","c","ç"]] }
+                { key: "'", combos: [["'", "a", "á"], ["'", "e", "é"], ["'", "i", "í"], ["'", "o", "ó"], ["'", "u", "ú"], ["'", "c", "ç"]] },
+                { key: "`", combos: [["`", "a", "à"]] },
+                { key: "~", combos: [["~", "a", "ã"], ["~", "o", "õ"]] },
+                { key: "^", combos: [["^", "a", "â"], ["^", "e", "ê"], ["^", "o", "ô"]] },
+                { key: '"', combos: [['"', "u", "ü"]] },
+                { key: ",", combos: [[",", "c", "ç"]] }
             ],
             italian: [
-                { key: "`", combos: [["`","a","à"],["`","e","è"],["`","i","ì"],["`","o","ò"],["`","u","ù"]] },
-                { key: "'", combos: [["'","e","é"]] }
+                { key: "`", combos: [["`", "a", "à"], ["`", "e", "è"], ["`", "i", "ì"], ["`", "o", "ò"], ["`", "u", "ù"]] },
+                { key: "'", combos: [["'", "e", "é"]] }
             ],
             turkish: [
-                { key: ",", combos: [[",","c","ç"],[",","s","ş"],[",","g","ğ"]] },
-                { key: '"', combos:  [['"',"o","ö"],['"',"u","ü"]] },
-                { key: "^", combos: [["^","a","â"],["^","i","î"],["^","u","û"]] }
+                { key: ",", combos: [[",", "c", "ç"], [",", "s", "ş"], [",", "g", "ğ"]] },
+                { key: '"', combos: [['"', "o", "ö"], ['"', "u", "ü"]] },
+                { key: "^", combos: [["^", "a", "â"], ["^", "i", "î"], ["^", "u", "û"]] }
             ],
             german: [
-                { key: '"', combos: [['"',"a","ä"],['"',"o","ö"],['"',"u","ü"],['"',"s","ß"]] }
+                { key: '"', combos: [['"', "a", "ä"], ['"', "o", "ö"], ['"', "u", "ü"], ['"', "s", "ß"]] }
             ]
         };
 
         // Map localStorage target-language name → DK_SHEET key
         const LANG_NAME_MAP = {
-            'Spanish':    'spanish',
-            'French':     'french',
+            'Spanish': 'spanish',
+            'French': 'french',
             'Portuguese': 'portuguese',
-            'Italian':    'italian',
-            'Turkish':    'turkish',
-            'German':     'german'
+            'Italian': 'italian',
+            'Turkish': 'turkish',
+            'German': 'german'
         };
 
         function renderDeadkeySheet() {
@@ -2987,7 +3087,7 @@
             const sheetKey = LANG_NAME_MAP[langName];
 
             const labelEl = document.getElementById('deadkeyLangLabel');
-            const bodyEl  = document.getElementById('deadkeyBody');
+            const bodyEl = document.getElementById('deadkeyBody');
 
             if (!sheetKey) {
                 // No special characters for this language – hide the whole panel
