@@ -284,12 +284,14 @@ document.addEventListener("pointerdown", function (e) {
 });
 
 function updateCount() {
+  var filled = 0;
   document.querySelectorAll("#gridRows .grid-row").forEach(function (row) {
     var s = row.querySelector(".cell-source").value.trim();
     var t = row.querySelector(".cell-target").value.trim();
-    if (s && t) row.classList.add("has-data");
+    if (s && t) { row.classList.add("has-data"); filled++; }
     else row.classList.remove("has-data");
   });
+  document.getElementById("filledCount").textContent = filled;
 }
 
 function collectRows() {
