@@ -105,6 +105,8 @@ if (myParam === "1") {
   document.getElementById("showCurrentRadio").checked = true;
 } else if (myParam === "5") {
   document.getElementById("audioOnlyRadio").checked = true;
+} else if (myParam === "6") {
+  document.getElementById("showRedRadio").checked = true;
 }
 
 document
@@ -210,6 +212,9 @@ openRequest.onsuccess = (event) => {
   } else if (myParam == "5") {
     dropdownItems[4].style.color = "green";
     renderView("audio");
+  } else if (myParam == "6") {
+    dropdownItems[5].style.color = "green";
+    renderView("red");
   }
 
 
@@ -325,6 +330,11 @@ async function renderView(viewType = "all") {
       case "audio":
         filteredData = allData.filter((item) => item?.fileName);
         break;
+      case "red":
+        filteredData = allData.filter(
+          (item) => String(item?.status || '').toUpperCase().charAt(0) === 'R'
+        );
+        break;
       default:
         filteredData = allData;
         break;
@@ -362,6 +372,10 @@ function displayAudioData() {
 
 function displayCurrentData() {
   renderView("current");
+}
+
+function displayRedData() {
+  renderView("red");
 }
 
 function updateIsFavFlag(id, isFav) {
@@ -482,6 +496,8 @@ function loadUpdatedTable() {
     displayCurrentData();
   } else if (myParam == "5") {
     displayAudioData();
+  } else if (myParam == "6") {
+    displayRedData();
   }
 }
 
