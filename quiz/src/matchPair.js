@@ -156,17 +156,29 @@ function getData() {
     if (allData.length > 0) {
       allData = shuffle(allData);
 
-      // Filter entries where isFav is true & isSkip is false
-
+      // Favs first: isFav=true, isSkip=false, showInDays=0
       var favData = allData.filter((item) => item.isFav === true && item.isSkip === false && item.showInDays === 0);
+      favData = shuffle(favData).slice(0, 20);
 
-      console.log(favData.length);
+      // Fill remaining slots with reds (status starts with 'R'), not already in favs
+      const favIds = new Set(favData.map(item => item.id));
+      const remaining = 20 - favData.length;
+      var redData = [];
+      if (remaining > 0) {
+        redData = allData.filter((item) =>
+          String(item.status || '').toUpperCase().charAt(0) === 'R' &&
+          item.isSkip === false &&
+          item.showInDays === 0 &&
+          !favIds.has(item.id)
+        );
+        redData = shuffle(redData).slice(0, remaining);
+      }
 
-      var favData = shuffle(favData);
+      const selectedData = [...favData, ...redData];
 
-      favData = favData.slice(0, 20);
+      console.log(`favs: ${favData.length}, reds: ${redData.length}, total: ${selectedData.length}`);
 
-      favData.forEach((item) => {
+      selectedData.forEach((item) => {
         source.push({ id: item.id, value: item.source });
         target.push({ id: item.id, value: item.target });
       });
@@ -180,12 +192,12 @@ function getData() {
       const tbody = dataTable.querySelector("tbody");
       tbody.innerHTML = "";
 
-      if (favData.length == 0) {
+      if (selectedData.length == 0) {
         dataTable.style.display = 'none';
         suggestion.style.display = 'block';
       }
 
-      for (var i = 0; i < favData.length; i++) {
+      for (var i = 0; i < selectedData.length; i++) {
         const row = appendData(source[i], target[i]);
         tbody.appendChild(row);
       }

@@ -1,4 +1,4 @@
-var dbName = "test";
+﻿var dbName = "test";
 var dbVersion = 1;
 var storeName = "data";
 var index = "subjectTopicIndex";
@@ -588,15 +588,17 @@ function appendData(data, idNumber) {
   const recordTitle = encodeURIComponent(value == 'true' ? (data.target || '') : (data.source || ''));
 
   const statusColor = getStatusTextColor(data?.status);
+  const hasMnemonic = !!(data?.mnemonic_text || data?.mnemonic_image);
   const cellStyle = statusColor
     ? `color:${statusColor};font-weight:500;`
-    : (data?.fileName ? 'color:#00569d;font-weight:500;' : '');
+    : (data?.fileName ? 'color:#00569d;font-weight:500;'
+      : (hasMnemonic ? 'color:#00569d;font-weight:700;' : ''));
 
   row.innerHTML = `
     <td style="${cellStyle}">${idNumber}</td>
     <td style="${cellStyle}">
       <a href="#" onclick="event.preventDefault(); window.location.href='retentionHub.html?id=${data.id}&title=${recordTitle}'" style="color: inherit; text-decoration: underline; cursor: pointer;">
-        ${value == "true" ? data.target : data.source}
+        ${hasMnemonic ? "*" : ""}${value == "true" ? data.target : data.source}
       </a>
     </td>
     <td><input data-id="${data.id}" type="number" style="width: 60px;" class="showInDays" value="${data.showInDays}" /></td>

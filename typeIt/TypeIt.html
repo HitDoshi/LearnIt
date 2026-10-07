@@ -686,14 +686,11 @@
         // DEAD KEY MAPPINGS
         // ============================================================
         const DEAD_KEY_MAP = {
-            "'": {
+            '`': {
                 'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú', 'c': 'ç',
                 'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú', 'C': 'Ç'
             },
-            '`': {
-                'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù',
-                'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù'
-            },
+
             '"': {
                 'a': 'ä', 'e': 'ë', 'i': 'ï', 'o': 'ö', 'u': 'ü', 's': 'ß',
                 'A': 'Ä', 'E': 'Ë', 'I': 'Ï', 'O': 'Ö', 'U': 'Ü'
@@ -1237,7 +1234,9 @@
         // ============================================================
         // AUTO-LOAD: LEVEL 2 – read full deck from IndexedDB
         // ============================================================
-        function autoLoadLevel2FromIndexedDB() {
+        // redsAndFavsOnly: when true (matchPairs entry), restrict to Red (status==='R')
+        // or Fav cards of the current deck only (showInDays===0, not skipped, not NS).
+        function autoLoadLevel2FromIndexedDB(redsAndFavsOnly = false) {
             return new Promise((resolve) => {
                 try {
                     const subject = parseInt(JSON.parse(localStorage.getItem('source-language') || '{}')?.id || 1);
@@ -1269,17 +1268,33 @@
                         const getAllReq = idx.getAll(range);
                         getAllReq.onsuccess = (ev) => {
                             const allData = ev.target.result || [];
-                            // Load ALL items (not just favourites), skip skipped items
-                            const filtered = allData.filter(item => item.isSkip !== true);
+
+                            let filtered;
+                            if (redsAndFavsOnly) {
+                                // From Match Pairs: only Red (status==='R') or Fav cards
+                                // of the current deck (ShowInDays=0, not skipped, not NS).
+                                filtered = allData.filter(item =>
+                                    !item.isSkip &&
+                                    !item.isNS &&
+                                    item.showInDays === 0 &&
+                                    (String(item.status || '').toUpperCase().charAt(0) === 'R' ||
+                                     item.isFav === true)
+                                );
+                                console.log(`Level 2: auto-loaded ${filtered.length} Red+Fav pairs from IndexedDB (matchPairs mode)`);
+                            } else {
+                                // Direct / other entry: load all active items
+                                filtered = allData.filter(item => item.isSkip !== true);
+                                console.log(`Level 2: auto-loaded ${filtered.length} pairs from IndexedDB`);
+                            }
+
                             if (filtered.length > 0) {
                                 L2_PAIRS = filtered.map(item => ({
                                     target: item.target || '',
                                     source: item.source || ''
                                 })).filter(p => p.target || p.source);
-                                console.log(`Level 2: auto-loaded ${L2_PAIRS.length} pairs from IndexedDB`);
                                 resolve(true);
                             } else {
-                                console.warn('Level 2: no data found in IndexedDB for current subject/topic');
+                                console.warn('Level 2: no Red/Fav data found in IndexedDB for current subject/topic');
                                 resolve(false);
                             }
                         };
@@ -2933,7 +2948,7 @@
 
             // --- Pre-load Level 2 or Level 3 data so it is ready on first switch ---
             if (typeitSource === 'matchPairs') {
-                await autoLoadLevel2FromIndexedDB();
+                await autoLoadLevel2FromIndexedDB(true); // matchPairs: Reds + Favs of current deck only
             } else if (typeitSource === 'dialoguePlayer') {
                 autoLoadLevel3FromDialogue();
             }
@@ -3037,28 +3052,28 @@
         // ============================================================
         const DK_SHEET = {
             spanish: [
-                { key: "'", combos: [["'", "a", "á"], ["'", "e", "é"], ["'", "i", "í"], ["'", "o", "ó"], ["'", "u", "ú"], ["'", "c", "ç"]] },
+                { key: "`", combos: [["`", "a", "á"], ["`", "e", "é"], ["`", "i", "í"], ["`", "o", "ó"], ["`", "u", "ú"], ["`", "c", "ç"]] },
                 { key: "~", combos: [["~", "n", "ñ"]] },
                 { key: '"', combos: [['"', "u", "ü"]] }
             ],
             french: [
-                { key: "'", combos: [["'", "e", "é"], ["'", "c", "ç"]] },
-                { key: "`", combos: [["`", "a", "à"], ["`", "e", "è"], ["`", "u", "ù"]] },
+                { key: "`", combos: [["`", "e", "é"], ["`", "c", "ç"]] },
+                { key: "'", combos: [["'", "a", "à"], ["'", "e", "è"], ["'", "u", "ù"]] },
                 { key: "^", combos: [["^", "a", "â"], ["^", "e", "ê"], ["^", "i", "î"], ["^", "o", "ô"], ["^", "u", "û"]] },
                 { key: '"', combos: [['"', "e", "ë"], ['"', "i", "ï"], ['"', "u", "ü"]] },
                 { key: ",", combos: [[",", "c", "ç"]] }
             ],
             portuguese: [
-                { key: "'", combos: [["'", "a", "á"], ["'", "e", "é"], ["'", "i", "í"], ["'", "o", "ó"], ["'", "u", "ú"], ["'", "c", "ç"]] },
-                { key: "`", combos: [["`", "a", "à"]] },
+                { key: "`", combos: [["`", "a", "á"], ["`", "e", "é"], ["`", "i", "í"], ["`", "o", "ó"], ["`", "u", "ú"], ["`", "c", "ç"]] },
+                { key: "'", combos: [["'", "a", "à"]] },
                 { key: "~", combos: [["~", "a", "ã"], ["~", "o", "õ"]] },
                 { key: "^", combos: [["^", "a", "â"], ["^", "e", "ê"], ["^", "o", "ô"]] },
                 { key: '"', combos: [['"', "u", "ü"]] },
                 { key: ",", combos: [[",", "c", "ç"]] }
             ],
             italian: [
-                { key: "`", combos: [["`", "a", "à"], ["`", "e", "è"], ["`", "i", "ì"], ["`", "o", "ò"], ["`", "u", "ù"]] },
-                { key: "'", combos: [["'", "e", "é"]] }
+                { key: "'", combos: [["'", "a", "à"], ["'", "e", "è"], ["'", "i", "ì"], ["'", "o", "ò"], ["'", "u", "ù"]] },
+                { key: "`", combos: [["`", "e", "é"]] }
             ],
             turkish: [
                 { key: ",", combos: [[",", "c", "ç"], [",", "s", "ş"], [",", "g", "ğ"]] },
