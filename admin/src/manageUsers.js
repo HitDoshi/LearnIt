@@ -3,7 +3,6 @@ const PAGE_SIZE = 50;
 let usersData = [];
 let filteredUsers = [];
 let currentPage = 1;
-let sortState = { key: "id", direction: "asc" };
 
 const usersTableBody = document.querySelector("#usersTable tbody");
 const userSearch = document.getElementById("userSearch");
@@ -42,27 +41,10 @@ function applyFilters(resetPage = true) {
     );
   });
 
-  sortUsers();
+  filteredUsers.sort((a, b) => Number(a.id) - Number(b.id));
   if (resetPage) currentPage = 1;
   saveFilters();
   renderUsers();
-}
-
-function sortUsers() {
-  const { key, direction } = sortState;
-  const modifier = direction === "asc" ? 1 : -1;
-
-  filteredUsers.sort((a, b) => {
-    if (key === "id") {
-      return (Number(a.id) - Number(b.id)) * modifier;
-    }
-    if (key === "lastAccessed") {
-      const first = parseServerDate(a.lastAccessed)?.getTime() || 0;
-      const second = parseServerDate(b.lastAccessed)?.getTime() || 0;
-      return (first - second) * modifier;
-    }
-    return String(a[key] || "").localeCompare(String(b[key] || ""), undefined, { sensitivity: "base" }) * modifier;
-  });
 }
 
 function renderUsers() {
@@ -84,8 +66,6 @@ function renderUsers() {
     : "";
   document.getElementById("prevPage").disabled = currentPage === 1;
   document.getElementById("nextPage").disabled = currentPage === totalPages;
-
-  updateSortIcons();
 }
 
 function createUserRow(user) {
@@ -110,19 +90,10 @@ function renderEmptyRow(message) {
   usersTableBody.innerHTML = `<tr class="empty-row"><td colspan="3">${escapeHtml(message)}</td></tr>`;
 }
 
-function updateSortIcons() {
-  document.querySelectorAll("#usersTable th.sortable").forEach((th) => {
-    const icon = th.querySelector(".fa");
-    const isSorted = th.dataset.sort === sortState.key;
-    th.classList.toggle("sorted", isSorted);
-    icon.className = isSorted ? `fa fa-sort-${sortState.direction}` : "fa fa-sort";
-  });
-}
-
 function saveFilters() {
   sessionStorage.setItem(
     "admin-user-filters",
-    JSON.stringify({ term: userSearch.value, type: userTypeFilter.value, sort: sortState, page: currentPage })
+    JSON.stringify({ term: userSearch.value, type: userTypeFilter.value, page: currentPage })
   );
 }
 
@@ -132,25 +103,8 @@ function restoreFilters() {
 
   userSearch.value = saved.term || "";
   userTypeFilter.value = saved.type || "";
-  sortState = saved.sort || sortState;
   currentPage = saved.page || 1;
 }
-
-document.querySelectorAll("#usersTable th.sortable").forEach((th) => {
-  th.addEventListener("click", () => {
-    const key = th.dataset.sort;
-    let direction = key === "lastAccessed" ? "desc" : "asc";
-
-    if (sortState.key === key) {
-      direction = sortState.direction === "asc" ? "desc" : "asc";
-    }
-
-    sortState = { key, direction };
-    sortUsers();
-    saveFilters();
-    renderUsers();
-  });
-});
 
 userSearch.addEventListener("input", () => applyFilters());
 userTypeFilter.addEventListener("change", () => applyFilters());

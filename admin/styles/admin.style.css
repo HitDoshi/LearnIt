@@ -209,20 +209,6 @@ body {
   background-color: #f8fafc;
 }
 
-.admin-table th.sortable {
-  cursor: pointer;
-  user-select: none;
-}
-
-.admin-table th.sortable .fa {
-  margin-left: 4px;
-  color: #b8c2cc;
-}
-
-.admin-table th.sortable.sorted .fa {
-  color: #00569d;
-}
-
 .admin-table .col-id {
   width: 90px;
   color: #52606d;
