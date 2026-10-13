@@ -474,7 +474,8 @@
 
       const backButton = document.getElementById("backButton");
       backButton.onclick = function () {
-        window.location.href = "ai.html";
+        const from = new URLSearchParams(window.location.search).get("from");
+        window.location.href = from === "admin" ? "../admin/manageDialogues.html" : "ai.html";
       };
     </script>
   </body>
