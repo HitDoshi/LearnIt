@@ -1,0 +1,56 @@
+.privacy-policy-modal .modal-header {
+  background-color: #00569d;
+  color: #fff;
+  border-bottom: none;
+  align-items: center;
+}
+
+.privacy-policy-modal .modal-header .close {
+  color: #fff;
+  opacity: 1;
+  text-shadow: none;
+}
+
+.privacy-policy-modal .modal-body {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.privacy-policy-modal .modal-body h5 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #00569d;
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+
+.privacy-policy-modal .modal-body h6 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.privacy-policy-modal .privacy-subheading {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.privacy-policy-modal .privacy-updated {
+  color: #6c757d;
+}
+
+.privacy-policy-modal .modal-body ul {
+  padding-left: 20px;
+}
+
+.privacy-policy-modal .modal-body li {
+  margin-bottom: 6px;
+}
+
+.privacy-policy-modal .privacy-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
