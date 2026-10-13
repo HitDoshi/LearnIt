@@ -1271,16 +1271,17 @@
 
                             let filtered;
                             if (redsAndFavsOnly) {
-                                // From Match Pairs: only Red (status==='R') or Fav cards
+                                // From Match Pairs: only Red (status==='R'), Yellow (status==='Y') or Fav cards
                                 // of the current deck (ShowInDays=0, not skipped, not NS).
                                 filtered = allData.filter(item =>
                                     !item.isSkip &&
                                     !item.isNS &&
                                     item.showInDays === 0 &&
                                     (String(item.status || '').toUpperCase().charAt(0) === 'R' ||
-                                     item.isFav === true)
+                                        String(item.status || '').toUpperCase().charAt(0) === 'Y' ||
+                                        item.isFav === true)
                                 );
-                                console.log(`Level 2: auto-loaded ${filtered.length} Red+Fav pairs from IndexedDB (matchPairs mode)`);
+                                console.log(`Level 2: auto-loaded ${filtered.length} Red+Yellow+Fav pairs from IndexedDB (matchPairs mode)`);
                             } else {
                                 // Direct / other entry: load all active items
                                 filtered = allData.filter(item => item.isSkip !== true);

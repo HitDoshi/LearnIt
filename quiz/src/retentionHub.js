@@ -19,7 +19,7 @@
   function statusMeta(status) {
     switch (String(status || '').toUpperCase().charAt(0)) {
       case 'G': return { label: 'Green', color: '#1e7e34' };
-      case 'Y': return { label: 'Yellow', color: '#b45309' };
+      case 'Y': return { label: 'Yellow', color: '#d97706' };
       case 'R': return { label: 'Red', color: '#c0392b' };
       default: return { label: 'Neutral', color: '#000000' };
     }

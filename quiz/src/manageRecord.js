@@ -587,7 +587,7 @@ function undoData() {
 function getStatusTextColor(status) {
   switch (String(status || '').toUpperCase().charAt(0)) {
     case 'G': return '#1e7e34';
-    case 'Y': return '#b45309';
+    case 'Y': return '#d97706';
     case 'R': return '#c0392b';
     case 'N': return '#000000';
     default: return null;
