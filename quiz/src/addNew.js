@@ -291,7 +291,8 @@ function updateCount() {
     if (s && t) { row.classList.add("has-data"); filled++; }
     else row.classList.remove("has-data");
   });
-  document.getElementById("filledCount").textContent = filled;
+  var filledCountEl = document.getElementById("filledCount");
+  if (filledCountEl) filledCountEl.textContent = filled;
 }
 
 function collectRows() {

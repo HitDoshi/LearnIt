@@ -194,7 +194,7 @@ nav .nav-title {
 .bottom-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 12px;
   flex-wrap: wrap;
   gap: 8px;
@@ -248,8 +248,4 @@ nav .nav-title {
 
 .btn-clear:active {
   background: #f2f2f2;
-}
-
-#snackbar {
-  display: none;
 }
