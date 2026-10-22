@@ -163,8 +163,6 @@
   var _modelSelector = createSelector(
     [
       { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', desc: 'Fast & efficient' },
-      { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', desc: 'Most capable' },
-      { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', desc: 'Previous gen fast' },
     ],
     'ai_selected_model',
     'gemini-2.5-flash',

@@ -93,6 +93,10 @@
           <span id="mnem-text-save-spinner" class="rh-spinner" style="display:none;"></span>
           Save Text
         </button>
+        <button type="button" class="btn-delete" id="mnem-text-delete-btn" disabled>
+          <span id="mnem-text-delete-spinner" class="rh-spinner" style="display:none;"></span>
+          Delete
+        </button>
       </div>
 
       <hr class="rh-divider" />
@@ -116,10 +120,27 @@
           <span id="mnem-img-save-spinner" class="rh-spinner" style="display:none;"></span>
           Save Image
         </button>
+        <button type="button" class="btn-delete" id="mnem-img-delete-btn" disabled>
+          <span id="mnem-img-delete-spinner" class="rh-spinner" style="display:none;"></span>
+          Delete
+        </button>
       </div>
 
     </div>
 
+  </div>
+
+  <!-- Delete confirmation (native confirm() is not shown inside the app WebView) -->
+  <div class="modal fade" id="mnemDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body" id="mnemDeleteModalText"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="mnemDeleteModalConfirm">Delete</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="./src/retentionHub.js"></script>

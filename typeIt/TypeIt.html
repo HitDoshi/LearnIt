@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeIt</title>
+    <script>
+        // Opened directly (not inside quiz/TypeIt.html's iframe) — load the wrapper so the blue nav bar shows
+        if (window.self === window.top) {
+            window.location.replace("../quiz/TypeIt.html");
+        }
+    </script>
     <style>
         :root {
             --bg-primary: #f7fafc;

@@ -103,8 +103,6 @@ if (myParam === "1") {
   document.getElementById("skipOnlyRadio").checked = true;
 } else if (myParam === "4") {
   document.getElementById("showCurrentRadio").checked = true;
-} else if (myParam === "5") {
-  document.getElementById("audioOnlyRadio").checked = true;
 } else if (myParam === "6") {
   document.getElementById("showRedRadio").checked = true;
 }
@@ -209,9 +207,6 @@ openRequest.onsuccess = (event) => {
   } else if (myParam == "4") {
     dropdownItems[3].style.color = "green";
     renderView("current");
-  } else if (myParam == "5") {
-    dropdownItems[4].style.color = "green";
-    renderView("audio");
   } else if (myParam == "6") {
     dropdownItems[5].style.color = "green";
     renderView("red");
@@ -327,9 +322,6 @@ async function renderView(viewType = "all") {
       case "current":
         filteredData = allData.filter((item) => item?.showInDays == 0);
         break;
-      case "audio":
-        filteredData = allData.filter((item) => item?.fileName);
-        break;
       case "red":
         filteredData = allData.filter(
           (item) => String(item?.status || '').toUpperCase().charAt(0) === 'R'
@@ -364,10 +356,6 @@ function displayFavData() {
 
 function displaySkipData() {
   renderView("skip");
-}
-
-function displayAudioData() {
-  renderView("audio");
 }
 
 function displayCurrentData() {
@@ -494,8 +482,6 @@ function loadUpdatedTable() {
     displaySkipData();
   } else if (myParam == "4") {
     displayCurrentData();
-  } else if (myParam == "5") {
-    displayAudioData();
   } else if (myParam == "6") {
     displayRedData();
   }

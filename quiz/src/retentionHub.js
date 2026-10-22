@@ -143,6 +143,7 @@
       document.getElementById('mnem-text-area').value = localText;
       setBtnDisabled('mnem-img-generate-btn', false);
       setBtnDisabled('mnem-text-save-btn', false);
+      setBtnDisabled('mnem-text-delete-btn', false);
     }
     if (localImage) {
       displayMnemonicImage(localImage);
@@ -175,6 +176,41 @@
     imgEl.style.display = 'block';
     placeholder.style.display = 'none';
     setBtnDisabled('mnem-img-save-btn', false);
+    setBtnDisabled('mnem-img-delete-btn', false);
+  }
+
+  function hideMnemonicImage() {
+    const imgEl = document.getElementById('mnem-img-display');
+    imgEl.removeAttribute('src');
+    imgEl.style.display = 'none';
+    document.getElementById('mnem-img-placeholder').style.display = 'flex';
+    setBtnDisabled('mnem-img-save-btn', true);
+    setBtnDisabled('mnem-img-delete-btn', true);
+  }
+
+  // Clears the mnemonic text or image on the server (DB value + image file).
+  // Returns true when there is nothing to do server-side (not logged in) or the server confirmed it.
+  async function deleteMnemonicOnServer(type, imageFileNames) {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+
+    const res = await fetch(`${API_URL}/api/delete_mnemonic.php?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: type,
+        source: currentRecord.source || '',
+        target: currentRecord.target || '',
+        topicId: currentRecord.topicId != null ? currentRecord.topicId : 0,
+        image_file_names: imageFileNames || []
+      })
+    });
+    const data = await res.json();
+    if (!data?.success) {
+      showToast(data?.message || 'Failed to delete on the server.');
+      return false;
+    }
+    return true;
   }
 
   async function generateMnemonicText() {
@@ -211,6 +247,7 @@
         document.getElementById('mnem-text-area').value = data.data.mnemonic_text;
         setBtnDisabled('mnem-text-save-btn', false);
         setBtnDisabled('mnem-img-generate-btn', false);
+        setBtnDisabled('mnem-text-delete-btn', false);
       } else {
         showToast(data?.message || 'Failed to generate mnemonic.');
       }
@@ -326,16 +363,86 @@
     setSpinner('mnem-img-save-spinner', false);
   }
 
+  function confirmDelete(message) {
+    return new Promise(function (resolve) {
+      let confirmed = false;
+      document.getElementById('mnemDeleteModalText').textContent = message;
+      document.getElementById('mnemDeleteModalConfirm').onclick = function () {
+        confirmed = true;
+        $('#mnemDeleteModal').modal('hide');
+      };
+      $('#mnemDeleteModal').one('hidden.bs.modal', function () { resolve(confirmed); });
+      $('#mnemDeleteModal').modal('show');
+    });
+  }
+
+  async function deleteMnemonicText() {
+    if (!currentRecord) return;
+    if (!(await confirmDelete('Delete the mnemonic association? It will be removed from this device and the server.'))) return;
+
+    setBtnDisabled('mnem-text-delete-btn', true);
+    setSpinner('mnem-text-delete-spinner', true);
+
+    try {
+      if (await deleteMnemonicOnServer('text')) {
+        await saveMnemonicToIndexedDB('', undefined);
+        document.getElementById('mnem-text-area').value = '';
+        setBtnDisabled('mnem-text-save-btn', true);
+        setBtnDisabled('mnem-img-generate-btn', true);
+        setSpinner('mnem-text-delete-spinner', false);
+        showToast('Mnemonic association deleted.');
+        return;
+      }
+    } catch (err) {
+      console.error('[deleteMnemonicText]', err);
+      showToast('Error: ' + err.message);
+    }
+
+    setBtnDisabled('mnem-text-delete-btn', false);
+    setSpinner('mnem-text-delete-spinner', false);
+  }
+
+  async function deleteMnemonicImage() {
+    if (!currentRecord) return;
+    if (!(await confirmDelete('Delete the mnemonic image? It will be removed from this device and the server.'))) return;
+
+    setBtnDisabled('mnem-img-delete-btn', true);
+    setSpinner('mnem-img-delete-spinner', true);
+
+    // Both the saved image and a freshly generated, not-yet-saved one
+    const files = [currentRecord.mnemonic_image, pendingImageFileName].filter(Boolean);
+
+    try {
+      if (await deleteMnemonicOnServer('image', files)) {
+        await saveMnemonicToIndexedDB(undefined, '');
+        pendingImageFileName = null;
+        hideMnemonicImage();
+        setSpinner('mnem-img-delete-spinner', false);
+        showToast('Mnemonic image deleted.');
+        return;
+      }
+    } catch (err) {
+      console.error('[deleteMnemonicImage]', err);
+      showToast('Error: ' + err.message);
+    }
+
+    setBtnDisabled('mnem-img-delete-btn', false);
+    setSpinner('mnem-img-delete-spinner', false);
+  }
+
   document.getElementById('mnem-text-area').addEventListener('input', function () {
     const hasText = this.value.trim().length > 0;
     setBtnDisabled('mnem-text-save-btn', !hasText);
     setBtnDisabled('mnem-img-generate-btn', !hasText);
+    setBtnDisabled('mnem-text-delete-btn', !hasText && !currentRecord?.mnemonic_text);
   });
 
   document.getElementById('mnem-generate-btn').addEventListener('click', generateMnemonicText);
   document.getElementById('mnem-text-save-btn').addEventListener('click', saveMnemonicText);
   document.getElementById('mnem-img-generate-btn').addEventListener('click', generateMnemonicImage);
   document.getElementById('mnem-img-save-btn').addEventListener('click', saveMnemonicImage);
+  document.getElementById('mnem-text-delete-btn').addEventListener('click', deleteMnemonicText);
+  document.getElementById('mnem-img-delete-btn').addEventListener('click', deleteMnemonicImage);
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadRecord);

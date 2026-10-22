@@ -21,8 +21,14 @@ userOpenRequest.onupgradeneeded = function (e) {
 userOpenRequest.onsuccess = function (e) { userDB = e.target.result; };
 userOpenRequest.onerror = function (e) { console.error("DB error:", e.target.error); };
 
+var backPage = new URLSearchParams(window.location.search).get("back");
+
 document.getElementById("backBtn").onclick = function () {
-  window.history.back();
+  if (backPage) {
+    window.location.href = backPage;
+  } else {
+    window.history.back();
+  }
 };
 
 var selAnchor = null;

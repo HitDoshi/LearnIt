@@ -2413,13 +2413,24 @@ async function showSecondaryLanguage() {
     );
     const result = await response.json();
 
-    if (result?.success) {
+    if (result?.success && result?.data?.[secondLanguage]) {
       input.value = result?.data?.[secondLanguage];
       input2.value = result?.data?.[secondLanguage + "_NOTE"];
 
       playTTS({ isPlayTTS: true, text: input.value, language: languagePhrase });
     } else {
-      input.value = "Not found.";
+      // Not in server data (e.g. user-defined) — translate the question, same as the app
+      const source = JSON.parse(localStorage.getItem("source-language") || "{}")?.code || "en-US";
+      const target = JSON.parse(localStorage.getItem("target-language") || "{}")?.code || "en-US";
+      const fromLan = toggleQuestion == "true" ? target : source;
+
+      const translated = await translateText(QuestionText.value || "", fromLan, languagePhrase);
+      if (translated) {
+        input.value = translated;
+        playTTS({ isPlayTTS: true, text: input.value, language: languagePhrase });
+      } else {
+        input.value = "Not found.";
+      }
     }
   } catch (error) {
     input.value = "Not found.";
@@ -2429,6 +2440,22 @@ async function showSecondaryLanguage() {
     spinner.classList.add("d-none");
     btnText.classList.remove("d-none");
   }
+}
+
+// Free Google Translate endpoint (same service the app's `translator` package uses).
+// Locale codes are reduced to the language part, e.g. "en-US" -> "en".
+async function translateText(text, fromLang, toLang) {
+  if (!text.trim()) return "";
+  const sl = (fromLang || "auto").split("-")[0];
+  const tl = (toLang || "en").split("-")[0];
+  const url =
+    "https://translate.googleapis.com/translate_a/single?client=gtx&dt=t" +
+    `&sl=${encodeURIComponent(sl)}&tl=${encodeURIComponent(tl)}&q=${encodeURIComponent(text)}`;
+
+  const response = await fetch(url);
+  if (!response.ok) return "";
+  const result = await response.json();
+  return (result?.[0] || []).map((part) => part?.[0] || "").join("").trim();
 }
 
 // AI Sentence Generator Logic
