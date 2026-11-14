@@ -7,7 +7,39 @@ const backButton = document.getElementById("backButton");
 
 window.addEventListener("load", loadDialogueList);
 
-async function loadDialogueList() {
+function dialogueListCacheKey() {
+  return "dialogue-list:" + lgCache.tokenKey();
+}
+
+function applyUserDialogues(data) {
+  dialogueData = (data?.data || []).filter(item => item.dialogue_id && item.dialogue_id.startsWith('A0.00.'));
+  renderDialogueRows(dialogueData);
+}
+
+async function refreshDialogueList(cachedData) {
+  try {
+    const token = localStorage.getItem("token") || "";
+    const response = await fetch(`${API_URL}/api/get_dialogue_data.php?token=${token}`);
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!data?.success || lgCache.same(data, cachedData)) return;
+    lgCache.write(dialogueListCacheKey(), data);
+    if (pendingDeletions.size === 0) {
+      applyUserDialogues(data);
+    }
+  } catch (error) {
+    console.error("Background refresh failed", error);
+  }
+}
+
+async function loadDialogueList(forceRefresh) {
+  const cachedData = forceRefresh === true ? null : lgCache.read(dialogueListCacheKey());
+  if (cachedData) {
+    applyUserDialogues(cachedData);
+    refreshDialogueList(cachedData);
+    return;
+  }
+
   try {
     $("#modal-loading").modal("show");
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -18,9 +50,8 @@ async function loadDialogueList() {
       .then((response) => response.json())
       .then((data) => {
         if (data?.success) {
-          // Filter ONLY user dialogues
-          dialogueData = (data?.data || []).filter(item => item.dialogue_id && item.dialogue_id.startsWith('A0.00.'));
-          renderDialogueRows(dialogueData);
+          lgCache.write(dialogueListCacheKey(), data);
+          applyUserDialogues(data);
         } else {
           showToast(data?.message || "Unable to load dialogues");
         }
@@ -166,7 +197,7 @@ async function updateData() {
       if (data?.success) {
         showToast(data?.message || "Deleted successfully");
         hideUpdateOption();
-        loadDialogueList(); // reload table
+        loadDialogueList(true);
       } else {
         showToast(data?.message || "Delete failed");
         $("#modal-loading").modal("hide");

@@ -21,7 +21,35 @@ function replaceStateWithHistory(page) {
   }
 }
 
+const levelTopicCacheKey = "level-topic";
+
+function applyLevelTopicData(responseData) {
+  topicData = responseData?.data?.topics || [];
+  levelData = responseData?.data?.levels || [];
+  customLevelRenderSelectOptions();
+}
+
+async function refreshLevelTopicData(cachedData) {
+  try {
+    const response = await fetch(`${API_URL}/api/get_level_topic_data.php`);
+    if (!response.ok) return;
+    const responseData = await response.json();
+    if (!responseData.success || lgCache.same(responseData, cachedData)) return;
+    lgCache.write(levelTopicCacheKey, responseData);
+    applyLevelTopicData(responseData);
+  } catch (error) {
+    console.error("Background refresh failed", error);
+  }
+}
+
 async function getData() {
+  const cachedData = lgCache.read(levelTopicCacheKey);
+  if (cachedData) {
+    applyLevelTopicData(cachedData);
+    refreshLevelTopicData(cachedData);
+    return;
+  }
+
   $("#modal-loading").modal("show");
   isShowLoading = true;
 
@@ -41,11 +69,11 @@ async function getData() {
 
     if (!responseData.success) {
       showToast(responseData.message);
+    } else {
+      lgCache.write(levelTopicCacheKey, responseData);
     }
-    topicData = responseData?.data?.topics || [];
-    levelData = responseData?.data?.levels || [];
 
-    customLevelRenderSelectOptions();
+    applyLevelTopicData(responseData);
     $("#modal-loading").modal("hide");
     isShowLoading = false;
   } catch (error) {

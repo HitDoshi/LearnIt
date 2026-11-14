@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dialogue Player</title>
 
@@ -33,9 +34,10 @@
 
   <script src="./constant.js"></script>
   <script src="./src/tts.js"></script>
+  <link rel="stylesheet" href="./styles/theme.css" />
 </head>
 
-<body onload="getData();">
+<body class="page-flow" onload="getData();">
   <nav id="myNavbar" class="navbar navbar-expand-lg" style="background-color: #00569d">
     <div style="display: flex; width: 100%; align-items: center;">
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short"
@@ -68,6 +70,7 @@
       ">
     <br />
 
+    <span class="lg-field-label">Level</span>
     <div class="custom-dropdown">
       <select class="level-list-custom-dropdown-select main-custom-button"></select>
       <span class="custom-dropdown-arrow"></span>
@@ -75,6 +78,7 @@
 
     <br />
 
+    <span class="lg-field-label">Topic</span>
     <div class="custom-dropdown">
       <select class="topic-list-custom-dropdown-select main-custom-button"></select>
       <span class="custom-dropdown-arrow"></span>
@@ -124,8 +128,10 @@
   </div>
 
   <script src="./src/displayToast.js"></script>
+  <script src="./src/lgCache.js"></script>
   <script src="./src/levelTopicSelection.js"></script>
   <script src="./src/api.js"></script>
+  <script src="./src/lgSelect.js"></script>
 </body>
 
 </html>

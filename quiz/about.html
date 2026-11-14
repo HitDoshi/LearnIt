@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About</title>
 
@@ -153,9 +154,10 @@
       color: #00569d;
     }
   </style>
+  <link rel="stylesheet" href="./styles/theme.css" />
 </head>
 
-<body style="display: flex; flex-direction: column; min-height: 100vh;margin-bottom: 50px;">
+<body class="page-about" style="display: flex; flex-direction: column; min-height: 100vh;margin-bottom: 50px;">
   <nav id="myNavbar" class="navbar navbar-expand-lg" style="background-color: #00569d">
     <div style="display: flex; flex: 1">
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short"
@@ -170,15 +172,15 @@
 
   <div class="container" style="max-width: 500px; margin: auto;margin-top: 20px;">
     <div class="container mt-4">
-      <div class="card p-3 shadow-sm">
+      <div class="card p-3 shadow-sm about-info">
         <h5>User Information</h5>
         <hr />
-        <p><strong>UserID:</strong> <span id="userId"></span></p>
-        <p><strong>UserType:</strong> <span id="userType"></span></p>
-        <p><strong>MaxUD:</strong> <span id="maxUD"></span></p>
-        <p><strong>MaxUD Dialogues:</strong> <span id="maxUDDialogue"></span></p>
-        <p><strong>Date:</strong> <span id="currentDate"></span></p>
-        <p><strong>Version:</strong> <span id="version"></span></p>
+        <p><strong>User ID</strong> <span id="userId"></span></p>
+        <p><strong>User type</strong> <span id="userType"></span></p>
+        <p><strong>MaxUD</strong> <span id="maxUD"></span></p>
+        <p><strong>MaxUD dialogues</strong> <span id="maxUDDialogue"></span></p>
+        <p><strong>Date</strong> <span id="currentDate"></span></p>
+        <p><strong>Version</strong> <span id="version"></span></p>
       </div>
     </div>
 

@@ -82,7 +82,64 @@ function openTypeItFromDialogue() {
   replaceStateWithHistory('TypeIt.html');
 }
 
+function readDialogueTopic() {
+  let dialogueTopic = {};
+  try {
+    const dialogueTopicStr = localStorage.getItem("dialogue-topic");
+    if (
+      dialogueTopicStr &&
+      dialogueTopicStr !== "undefined" &&
+      dialogueTopicStr !== "null"
+    ) {
+      dialogueTopic = JSON.parse(dialogueTopicStr);
+    }
+  } catch (error) {
+    console.error("Error parsing dialogue-topic from localStorage:", error);
+    dialogueTopic = {};
+  }
+  return dialogueTopic;
+}
+
+function applyDialogueList(responseData) {
+  const { levelID, topicID } = readDialogueTopic();
+  console.log(levelID, topicID);
+  dialogueData = (responseData.data || []).filter(
+    (item) => item.level_id == levelID && item.topic_id == topicID
+  );
+  if (!dialogueData.length) return false;
+  customSubjectRenderSelectOptions();
+  return true;
+}
+
+function dialogueListCacheKey() {
+  return "dialogue-list:" + lgCache.tokenKey();
+}
+
+async function refreshDialogueList(cachedData) {
+  try {
+    const token = localStorage.getItem("token") || "";
+    const response = await fetch(`${API_URL}/api/get_dialogue_data.php?token=${token}`);
+    if (!response.ok) return;
+    const responseData = await response.json();
+    if (!responseData.success || lgCache.same(responseData, cachedData)) return;
+    lgCache.write(dialogueListCacheKey(), responseData);
+    const currentId = selectedDialogue?.id;
+    if (applyDialogueList(responseData) && currentId != null) {
+      customSubjectDropdownSelect.value = String(currentId);
+    }
+  } catch (error) {
+    console.error("Background refresh failed", error);
+  }
+}
+
 async function getData() {
+  const cachedData = lgCache.read(dialogueListCacheKey());
+  if (cachedData && applyDialogueList(cachedData)) {
+    getSentences();
+    refreshDialogueList(cachedData);
+    return;
+  }
+
   $("#modal-loading").modal("show");
   isShowLoading = true;
 
@@ -94,38 +151,22 @@ async function getData() {
     const url = `${API_URL}/api/get_dialogue_data.php?token=${token}`;
     const response = await fetch(url);
 
+    if (!response.ok) {
+      throw new Error(`Request failed with status: ${response.status}`);
+    }
+
     const responseData = await response.json();
     console.log(responseData);
 
     if (responseData.success) {
-      let dialogueTopic = {};
-      try {
-        const dialogueTopicStr = localStorage.getItem("dialogue-topic");
-        if (
-          dialogueTopicStr &&
-          dialogueTopicStr !== "undefined" &&
-          dialogueTopicStr !== "null"
-        ) {
-          dialogueTopic = JSON.parse(dialogueTopicStr);
-        }
-      } catch (error) {
-        console.error("Error parsing dialogue-topic from localStorage:", error);
-        dialogueTopic = {};
-      }
-      const { levelID, topicID } = dialogueTopic;
-      console.log(levelID, topicID);
-      dialogueData = responseData.data;
-      dialogueData = dialogueData.filter(
-        (item) => item.level_id == levelID && item.topic_id == topicID
-      );
+      lgCache.write(dialogueListCacheKey(), responseData);
 
-      if (!dialogueData.length) {
+      if (!applyDialogueList(responseData)) {
         showToast("No dialogues found.");
         $("#modal-loading").modal("hide");
         isShowLoading = false;
         return;
       }
-      customSubjectRenderSelectOptions();
 
       getSentences();
     } else {
@@ -225,7 +266,50 @@ $(document).ready(function () {
   });
 });
 
+function applySentences(responseData) {
+  sentences = responseData.data;
+  sentences = sentences?.map((s) => {
+    return {
+      ...s,
+      language: sourceLang?.description,
+    };
+  });
+  renderSentences(sentences);
+}
+
+function sentencesCacheKey(dialogueId) {
+  return "dialogue-sentences:" + dialogueId + ":" + lgCache.tokenKey();
+}
+
+async function refreshSentences(dialogueId, cachedData) {
+  try {
+    const token = localStorage.getItem("token") || "";
+    const response = await fetch(`${API_URL}/api/get_dialogue_sentences.php?dialogue_id=${dialogueId}&token=${token}`);
+    if (!response.ok) return;
+    const responseData = await response.json();
+    if (!responseData.success || lgCache.same(responseData, cachedData)) return;
+    lgCache.write(sentencesCacheKey(dialogueId), responseData);
+    if (selectedDialogue?.dialogue_id === dialogueId && !isPlaying) {
+      applySentences(responseData);
+    }
+  } catch (error) {
+    console.error("Background refresh failed", error);
+  }
+}
+
 async function getSentences() {
+  const dialogueId = selectedDialogue?.dialogue_id;
+  const cachedData = lgCache.read(sentencesCacheKey(dialogueId));
+  if (cachedData) {
+    if (isShowLoading) {
+      $("#modal-loading").modal("hide");
+      isShowLoading = false;
+    }
+    applySentences(cachedData);
+    refreshSentences(dialogueId, cachedData);
+    return;
+  }
+
   $("#modal-loading").modal("show");
   isShowLoading = true;
 
@@ -233,7 +317,7 @@ async function getSentences() {
 
   try {
     const token = localStorage.getItem("token") || "";
-    const url = `${API_URL}/api/get_dialogue_sentences.php?dialogue_id=${selectedDialogue?.dialogue_id}&token=${token}`;
+    const url = `${API_URL}/api/get_dialogue_sentences.php?dialogue_id=${dialogueId}&token=${token}`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -243,15 +327,11 @@ async function getSentences() {
     const responseData = await response.json();
 
     if (responseData.success) {
-      sentences = responseData.data;
-      sentences = sentences?.map((s) => {
-        return {
-          ...s,
-          language: sourceLang?.description,
-        };
-      });
-      renderSentences(sentences);
-    } else[showToast(responseData.message)];
+      lgCache.write(sentencesCacheKey(dialogueId), responseData);
+      applySentences(responseData);
+    } else {
+      showToast(responseData.message);
+    }
 
     $("#modal-loading").modal("hide");
     isShowLoading = false;

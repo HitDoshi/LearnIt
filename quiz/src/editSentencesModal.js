@@ -342,6 +342,9 @@ async function saveSentenceChanges() {
     if (data?.success) {
       showToast(data?.message || "Sentences updated.");
       pendingChanges = {};
+      if (typeof lgCache !== "undefined") {
+        lgCache.remove("dialogue-sentences:" + selectedDialogue.dialogue_id + ":" + lgCache.tokenKey());
+      }
       await fetchSentencesForDialogue(selectedDialogue);
       $(editSentencesModalEl).modal('hide');
     } else {
