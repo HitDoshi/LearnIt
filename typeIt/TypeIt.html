@@ -602,6 +602,110 @@
       display: none;
     }
   </style>
+  <script>
+    (function () {
+      var mode = "system";
+      var systemDark = false;
+      try {
+        mode = localStorage.getItem("lg-theme") || "system";
+        var flag = localStorage.getItem("lg-system-dark");
+        systemDark = flag === "1" ? true : flag === "0" ? false : !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      } catch (error) {}
+      var dark = mode === "dark" || (mode !== "light" && systemDark);
+      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    })();
+  </script>
+  <style>
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg-primary: #0e1621;
+      --text-main: #e5ecf4;
+      --accent-blue: #4a98dc;
+      --sheet-bg: #16202d;
+      --border-color: #243345;
+    }
+
+    html[data-theme="dark"] h1 {
+      color: #cfe3f7;
+    }
+
+    html[data-theme="dark"] .file-label,
+    html[data-theme="dark"] .stat-card,
+    html[data-theme="dark"] .circulation-panel,
+    html[data-theme="dark"] .deadkey-details,
+    html[data-theme="dark"] .deadkey-combo {
+      border-color: #243345;
+      background: #16202d;
+    }
+
+    html[data-theme="dark"] .file-label {
+      color: #77b3ea;
+    }
+
+    html[data-theme="dark"] .progress-container,
+    html[data-theme="dark"] .phase-indicator .dot,
+    html[data-theme="dark"] .phase-indicator .dot-line {
+      background: #243345;
+    }
+
+    html[data-theme="dark"] .radio-toggle-group,
+    html[data-theme="dark"] .typewriter-row,
+    html[data-theme="dark"] .translation-row,
+    html[data-theme="dark"] .deadkey-lang-card {
+      background: #1c2837;
+    }
+
+    html[data-theme="dark"] .translation-row {
+      border-left-color: #4b5d73;
+    }
+
+    html[data-theme="dark"] .radio-toggle-group label,
+    html[data-theme="dark"] .phase-indicator,
+    html[data-theme="dark"] .panel-label,
+    html[data-theme="dark"] .typewriter-row,
+    html[data-theme="dark"] .translation-row,
+    html[data-theme="dark"] .deadkey-lang-header,
+    html[data-theme="dark"] .deadkey-combo .dk-base {
+      color: #c2cedb;
+    }
+
+    html[data-theme="dark"] .panel-content,
+    html[data-theme="dark"] .char-correct,
+    html[data-theme="dark"] .deadkey-combo .dk-result {
+      color: #e5ecf4;
+    }
+
+    html[data-theme="dark"] .char-untyped,
+    html[data-theme="dark"] .deadkey-summary,
+    html[data-theme="dark"] .deadkey-row-label,
+    html[data-theme="dark"] .deadkey-combo .dk-plus,
+    html[data-theme="dark"] .deadkey-combo .dk-arrow {
+      color: #8b9db2;
+    }
+
+    html[data-theme="dark"] .deadkey-row-sep {
+      color: #4b5d73;
+    }
+
+    html[data-theme="dark"] .deadkey-combo .dk-key {
+      color: #77b3ea;
+    }
+
+    html[data-theme="dark"] .char-correct {
+      background-color: #12302a;
+    }
+
+    html[data-theme="dark"] .char-current {
+      color: #ffffff;
+      background-color: #1d3b5a;
+    }
+
+    html[data-theme="dark"] select {
+      border-color: #314459;
+      background-color: #101a26;
+      color: #e5ecf4;
+    }
+  </style>
 </head>
 
 <body>

@@ -52,6 +52,10 @@
     <link rel="stylesheet" href="./styles/toast.style.css" />
     <link rel="stylesheet" href="./styles/navBar.style.css" />
     <link rel="stylesheet" href="./styles/loader.style.css" />
+    <link rel="stylesheet" href="./styles/theme.css" />
+    <link rel="stylesheet" href="../admin/styles/admin.style.css" />
+
+    <script src="./src/lgTheme.js"></script>
 
     <style>
       body {
@@ -73,6 +77,140 @@
         font-size: 14px;
         vertical-align: top;
         padding: 6px;
+      }
+
+      html[data-theme="dark"] {
+        color-scheme: dark;
+      }
+
+      html[data-theme="dark"] body {
+        background-color: #0e1621;
+        color: #e5ecf4;
+      }
+
+      html[data-theme="dark"] .text-muted {
+        color: #8b9db2 !important;
+      }
+
+      html[data-theme="dark"] .form-control,
+      html[data-theme="dark"] .custom-select {
+        border-color: #314459;
+        background-color: #101a26;
+        color: #e5ecf4;
+      }
+
+      html[data-theme="dark"] .custom-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23a9b8c9' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+      }
+
+      html[data-theme="dark"] .form-control:focus,
+      html[data-theme="dark"] .custom-select:focus {
+        border-color: #4a98dc;
+        background-color: #101a26;
+        color: #e5ecf4;
+        box-shadow: 0 0 0 0.2rem rgba(74, 152, 220, 0.25);
+      }
+
+      html[data-theme="dark"] .form-control::placeholder {
+        color: #6b7f96;
+      }
+
+      html[data-theme="dark"] .form-control:disabled,
+      html[data-theme="dark"] .form-control[readonly],
+      html[data-theme="dark"] .custom-select:disabled {
+        background-color: #1c2837;
+        color: #6b7f96;
+      }
+
+      html[data-theme="dark"] .modal-content {
+        border-color: #243345;
+        background-color: #16202d;
+        color: #e5ecf4;
+      }
+
+      html[data-theme="dark"] .modal-header,
+      html[data-theme="dark"] .modal-footer {
+        border-color: #243345;
+      }
+
+      html[data-theme="dark"] .modal-backdrop.show {
+        opacity: 0.65;
+      }
+
+      html[data-theme="dark"] .close {
+        color: #e5ecf4;
+        text-shadow: none;
+        opacity: 0.7;
+      }
+
+      html[data-theme="dark"] .close:not(:disabled):not(.disabled):hover {
+        color: #ffffff;
+        opacity: 1;
+      }
+
+      html[data-theme="dark"] #snackbar {
+        background-color: #e5ecf4;
+        color: #0e1621;
+      }
+
+      html[data-theme="dark"] .error-snippet {
+        border-color: #6b3036;
+        background: #3d2226;
+      }
+
+      html[data-theme="dark"] .error-snippet pre {
+        color: #f5c6c0;
+      }
+
+      html[data-theme="dark"] span[style*="#ffd2d2"] {
+        background: #7a2e35 !important;
+        color: #ffffff;
+      }
+
+      html[data-theme="dark"] .border {
+        border-color: #314459 !important;
+      }
+
+      html[data-theme="dark"] .table {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e5ecf4;
+        --bs-table-border-color: #314459;
+        color: #e5ecf4;
+      }
+
+      html[data-theme="dark"] .table th,
+      html[data-theme="dark"] .table td {
+        border-color: #314459;
+        background-color: transparent;
+        color: #e5ecf4;
+      }
+
+      html[data-theme="dark"] .table thead th {
+        background-color: #1c2837;
+      }
+
+      html[data-theme="dark"] .alert-success {
+        border-color: #1f4a2d;
+        background-color: #15321f;
+        color: #6fd18f;
+      }
+
+      html[data-theme="dark"] .alert-danger {
+        border-color: #5a2a2f;
+        background-color: #3d2226;
+        color: #f08a7e;
+      }
+
+      html[data-theme="dark"] .alert-info {
+        border-color: #1d4a5c;
+        background-color: #13303d;
+        color: #7fd0e6;
+      }
+
+      html[data-theme="dark"] .alert-warning {
+        border-color: #5a4a1c;
+        background-color: #3a3218;
+        color: #f2c95a;
       }
     </style>
   </head>

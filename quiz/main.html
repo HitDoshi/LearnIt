@@ -38,6 +38,7 @@
 
   <!-- Google Identity Services SDK -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="./src/lgTheme.js"></script>
   <link rel="stylesheet" href="./styles/theme.css" />
 </head>
 
@@ -188,6 +189,14 @@
         </svg>
       </span>
       <div class="dropdown-menu dropdown-menu-right">
+        <div class="lg-theme-switch" role="group" aria-label="Theme">
+          <span class="lg-theme-switch-label">Theme</span>
+          <div class="lg-theme-options">
+            <button type="button" data-lg-theme-option="light">Light</button>
+            <button type="button" data-lg-theme-option="dark">Dark</button>
+            <button type="button" data-lg-theme-option="system">Auto</button>
+          </div>
+        </div>
         <div id="notLogInContainer">
 
           <label class="dropdown-item d-flex align-items-center justify-content-center" style="pointer-events: none;">

@@ -179,8 +179,19 @@
     if (openState) close(openState, false);
   });
 
+  function enhanceWithin(node) {
+    if (node.nodeType !== 1) return;
+    if (node.matches("select.main-custom-button")) enhance(node);
+    Array.prototype.forEach.call(node.querySelectorAll("select.main-custom-button"), enhance);
+  }
+
   function init() {
-    Array.prototype.forEach.call(document.querySelectorAll("select.main-custom-button"), enhance);
+    enhanceWithin(document.body);
+    new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        Array.prototype.forEach.call(mutation.addedNodes, enhanceWithin);
+      });
+    }).observe(document.body, { childList: true, subtree: true });
   }
 
   if (document.readyState === "loading") {

@@ -155,7 +155,7 @@ function createInputField(field, type) {
 
   if (type === "userType") {
     input = document.createElement("select");
-    input.className = "custom-select";
+    input.className = "custom-select main-custom-button";
     Object.entries(USER_TYPES).forEach(([value, text]) => {
       const option = document.createElement("option");
       option.value = value;
