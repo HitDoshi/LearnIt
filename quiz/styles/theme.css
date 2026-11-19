@@ -761,7 +761,6 @@ input[type="number"]:not(.form-control):focus {
   font-weight: 500;
 }
 
-.page-practice input[type="checkbox"],
 .page-flow #toggle_tts,
 .page-flow .sentence_box input[type="checkbox"] {
   position: relative;
@@ -778,7 +777,6 @@ input[type="number"]:not(.form-control):focus {
   transition: background-color 0.2s var(--lg-ease), box-shadow 0.2s var(--lg-ease);
 }
 
-.page-practice input[type="checkbox"]::before,
 .page-flow #toggle_tts::before,
 .page-flow .sentence_box input[type="checkbox"]::before {
   content: "";
@@ -793,30 +791,106 @@ input[type="number"]:not(.form-control):focus {
   transition: transform 0.2s var(--lg-ease);
 }
 
-.page-practice input[type="checkbox"]:checked,
 .page-flow #toggle_tts:checked,
 .page-flow .sentence_box input[type="checkbox"]:checked {
   background-color: var(--lg-brand);
 }
 
-.page-practice input[type="checkbox"]:checked::before,
 .page-flow #toggle_tts:checked::before,
 .page-flow .sentence_box input[type="checkbox"]:checked::before {
   transform: translateX(16px);
 }
 
-.page-practice input[type="checkbox"]:focus-visible,
 .page-flow #toggle_tts:focus-visible,
 .page-flow .sentence_box input[type="checkbox"]:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px var(--lg-brand-ring);
 }
 
-.page-practice input[type="checkbox"]:disabled,
 .page-flow #toggle_tts:disabled,
 .page-flow .sentence_box input[type="checkbox"]:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+/* Practice page (test.html): plain checkboxes, not switches */
+.page-practice input[type="checkbox"] {
+  position: relative;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 2px solid var(--lg-border-strong);
+  border-radius: 5px;
+  background-color: var(--lg-input-bg);
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background-color 0.15s var(--lg-ease), border-color 0.15s var(--lg-ease), box-shadow 0.15s var(--lg-ease);
+}
+
+/* check mark */
+.page-practice input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--lg-on-brand);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.15s var(--lg-ease);
+}
+
+.page-practice input[type="checkbox"]:checked {
+  border-color: var(--lg-brand);
+  background-color: var(--lg-brand);
+}
+
+.page-practice input[type="checkbox"]:checked::before {
+  transform: rotate(45deg) scale(1);
+}
+
+.page-practice input[type="checkbox"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--lg-brand-ring);
+}
+
+.page-practice input[type="checkbox"]:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Playback card (TTS / Alt / Auto): kept as switches – checkboxes leave too much empty space there */
+.page-practice .playback-item input[type="checkbox"] {
+  width: 40px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--lg-switch-off);
+}
+
+.page-practice .playback-item input[type="checkbox"]::before {
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--lg-switch-knob);
+  box-shadow: var(--lg-knob-shadow);
+  transform: none;
+  transition: transform 0.2s var(--lg-ease);
+}
+
+.page-practice .playback-item input[type="checkbox"]:checked {
+  background-color: var(--lg-brand);
+}
+
+.page-practice .playback-item input[type="checkbox"]:checked::before {
+  transform: translateX(16px);
 }
 
 .page-practice input[type="number"] {
@@ -882,6 +956,79 @@ input[type="number"]:not(.form-control):focus {
 .page-practice #last_shown {
   background-color: var(--lg-interval-bg);
   color: var(--lg-interval-text);
+}
+
+/* My Fav / Skip / NS: kept on one line with the counters */
+.page-practice .flags-row {
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.page-practice .flags-row .toggle-item {
+  flex-shrink: 0;
+  gap: 5px;
+}
+
+.page-practice .flags-row .toggle-item label {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.page-practice .flags-row .practice-counters {
+  gap: 4px;
+}
+
+.page-practice .flags-row .practice-counters h6 {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  font-size: 14px;
+}
+
+/* Narrow phones (375px and below): tighten further so it still fits on one line */
+@media (max-width: 380px) {
+  .page-practice .flags-row {
+    gap: 6px;
+  }
+
+  .page-practice .flags-row .toggle-item {
+    gap: 4px;
+  }
+
+  .page-practice .flags-row .toggle-item label {
+    font-size: 14px;
+  }
+
+  .page-practice .flags-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+  }
+
+  .page-practice .flags-row input[type="checkbox"]::before {
+    top: 0;
+    left: 3px;
+    width: 5px;
+    height: 9px;
+  }
+
+  .page-practice .flags-row .practice-counters {
+    gap: 3px;
+  }
+
+  .page-practice .flags-row .practice-counters h6 {
+    min-width: 22px;
+    height: 24px;
+    padding: 0 5px;
+    font-size: 13px;
+  }
+}
+
+/* Tiny screens: let the counters drop to a new line rather than overflow */
+@media (max-width: 349px) {
+  .page-practice .flags-row {
+    flex-wrap: wrap;
+  }
 }
 
 .page-practice .quiz-row {

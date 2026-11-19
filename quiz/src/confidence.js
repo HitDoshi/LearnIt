@@ -49,7 +49,7 @@ function replaceStateWithHistory(page) {
 const backButton = document.getElementById("backButton");
 backButton.onclick = function () {
   // window.history.back();
-  window.location.href = "showInDaysStats.html";
+  window.location.href = "countdown.html";
 };
 
 openRequest.onupgradeneeded = (event) => {
